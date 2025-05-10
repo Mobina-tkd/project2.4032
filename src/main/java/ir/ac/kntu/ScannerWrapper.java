@@ -30,4 +30,8 @@ public class ScannerWrapper {
 	public void close() {
 		scanner.close();
 	}
+
+	public boolean nextBoolean() {
+		return scanner.nextBoolean();
+	}
 }

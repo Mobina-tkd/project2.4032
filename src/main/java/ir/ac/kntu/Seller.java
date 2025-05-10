@@ -1,6 +1,10 @@
 package ir.ac.kntu;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class Seller {
@@ -142,6 +146,7 @@ public class Seller {
             Vendilo.SellerOption option = Menu.getSellerOption();
             switch (option) {
                 case PRODUCTS -> {
+                    handleProduct();
                     break;
                 }
                 case WALLET-> {
@@ -160,4 +165,42 @@ public class Seller {
             }
         }
     }  
+
+
+    private boolean handleProduct() {
+        Menu.productMenu();
+        Vendilo.ProductOption productOption = Menu.getProductOption();
+
+        switch (productOption) {
+            case INSERT_PRODUCT-> {
+                Menu.insertProductMenu();
+                Vendilo.InsertProduct insertProduct = Menu.getInserProductOption();
+                switch (insertProduct) {
+                    case MOBILE -> {
+                        Mobile mobile = new Mobile();
+                        mobile = mobile.readData();
+                        MobileDAO.insertMobile(mobile);
+                    }
+                    case LAPTOP -> {
+                        Laptop laptop = new Laptop();
+                        laptop = laptop.readData();
+                        LaptopDAO.insertLaptop(laptop);
+                    }
+                    case BOOK -> {
+                        Book book = new Book();
+                        book = book.readData();
+                        BookDAO.insertBook(book);
+                    }
+                    case UNDEFINED -> {
+                    }
+                }
+            }
+            case SET_INVENTORY-> {
+            }
+            case UNDEFINED-> {
+            }
+        }
+
+
+    }
 }

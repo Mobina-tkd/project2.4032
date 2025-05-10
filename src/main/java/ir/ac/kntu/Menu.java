@@ -119,6 +119,39 @@ public class Menu{
 		return Vendilo.Statement.UNDEFINED;
 	}
 
+	public static void productMenu() {
+		System.out.println("1 ) Insert product");
+		System.out.println("2) Set inventory");
+		System.out.print("Please Enter Your Choise:  ");        
+	}
+
+	public static Vendilo.ProductOption getProductOption() {
+		Vendilo.ProductOption[] options = Vendilo.ProductOption.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.ProductOption.UNDEFINED;
+	}
+
+	public static void  insertProductMenu() {
+		System.out.println("1 ) Mobile");
+		System.out.println("2) Laptop");
+		System.out.println("3) Book");
+		System.out.print("Please Enter Your Choise:  ");
+	}
     
+	public static Vendilo.InsertProduct getInserProductOption() {
+		Vendilo.InsertProduct[] options = Vendilo.InsertProduct.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.InsertProduct.UNDEFINED;
+	}
     
 }

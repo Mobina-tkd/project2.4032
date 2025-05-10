@@ -8,6 +8,8 @@ public class Vendilo{
     enum SupporterOption{FOLLOW_UP_REQUEST, IDENTITY_VERIFICATION, RECENT_PURCHASES, BACK, UNDEFINED}
     enum Statement{NEW_USER, ALREADY_HAS_ACCOUNT,BACK, UNDEFINED}
     enum AddressOption{INSERT_NEW_ADDRESS, VIEW_ADDRESSES, EDIT_ADDRESSES, DELETE_ADDRESSES, UNDEFINED}
+    enum ProductOption{INSERT_PRODUCT, SET_INVENTORY, UNDEFINED}
+    enum InsertProduct{MOBILE, LAPTOP, BOOK, UNDEFINED}
     
     public static void main(String[] args) {
         UserDAO.createTable();
