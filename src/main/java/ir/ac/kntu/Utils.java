@@ -1,14 +1,20 @@
 package ir.ac.kntu;
 
-import java.util.regex.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
+    private static final String DB_URL = "jdbc:sqlite:data.db";
     public static User readUserData(){
     
     String email;
     String password;
     String phoneNumber;
-    
     System.out.print("Enter first name: ");
     String firstName = ScannerWrapper.getInstance().nextLine();
        
@@ -53,7 +59,7 @@ public class Utils {
 
 
     public static Seller readSellerData(){
-    
+
         String firstName;
         String lastName;
         String storName;
@@ -143,5 +149,51 @@ public class Utils {
         return false;
         
     }
+
+    public static Address readAddressFromUser() {
+        System.out.print("Enter the location: ");
+        String location = ScannerWrapper.getInstance().nextLine();
+        System.out.print("Enter the state: ");
+        String state = ScannerWrapper.getInstance().nextLine();
+        System.out.print("Enter the street: ");
+        String street = ScannerWrapper.getInstance().nextLine();
+        System.out.print("Enter the houseNumber: ");
+        String houseNumber = ScannerWrapper.getInstance().nextLine();
+
+        Address address = new Address(location, state, street, houseNumber);
+        return address;
+    }
+
+    public static User findUser(String username) {
+    String sql = "SELECT first_name, last_name, email, phone, password FROM users WHERE email = ? OR phone = ?";
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, username);
+        stmt.setString(2, username);
+
+        ResultSet resultSet = stmt.executeQuery();
+
+        if (resultSet.next()) {
+            // Assuming User has a constructor like: User(int id, String name, String email, String phone)
+            String firstName = resultSet.getString("first_name");
+            String lastName = resultSet.getString("last_name");
+            String email = resultSet.getString("email");
+            String phone = resultSet.getString("phone");
+            String password = resultSet.getString("password");
+
+            return new User(firstName, lastName, email, phone, password);
+        } else {
+            System.out.println("No user found with email or phone: " + username);
+            return null;
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error finding user: " + e.getMessage());
+        return null;
+    }
+}
+
     
 }

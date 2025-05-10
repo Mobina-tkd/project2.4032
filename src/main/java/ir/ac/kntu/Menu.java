@@ -6,17 +6,37 @@ public class Menu{
         System.out.println("1) User");
         System.out.println("2) Seller");
         System.out.println("3) Supporter");
-        System.out.print("Please choose Your Role : ");
+        System.out.print("Please choose Your Role: ");
     }
 
     public static Vendilo.MenuOption getMenuOption() {
 		Vendilo.MenuOption[] options = Vendilo.MenuOption.values();
 		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
 		userInput--;
 		if (userInput >= 0 && userInput < options.length) {
 			return options[userInput];
 		}
 		return Vendilo.MenuOption.UNDEFINED;
+	}
+
+	public static void AddressMenue() {
+		System.out.println("1) Insert new address");
+		System.out.println("2) View my addresses");
+		System.out.println("3) Edite address");
+		System.out.println("4) Delete address");
+        System.out.print("Please Enter Your Choise:  ");
+	}
+
+	public static Vendilo.AddressOption getAddressOption() {
+		Vendilo.AddressOption[] options = Vendilo.AddressOption.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.AddressOption.UNDEFINED;
 	}
 
     public static void userMenu(){
@@ -28,12 +48,13 @@ public class Menu{
         System.out.println("6) Wallet ");   
         System.out.println("7) Customer Support ");
 		System.out.println("8) Back");
-        System.out.print("Please Enter Your Choise :  ");
+        System.out.print("Please Enter Your Choise:  ");
     }
 
     public static Vendilo.UserOption getUserOption() {
 		Vendilo.UserOption[] options = Vendilo.UserOption.values();
 		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
 		userInput--;
 		if (userInput >= 0 && userInput < options.length) {
 			return options[userInput];
@@ -46,12 +67,13 @@ public class Menu{
         System.out.println("2) Wallet ");
         System.out.println("3) Recent Purchases ");
 		System.out.println("4) Back");
-        System.out.print("Please Enter Your Choise :  ");
+        System.out.print("Please Enter Your Choise:  ");
     }
 
     public static Vendilo.SellerOption getSellerOption() {
 		Vendilo.SellerOption[] options = Vendilo.SellerOption.values();
 		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
 		userInput--;
 		if (userInput >= 0 && userInput < options.length) {
 			return options[userInput];
@@ -64,13 +86,14 @@ public class Menu{
         System.out.println("2) Identity Verification ");
         System.out.println("3) Recent Purchases ");
 		System.out.println("4) Back");
-        System.out.print("Please Enter Your Choise :  ");
+        System.out.print("Please Enter Your Choise:  ");
 
     }
 
     public static Vendilo.SupporterOption getSupporterOption() {
 		Vendilo.SupporterOption[] options = Vendilo.SupporterOption.values();
 		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
 		userInput--;
 		if (userInput >= 0 && userInput < options.length) {
 			return options[userInput];
@@ -82,12 +105,13 @@ public class Menu{
         System.out.println("1) New User");
         System.out.println("2) I Already Have An Account");
 		System.out.println("3) Back");
-        System.out.print("Please Enter Your Choise :  ");        
+        System.out.print("Please Enter Your Choise:  ");        
     }
 
     public static Vendilo.Statement getStatementOption() {
 		Vendilo.Statement[] options = Vendilo.Statement.values();
 		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
 		userInput--;
 		if (userInput >= 0 && userInput < options.length) {
 			return options[userInput];

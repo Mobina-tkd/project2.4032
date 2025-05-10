@@ -7,13 +7,11 @@ public class Vendilo{
     enum SellerOption{PRODUCTS, WALLET, RECENT_PURCHASES, BACK, UNDEFINED}
     enum SupporterOption{FOLLOW_UP_REQUEST, IDENTITY_VERIFICATION, RECENT_PURCHASES, BACK, UNDEFINED}
     enum Statement{NEW_USER, ALREADY_HAS_ACCOUNT,BACK, UNDEFINED}
-   
-   
-   
-   
+    enum AddressOption{INSERT_NEW_ADDRESS, VIEW_ADDRESSES, EDIT_ADDRESSES, DELETE_ADDRESSES, UNDEFINED}
     
     public static void main(String[] args) {
         UserDAO.createTable();
+        AddressDAO.createTable();
         SellerDAO.createTable();
         
         
@@ -29,8 +27,6 @@ public class Vendilo{
                         continue;
                     }
                     User.handleUser(statement);
-                    //you need a if clause
-                    User.chooseOption(); 
                     break;   
                 } 
             
@@ -42,7 +38,6 @@ public class Vendilo{
                     }
                     Seller.handleSeller(statement);
                     //you need a if clause
-                    Seller.chooseOption(); 
                     break;  
                 }
             

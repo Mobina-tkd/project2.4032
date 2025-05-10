@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class User {
     private String firstName;
     private String lastName;
@@ -20,6 +21,9 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.password = password;
     }
+    public User() {
+
+    }
     //you dont need this actually
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
@@ -28,7 +32,7 @@ public class User {
     public String getPassword() { return password; }
 
 
-    public static boolean  loginPage(){
+    public static String  loginPage(){
         String url = "jdbc:sqlite:data.db";  
         while (true){
             System.out.println("--------Login Page-------");
@@ -54,14 +58,14 @@ public class User {
                     String storedPassword = rs.getString("password");
                     if (storedPassword.equals(password)) {
                         System.out.println("Login successful! Welcome.");
-                        return true;
+                        return username;
                     } else {
                         System.out.println("Incorrect password.");
-                        return false;
+                        return null;
                     }
                 } else {
                     System.out.println("No account found with that email or phone number.");
-                    return false;
+                    return null;
                 }
 
             } catch (SQLException e) {
@@ -73,11 +77,12 @@ public class User {
 
 
     public static void handleUser(Vendilo.Statement statement){ 
+        User user = new User();
         while(true){
             switch (statement) {
                 case NEW_USER -> {
                     while(true){ 
-                    User user = Utils.readUserData();
+                    user = Utils.readUserData();
                     Boolean inserted = UserDAO.insertUser(user);
                     if(!inserted){
                     continue;
@@ -85,41 +90,40 @@ public class User {
                     break;
                 }
                     while(true){
-                    boolean canEnter = loginPage();
-                    if(!canEnter){
+                    String username = loginPage();
+                    if(username == null){
                         continue;
                     }
                     break;
                 }
-                    chooseOption();//im here
+                    chooseOption(user);
                     break;
                 }
 
 
                 case ALREADY_HAS_ACCOUNT -> {
+                    String  username ="";
                     while(true){
-                        boolean canEnter = loginPage();
-                        if(!canEnter){
+                        username = loginPage();
+                        if(username == null){
                             continue;
                         }
                         break;
                     }
-                    
-                    chooseOption();
+                    user = Utils.findUser(username);
+                    chooseOption(user);
                 } 
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice");
                     break;
                 }        
             }
-
-
         }
     }
 
    
 
-    public static void chooseOption(){
+    public static void chooseOption(User user){
         while(true){
             Menu.userMenu();
             Vendilo.UserOption option = Menu.getUserOption();
@@ -137,7 +141,7 @@ public class User {
                     break;
                 }
                 case ADRESSES -> {
-                    break;
+                    Address.handleAddress(user);    
                 }
                 case WALLET -> {
                     break;
