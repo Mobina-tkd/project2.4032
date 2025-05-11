@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.w3c.dom.UserDataHandler;
+
 
 public class Seller {
     private String firstName;
@@ -15,11 +17,14 @@ public class Seller {
     private String state;
     private String phoneNumber;
     private String password;
-    private boolean identityVerified;
+    private boolean identityVerified = false;
+    private String agencyCode;
+
+    
 
     // Constructor
     public Seller(String firstName, String lastName, String IDNumber, String storeName,
-                  String state, String phoneNumber, String password, boolean identityVerified) {
+        String state, String phoneNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.IDNumber = IDNumber;
@@ -27,7 +32,6 @@ public class Seller {
         this.state = state;
         this.phoneNumber = phoneNumber;
         this.password = password;
-        this.identityVerified = identityVerified;
     }
 
     // Getters
@@ -61,6 +65,14 @@ public class Seller {
 
     public boolean isIdentityVerified() {
         return identityVerified;
+    }
+
+    public void setAgencyCode(String agencyCode) {
+        this.agencyCode = agencyCode;
+    }
+
+    public String getAgencyCode() {
+        return agencyCode;
     }
 
 
@@ -109,12 +121,16 @@ public class Seller {
                 case NEW_USER -> {
                     while(true){ 
                     Seller seller = Utils.readSellerData();
+                    String agencyCode = DealerCodeGenerator.generateUniqueCode();
+                    seller.setAgencyCode(agencyCode);
                     Boolean inserted = SellerDAO.insertSeller(seller);
                     if(!inserted){
                     continue;
                     }
+                    
                     break;
                 }
+
                     while(true){
                     boolean canEnter = loginPage();
                     if(!canEnter){
@@ -127,7 +143,7 @@ public class Seller {
                     break;
                 }
                 case ALREADY_HAS_ACCOUNT -> {
-                    Seller.loginPage();
+                    loginPage();
                     break;
                 } 
                 case UNDEFINED -> {
@@ -203,4 +219,6 @@ public class Seller {
 
 
     }
+
+    
 }

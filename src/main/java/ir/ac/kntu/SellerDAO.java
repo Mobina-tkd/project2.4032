@@ -1,6 +1,10 @@
 package ir.ac.kntu;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 
 public class SellerDAO {
@@ -17,6 +21,7 @@ public class SellerDAO {
                    + "phone_number TEXT UNIQUE,"
                    + "password TEXT NOT NULL,"
                    + "identity_varified BOOLEAN"
+                   + "agency_code TEXT UNIQUE,"
                    + ");";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -30,8 +35,8 @@ public class SellerDAO {
     
 
     public static Boolean insertSeller(Seller seller) {
-        String sql = "INSERT INTO sellers(first_name, last_name, ID_Number, stor_name, state, phone_number, password, identity_varified) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO sellers(first_name, last_name, ID_Number, stor_name, state, phone_number, password, identity_varified, agency_code) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -44,6 +49,8 @@ public class SellerDAO {
             pstmt.setString(6, seller.getPhoneNumber());
             pstmt.setString(7, seller.getPassword());
             pstmt.setBoolean(8, seller.isIdentityVerified());
+            pstmt.setString(9, seller.getAgencyCode());
+
     
             pstmt.executeUpdate();
             System.out.println("Seller inserted successfully.");

@@ -67,8 +67,6 @@ public class Utils {
         String phoneNumber;
         String password;
         String state;
-        String agencyCode;
-        boolean identityVarified = false;
 
 
         
@@ -110,13 +108,11 @@ public class Utils {
     
         }
     
-        Seller seller = new Seller(firstName, lastName, IDNumber, storName, state, phoneNumber, password, identityVarified);
+        Seller seller = new Seller(firstName, lastName, IDNumber, storName, state, phoneNumber, password);
         return seller;
         }
 
-
-
-
+    
 
 
     public static boolean matchEmail(String email){
