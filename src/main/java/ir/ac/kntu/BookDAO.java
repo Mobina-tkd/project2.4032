@@ -11,9 +11,10 @@ public class BookDAO {
 
 
     public static void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS books ("
+        String sql = "CREATE TABLE IF NOT EXISTS Books ("
             + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
             + "name TEXT NOT NULL,"
+            + "title TEXT NOT NULL,"
             + "price REAL NOT NULL,"
             + "inventory INTEGER NOT NULL,"
             + "writerName TEXT NOT NULL,"
@@ -33,28 +34,62 @@ public class BookDAO {
     }
 
     public static boolean insertBook(Book book) {
-        String sql = "INSERT INTO books(name, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO books(name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
     
-            pstmt.setString(1, book.getName());
-            pstmt.setDouble(2, book.getPrice());
-            pstmt.setInt(3, book.getInventory());
-            pstmt.setString(4, book.getWriterName());
-            pstmt.setInt(5, book.getPageNumber());
-            pstmt.setString(6, book.getGenre());
-            pstmt.setString(7, book.getAgeGroup());
-            pstmt.setString(8, book.getISBN());
+            pstmt.setString(1, "Book");
+            pstmt.setString(2, book.getTitle());
+            pstmt.setDouble(3, book.getPrice());
+            pstmt.setInt(4, book.getInventory());
+            pstmt.setString(5, book.getWriterName());
+            pstmt.setInt(6, book.getPageNumber());
+            pstmt.setString(7, book.getGenre());
+            pstmt.setString(8, book.getAgeGroup());
+            pstmt.setString(9, book.getISBN());
     
             pstmt.executeUpdate();
-            System.out.println("book inserted successfully.");
+            System.out.println("Book inserted successfully.");
             return true;
         } catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
             return false;
         }
+    }
+
+    
+    public static Book readData() {
+
+        String name = "Book";
+        
+        System.out.print("Enter book title: ");
+        String title = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter price: ");
+        double price = ScannerWrapper.getInstance().nextDouble();
+
+        System.out.print("Enter inventory count: ");
+        int inventory = ScannerWrapper.getInstance().nextInt();
+
+        System.out.print("Enter writer's name: ");
+        String writerName = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter page number: ");
+        int pageNumber = ScannerWrapper.getInstance().nextInt();
+
+        System.out.print("Enter genre: ");
+        String genre = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter age group: ");
+        String ageGroup = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter ISBN: ");
+        String isbn = ScannerWrapper.getInstance().nextLine();
+
+        return new Book(title, name, price, inventory, writerName, pageNumber, genre, ageGroup, isbn);
+        
     }
     
 }

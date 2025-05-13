@@ -34,8 +34,8 @@ public class LaptopDAO {
     }
 
     public static boolean insertLaptop(Laptop laptop) {
-        String sql = "INSERT INTO laptops(name, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO laptops(name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam )"
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -61,7 +61,41 @@ public class LaptopDAO {
         }
     }
 
+    public static Laptop readData() {
+        String name = "Laptop";
 
-    
+        System.out.print("Enter price: ");
+        double price = ScannerWrapper.getInstance().nextDouble();
+        ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter inventory count: ");
+        int inventory = ScannerWrapper.getInstance().nextInt();
+        ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter brand: ");
+        String brand = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter memory (GB): ");
+        int memory = ScannerWrapper.getInstance().nextInt();
+        ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter RAM (GB): ");
+        int ram = ScannerWrapper.getInstance().nextInt();
+        ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter model: ");
+        String model = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter GPU: ");
+        String gpu = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Has Bluetooth? (true/false): ");
+        boolean hasBluetooth = Boolean.parseBoolean(ScannerWrapper.getInstance().nextLine());
+
+        System.out.print("Has Webcam? (true/false): ");
+        boolean hasWebcam = Boolean.parseBoolean(ScannerWrapper.getInstance().nextLine());
+
+        return new Laptop(name, price, inventory, brand, memory, ram, model, gpu, hasBluetooth, hasWebcam);
+    }
     
 }

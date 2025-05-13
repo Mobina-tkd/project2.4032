@@ -136,22 +136,77 @@ public class Menu{
 		return Vendilo.ProductOption.UNDEFINED;
 	}
 
-	public static void  insertProductMenu() {
-		System.out.println("1 ) Mobile");
+	public static void  productCategoryMenu() {
+		System.out.println("1) Mobile");
 		System.out.println("2) Laptop");
 		System.out.println("3) Book");
 		System.out.print("Please Enter Your Choise:  ");
 	}
     
-	public static Vendilo.InsertProduct getInserProductOption() {
-		Vendilo.InsertProduct[] options = Vendilo.InsertProduct.values();
+	public static Vendilo.Product getProductCategory() {
+		Vendilo.Product[] options = Vendilo.Product.values();
 		int userInput = ScannerWrapper.getInstance().nextInt();
 		ScannerWrapper.getInstance().nextLine();
 		userInput--;
 		if (userInput >= 0 && userInput < options.length) {
 			return options[userInput];
 		}
-		return Vendilo.InsertProduct.UNDEFINED;
+		return Vendilo.Product.UNDEFINED;
 	}
     
+	public static void searchMenu() {
+		System.out.println("1) Show all");
+		System.out.println("2) search by price");
+		System.out.print("Please Enter Your Choise:  ");
+
+	}
+
+	public static Vendilo.SearchMenu getSearchMenuOption() {
+		Vendilo.SearchMenu[] options = Vendilo.SearchMenu.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.SearchMenu.UNDEFINED;
+	}
+
+	public static void searcBookhMenu() {
+		System.out.println("1) Show all");
+		System.out.println("2) Search by price");
+		System.out.println("3) Search by title");
+		System.out.print("Please Enter Your Choise:  ");
+
+	}
+
+	public static Vendilo.SearchBookOption getSearchBookOption() {
+		Vendilo.SearchBookOption[] options = Vendilo.SearchBookOption.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.SearchBookOption.UNDEFINED;
+	}
+
+	public static void SettingMenu() {
+		System.out.println("1) Show all");
+		System.out.println("2) Search by price");
+		System.out.println("3) Search by title");
+		System.out.print("Please Enter Your Choise:  ");
+
+	}
+
+	public static Vendilo.SettingMenu getSettingMenu() {
+		Vendilo.SettingMenu[] options = Vendilo.SettingMenu.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.SettingMenu.UNDEFINED;
+	}
 }

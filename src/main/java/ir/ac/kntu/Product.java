@@ -1,10 +1,10 @@
 package ir.ac.kntu;
 
-public abstract class Product {
+public class Product {
     String name;
     double price;
     int inventory;
-    public abstract Product readData();
+
 
     public String getName() {
         return name;

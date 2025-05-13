@@ -32,10 +32,10 @@ public String getNetworkInternet() {
     return networkInternet;
 }
     
-    @Override
+    
     public Mobile readData(){
-        System.out.print("Enter name: ");
-        String name = ScannerWrapper.getInstance().nextLine();
+        
+        String name ="Mobile";
 
         System.out.print("Enter price: ");
         double price = ScannerWrapper.getInstance().nextDouble();
@@ -65,6 +65,35 @@ public String getNetworkInternet() {
 
         return new Mobile(name, price, inventory, brand, memory, RAM,
                           rareCameraResolution, frontCameraResolution, networkInternet);
+    }
+
+    public static void search() {
+        Menu.searchMenu();
+        Vendilo.SearchMenu option = Menu.getSearchMenuOption();
+
+        switch (option) {
+            case SHOW_ALL-> {
+                Utils.showAllProducts("Mobile");
+            }
+
+
+            case SEARCH_BY_PRICE-> {
+                System.out.println("Enter the min price: ");
+                double min = ScannerWrapper.getInstance().nextDouble();
+                System.out.println("Enter the max price: ");
+                double max = ScannerWrapper.getInstance().nextDouble();
+                Utils.searchByPrice( "Mobile", min, max);
+            }
+
+
+
+
+            case UNDEFINED-> {
+                System.out.println("Undefined Choice; Try again...\n");
+                break;
+            }
+        }
+        
     }
 
     

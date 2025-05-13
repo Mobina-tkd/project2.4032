@@ -30,6 +30,24 @@ public class User {
     public String getEmail() { return email; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getPassword() { return password; }
+    
+
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
 
     public static String  loginPage(){
@@ -49,12 +67,9 @@ public class User {
                 pstmt.setString(1, username);
                 pstmt.setString(2, username);
 
-                // Execute the query
                 ResultSet rs = pstmt.executeQuery();
 
-                // Check if any row is returned (meaning the username and password match)
                 if (rs.next()) {
-                    // Check if the password matches
                     String storedPassword = rs.getString("password");
                     if (storedPassword.equals(password)) {
                         System.out.println("Login successful! Welcome.");
@@ -75,31 +90,38 @@ public class User {
         }
     }
 
-
-    public static void handleUser(Vendilo.Statement statement){ 
+    public static User handleNewUser() {
         User user = new User();
+        while(true){ 
+            user = Utils.readUserData();
+            Boolean inserted = UserDAO.insertUser(user);
+            if(!inserted){
+            continue;
+            }
+            break;
+        }
+            while(true){
+            String username = loginPage();
+            if(username == null){
+                continue;
+            }
+            return user;
+        }
+        
+    }
+
+
+    public static void handleUser(){ 
+        
         while(true){
+            Menu.chooseStatementMenu();
+            Vendilo.Statement statement = Menu.getStatementOption();
+            User user = new User();
             switch (statement) {
                 case NEW_USER -> {
-                    while(true){ 
-                    user = Utils.readUserData();
-                    Boolean inserted = UserDAO.insertUser(user);
-                    if(!inserted){
-                    continue;
-                    }
-                    break;
-                }
-                    while(true){
-                    String username = loginPage();
-                    if(username == null){
-                        continue;
-                    }
-                    break;
-                }
+                    user = handleNewUser(); 
                     chooseOption(user);
-                    break;
                 }
-
 
                 case ALREADY_HAS_ACCOUNT -> {
                     String  username ="";
@@ -113,6 +135,9 @@ public class User {
                     user = Utils.findUser(username);
                     chooseOption(user);
                 } 
+                case BACK -> {
+                    return;
+                }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice");
                     break;
@@ -129,13 +154,15 @@ public class User {
             Vendilo.UserOption option = Menu.getUserOption();
             switch (option) {
                 case SEARCH_FOR_PRODUCTS -> {
+                    Utils.searchProduct();
                     break;
                 }
                 case SHOPPING_CART-> {
+
                     break;
                 }
                 case SETTING-> {
-                    break;
+                    handleSetting(user);
                 }
                 case RECENT_PURCHASES-> {
                     break;
@@ -149,6 +176,9 @@ public class User {
                 case CUSTOMER_SUPPORT -> {
                     break;
                 }
+                case BACK -> {
+                    return;
+                }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
                 }
@@ -156,4 +186,48 @@ public class User {
             }
         }
     }  
+
+
+    public static void handleSetting(User user) {
+        while(true) {
+            String newValue;
+            Menu.SettingMenu();
+            Vendilo.SettingMenu settingMenue = Menu.getSettingMenu();
+            switch (settingMenue) {
+                case EMAIL-> {
+                    newValue = Utils.readEmail();
+                    Utils.setAndUpdate(user, "email", newValue);
+                }
+                case PHONE_NUMBER-> {
+                    newValue = Utils.readPhoneNUmber();
+                    Utils.setAndUpdate(user, "phone_number", newValue);
+
+                }
+                case FIRST_NAME-> {
+                    System.out.print("Enter first name: ");
+                    newValue = ScannerWrapper.getInstance().nextLine();
+                    Utils.setAndUpdate(user, "first_name", newValue);
+
+                }
+                case LAST_NAME-> {
+                    System.out.print("Enter last name: ");
+                    newValue = ScannerWrapper.getInstance().nextLine();
+                    Utils.setAndUpdate(user, "last_name", newValue);
+
+                }
+                case PASSWORD-> {
+                    newValue = Utils.readPassword();
+                    Utils.setAndUpdate(user, "password", newValue);
+
+                }
+                case BACK-> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println("Undefined Choice; Try again...\\n");
+                }                        
+            }
+        }
+    
+    }
 }

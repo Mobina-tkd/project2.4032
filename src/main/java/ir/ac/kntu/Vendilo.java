@@ -9,12 +9,17 @@ public class Vendilo{
     enum Statement{NEW_USER, ALREADY_HAS_ACCOUNT,BACK, UNDEFINED}
     enum AddressOption{INSERT_NEW_ADDRESS, VIEW_ADDRESSES, EDIT_ADDRESSES, DELETE_ADDRESSES, BACK, UNDEFINED}
     enum ProductOption{INSERT_PRODUCT, SET_INVENTORY, BACK, UNDEFINED}
-    enum InsertProduct{MOBILE, LAPTOP, BOOK, BACK, UNDEFINED}
-    
+    enum Product{MOBILE, LAPTOP, BOOK, BACK, UNDEFINED}
+    enum SearchMenu{SHOW_ALL, SEARCH_BY_PRICE, UNDEFINED}
+    enum SearchBookOption{SHOW_ALL, SEARCH_BY_PRICE, SEARCH_BY_TITLE, UNDEFINED}
+    enum SettingMenu{EMAIL, PHONE_NUMBER, FIRST_NAME, LAST_NAME, PASSWORD, BACK, UNDEFINED}
     public static void main(String[] args) {
         UserDAO.createTable();
         AddressDAO.createTable();
         SellerDAO.createTable();
+        LaptopDAO.createTable();
+        MobileDAO.createTable();
+        BookDAO.createTable();
         
         
         
@@ -23,28 +28,14 @@ public class Vendilo{
             MenuOption menuOption = Menu.getMenuOption();
             switch (menuOption) {
                 case USER -> {
-                    Menu.chooseStatementMenu();
-                    Statement statement = Menu.getStatementOption();
-                    if(statement.equals(Statement.BACK)){
-                        continue;
-                    }
-                    User.handleUser(statement);
-                    break;   
+                    User.handleUser();
                 } 
             
                 case SELLER -> { 
-                    Menu.chooseStatementMenu();
-                    Statement statement = Menu.getStatementOption();
-                    if(statement.equals(Statement.BACK)){
-                        continue;
-                    }
-                    Seller.handleSeller(statement);
-                    //you need a if clause
-                    break;  
+                    Seller.handleSeller();
                 }
             
                 case SUPPORTER -> {
-                    
                     break;
                 }
             

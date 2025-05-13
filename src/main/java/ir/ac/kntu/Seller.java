@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.w3c.dom.UserDataHandler;
-
 
 public class Seller {
     private String firstName;
@@ -79,73 +77,86 @@ public class Seller {
     
 
 
-    public static boolean loginPage(){
+    public static boolean loginPage() {
         String url = "jdbc:sqlite:data.db";  
-        while (true){
+        while (true) {
             System.out.println("--------Login Page-------");
-            System.out.print("Enter your agency code  :  ");
+            System.out.print("Enter your agency code : ");
             String username = ScannerWrapper.getInstance().nextLine(); 
-            
-
-
+            System.out.print("Enter your password : ");
+            String userPassword = ScannerWrapper.getInstance().nextLine(); 
+    
             try (Connection conn = DriverManager.getConnection(url)) {
-                String sql = "SELECT * FROM agencies WHERE agency_number = ?";
+                String sql = "SELECT password FROM sellers WHERE agency_code = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, username);
     
                 ResultSet rs = pstmt.executeQuery();
     
                 if (rs.next()) {
-                    System.out.println("Welcom dear seller");
-                    return true;
+                    String Password = rs.getString("password");
+                    if (userPassword.equals(Password)) {
+                        System.out.println("Welcome dear seller");
+                        return true;
+                    } else {
+                        System.out.println("Incorrect password. Try again.");
+                    }
                 } else {
-                    System.out.println("We could not find this agency code");
+                    System.out.println("We could not find this agency code.");
                     return false;
                 }
     
             } catch (SQLException e) {
                 System.out.println("Database error: " + e.getMessage());
+                return false;
             }
-    
-
         }
     }
     
-
-
-
-
-    public static void handleSeller(Vendilo.Statement statement){ 
+    public static void handleNewSeller() {
+        while(true){ 
+            Seller seller = Utils.readSellerData();
+            String agencyCode = DealerCodeGenerator.generateUniqueCode();
+            seller.setAgencyCode(agencyCode);
+            Boolean inserted = SellerDAO.insertSeller(seller);
+            if(inserted){
+                System.out.println("Here is your agency code : " + agencyCode);
+                break;
+            }
+        }
         while(true){
+            boolean canEnter = loginPage();
+            if(!canEnter){
+                continue;
+            }
+            break;
+        }
+    }
+
+
+
+    public static void handleSeller(){
+        while(true){
+            Menu.chooseStatementMenu();
+            Vendilo.Statement statement = Menu.getStatementOption(); 
             switch (statement) {
                 case NEW_USER -> {
-                    while(true){ 
-                    Seller seller = Utils.readSellerData();
-                    String agencyCode = DealerCodeGenerator.generateUniqueCode();
-                    seller.setAgencyCode(agencyCode);
-                    Boolean inserted = SellerDAO.insertSeller(seller);
-                    if(!inserted){
-                    continue;
-                    }
-                    
-                    break;
-                }
-
-                    while(true){
-                    boolean canEnter = loginPage();
-                    if(!canEnter){
-                        continue;
-                    }
-                    break;
-                }
-                chooseOption();//im here
-
-                    break;
+                    handleNewSeller();
+                    chooseOption();
                 }
                 case ALREADY_HAS_ACCOUNT -> {
-                    loginPage();
-                    break;
+                    while(true){
+                        boolean canEnter = loginPage();
+                        if(!canEnter){
+                            continue;
+                        }
+                        break;
+                    }
+                    chooseOption();
                 } 
+                case BACK -> {
+                    return;
+                }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice");
                     break;
@@ -163,7 +174,6 @@ public class Seller {
             switch (option) {
                 case PRODUCTS -> {
                     handleProduct();
-                    break;
                 }
                 case WALLET-> {
                     break;
@@ -172,7 +182,7 @@ public class Seller {
                     break;
                 }
                 case BACK-> {
-                    break;
+                    return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
@@ -183,42 +193,55 @@ public class Seller {
     }  
 
 
-    private boolean handleProduct() {
-        Menu.productMenu();
-        Vendilo.ProductOption productOption = Menu.getProductOption();
+    private static void handleProduct() {
+        while(true) {
+            Menu.productMenu();
+            Vendilo.ProductOption productOption = Menu.getProductOption();
+            switch (productOption) {
+                case INSERT_PRODUCT-> {
+                    handleInsertProduct();
+                }
+                case SET_INVENTORY-> {
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED-> {
+                    System.out.println("Undefined Choice; Try again...\n");
 
-        switch (productOption) {
-            case INSERT_PRODUCT-> {
-                Menu.insertProductMenu();
-                Vendilo.InsertProduct insertProduct = Menu.getInserProductOption();
-                switch (insertProduct) {
-                    case MOBILE -> {
-                        Mobile mobile = new Mobile();
-                        mobile = mobile.readData();
-                        MobileDAO.insertMobile(mobile);
-                    }
-                    case LAPTOP -> {
-                        Laptop laptop = new Laptop();
-                        laptop = laptop.readData();
-                        LaptopDAO.insertLaptop(laptop);
-                    }
-                    case BOOK -> {
-                        Book book = new Book();
-                        book = book.readData();
-                        BookDAO.insertBook(book);
-                    }
-                    case UNDEFINED -> {
-                    }
                 }
             }
-            case SET_INVENTORY-> {
-            }
-            case UNDEFINED-> {
-            }
         }
-
-
     }
 
-    
+    public static void handleInsertProduct() {
+        while(true) {
+            Menu.productCategoryMenu();
+            Vendilo.Product insertProduct = Menu.getProductCategory();
+            switch (insertProduct) {
+                case MOBILE -> {
+                    Mobile mobile = new Mobile();
+                    mobile = mobile.readData();
+                    MobileDAO.insertMobile(mobile);
+                }
+                case LAPTOP -> {
+                    Laptop laptop = new Laptop();
+                    laptop = laptop.readData();
+                    LaptopDAO.insertLaptop(laptop);
+                }
+                case BOOK -> {
+                    Book book = new Book();
+                    book = book.readData();
+                    BookDAO.insertBook(book);
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println("Undefined Choice; Try again...\n");
+
+                }
+            }
+        }
+    }
 }
