@@ -13,6 +13,9 @@ public class Vendilo{
     enum SearchMenu{SHOW_ALL, SEARCH_BY_PRICE, UNDEFINED}
     enum SearchBookOption{SHOW_ALL, SEARCH_BY_PRICE, SEARCH_BY_TITLE, UNDEFINED}
     enum SettingMenu{EMAIL, PHONE_NUMBER, FIRST_NAME, LAST_NAME, PASSWORD, BACK, UNDEFINED}
+    enum VarificationMenu{CONFIRM, DENY, BACK, UNDEFINED}
+
+
     public static void main(String[] args) {
         UserDAO.createTable();
         AddressDAO.createTable();
@@ -36,7 +39,13 @@ public class Vendilo{
                 }
             
                 case SUPPORTER -> {
-                    break;
+                    while(true){
+                        boolean canEnter = Supporter.loginPage();
+                        if(!canEnter){
+                            continue;
+                        }
+                        Supporter.chooseOption();
+                    }
                 }
             
                 case UNDEFINED -> {

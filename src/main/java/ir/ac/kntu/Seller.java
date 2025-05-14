@@ -4,10 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 
 public class Seller {
+    private static final String DB_URL = "jdbc:sqlite:data.db";
+
     private String firstName;
     private String lastName;
     private String IDNumber;
@@ -78,7 +81,6 @@ public class Seller {
 
 
     public static boolean loginPage() {
-        String url = "jdbc:sqlite:data.db";  
         while (true) {
             System.out.println("--------Login Page-------");
             System.out.print("Enter your agency code : ");
@@ -86,8 +88,8 @@ public class Seller {
             System.out.print("Enter your password : ");
             String userPassword = ScannerWrapper.getInstance().nextLine(); 
     
-            try (Connection conn = DriverManager.getConnection(url)) {
-                String sql = "SELECT password FROM sellers WHERE agency_code = ?";
+            try (Connection conn = DriverManager.getConnection(DB_URL)) {
+                String sql = "SELECT password AND identity_varified AND massage FROM sellers WHERE agency_code = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, username);
     
@@ -95,10 +97,15 @@ public class Seller {
     
                 if (rs.next()) {
                     String Password = rs.getString("password");
-                    if (userPassword.equals(Password)) {
+                    int identityVarified = rs.getInt("identity_varified");
+                    String message = rs.getString("message");
+                    if (userPassword.equals(Password) && identityVarified == 1) {
                         System.out.println("Welcome dear seller");
                         return true;
-                    } else {
+                    }else if(identityVarified == 2) {
+                        System.out.println(message);
+
+                    }else {
                         System.out.println("Incorrect password. Try again.");
                     }
                 } else {
@@ -244,4 +251,75 @@ public class Seller {
             }
         }
     }
+
+    public static boolean  printSellersData() { //modify print format
+        String query = "SELECT * FROM WHERE identity_varified = 0";
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        ResultSet rs = pstmt.executeQuery();
+
+        ResultSetMetaData meta = rs.getMetaData();
+        int columnCount = meta.getColumnCount();
+
+        boolean found = false;
+        while (rs.next()) {
+            found = true;
+            for (int i = 2; i <= columnCount; i++) {
+                System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+            }
+            System.out.println();
+        }
+
+        if (!found) {
+            System.out.println("No products found with identity_varified 0");
+            return false;
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        return false;
+    }
+    return true;
+
+    }
+
+    public static boolean printByAgencyCode(String agencyCode) { //modify print format
+        String query = "SELECT * FROM WHERE agency_code = ?";
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, agencyCode);
+
+
+        ResultSet rs = pstmt.executeQuery();
+
+        ResultSetMetaData meta = rs.getMetaData();
+        int columnCount = meta.getColumnCount();
+
+        boolean found = false;
+        while (rs.next()) {
+            found = true;
+            for (int i = 2; i <= columnCount; i++) {
+                System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+            }
+            System.out.println();
+        }
+
+        if (!found) {
+            System.out.println("No products found with agency_code " + agencyCode );
+            return false;
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        return false;
+    }
+    return true;
+
+    }
+
+
 }

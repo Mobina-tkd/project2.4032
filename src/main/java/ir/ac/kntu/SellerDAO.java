@@ -22,6 +22,7 @@ public class SellerDAO {
                    + "phone_number TEXT UNIQUE,"
                    + "password TEXT NOT NULL,"
                    + "identity_varified INTEGER"
+                   + "message TEXT"
                    + ");";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -35,8 +36,8 @@ public class SellerDAO {
     
 
     public static Boolean insertSeller(Seller seller) {
-        String sql = "INSERT INTO sellers(agency_code, first_name, last_name, ID_Number, store_name, state, phone_number, password, identity_varified) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO sellers(agency_code, first_name, last_name, ID_Number, store_name, state, phone_number, password, identity_varified, massage) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -50,6 +51,8 @@ public class SellerDAO {
             pstmt.setString(7, seller.getPhoneNumber());
             pstmt.setString(8, seller.getPassword());
             pstmt.setInt(9, seller.isIdentityVerified() ? 1 : 0);
+            pstmt.setString(10,"");
+            
 
     
             pstmt.executeUpdate();

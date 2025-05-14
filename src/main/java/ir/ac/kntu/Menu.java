@@ -209,4 +209,22 @@ public class Menu{
 		}
 		return Vendilo.SettingMenu.UNDEFINED;
 	}
+
+	public static void varifiacationMenu() {
+		System.out.println("1) confirm");
+		System.out.println("2) deny");
+		System.out.print("Please Enter Your Choise:  ");
+
+	}
+
+	public static Vendilo.VarificationMenu getVarificationOption() {
+		Vendilo.VarificationMenu[] options = Vendilo.VarificationMenu.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.VarificationMenu.UNDEFINED;
+	}
 }
