@@ -1,6 +1,10 @@
 package ir.ac.kntu;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UserDAO {
     private static final String DB_URL = "jdbc:sqlite:data.db";
@@ -11,7 +15,7 @@ public class UserDAO {
                    + "first_name TEXT,"
                    + "last_name TEXT,"
                    + "email TEXT UNIQUE NOT NULL,"
-                   + "phone_number TEXT UNIQUE ,"
+                   + "phone_number TEXT UNIQUE,"
                    + "password TEXT NOT NULL"
                    + ");";
 

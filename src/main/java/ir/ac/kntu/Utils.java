@@ -15,14 +15,15 @@ public class Utils {
     private static final String DB_URL = "jdbc:sqlite:data.db";
     public static User readUserData(){
     
-    String email = readEmail();
-    String password = readPassword();
-    String phoneNumber = readPhoneNUmber();
     System.out.print("Enter first name: ");
     String firstName = ScannerWrapper.getInstance().nextLine();
        
     System.out.print("Enter last name: ");
     String lastName = ScannerWrapper.getInstance().nextLine();
+
+    String email = readEmail();
+    String password = readPassword();
+    String phoneNumber = readPhoneNUmber();
     
     User user = new User(firstName, lastName, email, phoneNumber, password);
     return user;
@@ -36,8 +37,6 @@ public class Utils {
         String lastName;
         String storName;
         String IDNumber;
-        String phoneNumber = readPhoneNUmber();
-        String password = readPassword();
         String state;
 
 
@@ -56,6 +55,9 @@ public class Utils {
 
         System.out.print("Enter ID number: ");
         IDNumber = ScannerWrapper.getInstance().nextLine();
+
+        String phoneNumber = readPhoneNUmber();
+        String password = readPassword();
         
        
         
@@ -151,7 +153,7 @@ public class Utils {
     }
 
     public static User findUser(String username) {
-    String sql = "SELECT first_name, last_name, email, phone, password FROM users WHERE email = ? OR phone = ?";
+    String sql = "SELECT first_name, last_name, email, phone_number, password FROM users WHERE email = ? OR phone_number = ?";
 
     try (Connection conn = DriverManager.getConnection(DB_URL);
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -166,7 +168,7 @@ public class Utils {
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
             String email = resultSet.getString("email");
-            String phone = resultSet.getString("phone");
+            String phone = resultSet.getString("phone_number");
             String password = resultSet.getString("password");
 
             return new User(firstName, lastName, email, phone, password);
@@ -181,26 +183,7 @@ public class Utils {
     }
 }
 
-    public static void searchProduct() {
-        Menu.productCategoryMenu();
-        Vendilo.Product product = Menu.getProductCategory();
-
-        switch (product) {
-            case LAPTOP -> {
-                Laptop.search();
-            }
-            case MOBILE -> {
-                Mobile.search();
-            }
-            case BOOK -> {
-                Book.search();
-            }
-            case UNDEFINED -> {
-                System.out.println("Undefined Choice; Try again...\n");
-                break;            }        
-        }
-
-    }
+    
 
     public static void showAllProducts(String name) {
         String tableName = name;
@@ -217,7 +200,7 @@ public class Utils {
 
             // skip printing name
             while (rs.next()) {
-                for (int i = 2; i <= columnCount; i++) {
+                for (int i = 1; i <= columnCount; i++) {
                     System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
                 }
                 System.out.println(); 
@@ -246,7 +229,7 @@ public class Utils {
         boolean found = false;
         while (rs.next()) {
             found = true;
-            for (int i = 2; i <= columnCount; i++) {
+            for (int i = 1; i <= columnCount; i++) {
                 System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
             }
             System.out.println();
@@ -306,5 +289,89 @@ public class Utils {
 
     }
 
+
     
+
+    public static void addToList(String productType, User user) {
+        while (true) { 
+            Menu.addToListMenu();
+            Vendilo.AddToList option = Menu.getAddToListOption();
+            switch (option) {
+                case ADD -> {
+                    Utils.chooseProduct(productType, user);
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println("Undefined Choice; Try again...\n");
+                }       
+            }
+        }
+    }   
+    
+    
+    public static void chooseProduct(String productType, User user) {
+        
+        while (true) { 
+            System.out.println("Enter the id of the product you want to add to shopping cart: ");
+            int id = ScannerWrapper.getInstance().nextInt();         
+            boolean added = addProductToShoppingCart(id, productType, user); //might product be soled out
+            if(added) {
+                break;
+            }else {
+                System.out.println("The product didnt add to you shopping cart :( please try again...");
+
+            }
+
+        }
+    }
+
+
+
+
+    public static boolean addProductToShoppingCart(int id, String productType, User user) {
+        String information = makeInformation(id, productType);
+        ShoppingCart shoppingCart = new ShoppingCart(information);
+        boolean inserted = ShoppingCartDAO.insertToShoppingCart(shoppingCart, user);
+        if(inserted) {
+            return true;
+        }
+        return false;
+    }
+
+
+    private static String makeInformation(int id, String productType) {
+        String sql = "SELECT * FROM " + productType + " WHERE id = ?";
+
+      StringBuilder result = new StringBuilder();
+    
+            try (
+                Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(sql)
+            ) {
+                stmt.setInt(1, id);
+                ResultSet rs = stmt.executeQuery();
+    
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+    
+                if (rs.next()) {
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnName(i);
+                        String columnValue = rs.getString(i);
+                        result.append(columnName).append(": ").append(columnValue).append("\n");
+                    }
+                } else {
+                    return "No record found with id = " + id;
+                }
+    
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return "Database error: " + e.getMessage();
+            }
+    
+            return result.toString();
+        }
 }
+

@@ -67,13 +67,15 @@ public String getNetworkInternet() {
                           rareCameraResolution, frontCameraResolution, networkInternet);
     }
 
-    public static void search() {
+    public static void search(User user) {
         Menu.searchMenu();
         Vendilo.SearchMenu option = Menu.getSearchMenuOption();
 
         switch (option) {
             case SHOW_ALL-> {
                 Utils.showAllProducts("Mobile");
+                Utils.addToList("Mobile",user);              
+
             }
 
 
@@ -83,8 +85,14 @@ public String getNetworkInternet() {
                 System.out.println("Enter the max price: ");
                 double max = ScannerWrapper.getInstance().nextDouble();
                 Utils.searchByPrice( "Mobile", min, max);
+                Utils.addToList("Mobile", user);              
+
+
             }
 
+            case BACK -> {
+                return ;
+            }
 
 
 

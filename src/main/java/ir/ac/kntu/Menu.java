@@ -120,8 +120,9 @@ public class Menu{
 	}
 
 	public static void productMenu() {
-		System.out.println("1 ) Insert product");
+		System.out.println("1) Insert product");
 		System.out.println("2) Set inventory");
+		System.out.println("3) Back");
 		System.out.print("Please Enter Your Choise:  ");        
 	}
 
@@ -140,6 +141,7 @@ public class Menu{
 		System.out.println("1) Mobile");
 		System.out.println("2) Laptop");
 		System.out.println("3) Book");
+		System.out.println("4) Back");
 		System.out.print("Please Enter Your Choise:  ");
 	}
     
@@ -157,6 +159,7 @@ public class Menu{
 	public static void searchMenu() {
 		System.out.println("1) Show all");
 		System.out.println("2) search by price");
+		System.out.println("4) Back");
 		System.out.print("Please Enter Your Choise:  ");
 
 	}
@@ -172,10 +175,11 @@ public class Menu{
 		return Vendilo.SearchMenu.UNDEFINED;
 	}
 
-	public static void searcBookhMenu() {
+	public static void searchBookhMenu() {
 		System.out.println("1) Show all");
 		System.out.println("2) Search by price");
 		System.out.println("3) Search by title");
+		System.out.println("4) Back");
 		System.out.print("Please Enter Your Choise:  ");
 
 	}
@@ -226,5 +230,22 @@ public class Menu{
 			return options[userInput];
 		}
 		return Vendilo.VarificationMenu.UNDEFINED;
+	}
+
+	public static  void addToListMenu() {
+		System.out.println("1) Add product to shopping cart");
+        System.out.println("2) Back");
+		System.out.print("Please Enter Your Choise:  ");
+	}
+
+	public static Vendilo.AddToList getAddToListOption() {
+		Vendilo.AddToList[] options = Vendilo.AddToList.values();
+		int userInput = ScannerWrapper.getInstance().nextInt();
+		ScannerWrapper.getInstance().nextLine();
+		userInput--;
+		if (userInput >= 0 && userInput < options.length) {
+			return options[userInput];
+		}
+		return Vendilo.AddToList.UNDEFINED;
 	}
 }

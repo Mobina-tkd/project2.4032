@@ -76,20 +76,21 @@ public class Supporter {
     }
 
 
-    public static void handleIdentityVerification() {
+    public static void handleIdentityVerification() { //fix back option here
+        String agencyCode;
+        
         while(true) {
-        boolean printed = Seller.printSellersData();
-        if(printed) {
-            break;
-        }   
-        }
-        System.out.println("Enter the agency code to confirm or deny: ");
-        String agencyCode = ScannerWrapper.getInstance().nextLine();
-        while(true) {
-            boolean printed = Seller.printByAgencyCode(agencyCode);
-            if(printed) {
+            boolean printed = Seller.printSellersData();
+            if(!printed) {
+                return;
+            }
+            System.out.println("Enter the agency code to confirm or deny: ");
+            agencyCode = ScannerWrapper.getInstance().nextLine();
+                boolean canPrint = Seller.printByAgencyCode(agencyCode);
+                if(!canPrint) {
+                    return;
+                }   
                 break;
-            }   
         }
         Menu.varifiacationMenu();
         Vendilo.VarificationMenu option = Menu.getVarificationOption();

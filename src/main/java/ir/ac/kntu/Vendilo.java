@@ -10,11 +10,11 @@ public class Vendilo{
     enum AddressOption{INSERT_NEW_ADDRESS, VIEW_ADDRESSES, EDIT_ADDRESSES, DELETE_ADDRESSES, BACK, UNDEFINED}
     enum ProductOption{INSERT_PRODUCT, SET_INVENTORY, BACK, UNDEFINED}
     enum Product{MOBILE, LAPTOP, BOOK, BACK, UNDEFINED}
-    enum SearchMenu{SHOW_ALL, SEARCH_BY_PRICE, UNDEFINED}
-    enum SearchBookOption{SHOW_ALL, SEARCH_BY_PRICE, SEARCH_BY_TITLE, UNDEFINED}
+    enum SearchMenu{SHOW_ALL, SEARCH_BY_PRICE, BACK, UNDEFINED}
+    enum SearchBookOption{SHOW_ALL, SEARCH_BY_PRICE, SEARCH_BY_TITLE, BACK, UNDEFINED}
     enum SettingMenu{EMAIL, PHONE_NUMBER, FIRST_NAME, LAST_NAME, PASSWORD, BACK, UNDEFINED}
     enum VarificationMenu{CONFIRM, DENY, BACK, UNDEFINED}
-
+    enum AddToList{ADD, BACK, UNDEFINED}
 
     public static void main(String[] args) {
         UserDAO.createTable();
@@ -23,7 +23,7 @@ public class Vendilo{
         LaptopDAO.createTable();
         MobileDAO.createTable();
         BookDAO.createTable();
-        
+        ShoppingCartDAO.createTable();
         
         
         while(true){
@@ -44,8 +44,9 @@ public class Vendilo{
                         if(!canEnter){
                             continue;
                         }
-                        Supporter.chooseOption();
+                        break;
                     }
+                    Supporter.chooseOption();
                 }
             
                 case UNDEFINED -> {

@@ -37,47 +37,7 @@ public class Address {
         return houseNumber;
     }
 
-    public static void handleAddress(User user) {
-
-    while(true) {
-        Menu.AddressMenue();
-        Vendilo.AddressOption addressOption = Menu.getAddressOption();
-        switch (addressOption) {
-            case INSERT_NEW_ADDRESS -> {
-                while(true) {
-                    Address address = Utils.readAddressFromUser();
-                    boolean inserted = AddressDAO.insertAddress(address, user);
-                    if(!inserted) {
-                        continue;
-                    }
-                    break;
-                }
-            }
-            case VIEW_ADDRESSES -> {
-                printAllAddresses(user);
-            }
-            case EDIT_ADDRESSES -> {
-                System.out.print("Enter the location you want to edit : ");
-                String location = ScannerWrapper.getInstance().nextLine();
-                editAddress(user, location);
-                   
-            }
-            case DELETE_ADDRESSES -> {
-                System.out.print("Enter the location you want to delete : ");
-                String location = ScannerWrapper.getInstance().nextLine();
-                deleteAddress(user, location);
-            }
-            case UNDEFINED -> {
-                System.out.println("Undefined Choice; Try again...\\n");
-                
-            }
-        }
-    }
-
-
-
-
-    }
+    
 
     public static void printAllAddresses(User user) {
     String email = user.getEmail();

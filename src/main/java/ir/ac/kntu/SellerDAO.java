@@ -12,18 +12,19 @@ public class SellerDAO {
 
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS sellers ("
-                   + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                   + "agency_code TEXT UNIQUE,"
-                   + "first_name TEXT,"
-                   + "last_name TEXT,"
-                   + "ID_Number TEXT UNIQUE,"
-                   + "store_name TEXT UNIQUE,"
-                   + "state TEXT,"
-                   + "phone_number TEXT UNIQUE,"
-                   + "password TEXT NOT NULL,"
-                   + "identity_varified INTEGER"
-                   + "message TEXT"
-                   + ");";
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "agency_code TEXT UNIQUE,"
+                    + "first_name TEXT,"
+                    + "last_name TEXT,"
+                    + "ID_Number TEXT UNIQUE,"
+                    + "store_name TEXT UNIQUE,"
+                    + "state TEXT,"
+                    + "phone_number TEXT UNIQUE,"
+                    + "password TEXT NOT NULL,"
+                    + "identity_varified INTEGER,"
+                    + "message TEXT"
+                    + ");";
+
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
             Statement stmt = conn.createStatement()) {
@@ -36,7 +37,7 @@ public class SellerDAO {
     
 
     public static Boolean insertSeller(Seller seller) {
-        String sql = "INSERT INTO sellers(agency_code, first_name, last_name, ID_Number, store_name, state, phone_number, password, identity_varified, massage) "
+        String sql = "INSERT INTO sellers(agency_code, first_name, last_name, ID_Number, store_name, state, phone_number, password, identity_varified, message) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);

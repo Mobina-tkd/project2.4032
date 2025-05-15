@@ -74,13 +74,15 @@ public class Laptop extends Digital {
         return new Laptop(name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam);
     }
 
-    public static void search() {
+    public static void search(User user) {
         Menu.searchMenu();
         Vendilo.SearchMenu option = Menu.getSearchMenuOption();
 
         switch (option) {
             case SHOW_ALL-> {
                 Utils.showAllProducts("Laptop");
+                Utils.addToList("Laptop", user);              
+
             }
 
 
@@ -90,10 +92,14 @@ public class Laptop extends Digital {
                 System.out.println("Enter the max price: ");
                 double max = ScannerWrapper.getInstance().nextDouble();
                 Utils.searchByPrice("Laptop", min, max);
+                Utils.addToList("Laptop", user);              
+
             }
 
 
-
+            case BACK-> {
+                return;
+            }
             
 
             case UNDEFINED-> {

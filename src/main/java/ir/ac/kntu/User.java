@@ -24,7 +24,7 @@ public class User {
     public User() {
 
     }
-    //you dont need this actually
+    
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
     public String getEmail() { return email; }
@@ -154,21 +154,22 @@ public class User {
             Vendilo.UserOption option = Menu.getUserOption();
             switch (option) {
                 case SEARCH_FOR_PRODUCTS -> {
-                    Utils.searchProduct();
+                    HandleUserOptions.searchProduct(user);
                     break;
                 }
                 case SHOPPING_CART-> {
+                    //HandleUserOptions.handleShoppingCart(user);
 
                     break;
                 }
                 case SETTING-> {
-                    handleSetting(user);
+                    HandleUserOptions.handleSetting(user);
                 }
                 case RECENT_PURCHASES-> {
                     break;
                 }
                 case ADRESSES -> {
-                    Address.handleAddress(user);    
+                    HandleUserOptions.handleAddress(user);    
                 }
                 case WALLET -> {
                     break;
@@ -188,46 +189,5 @@ public class User {
     }  
 
 
-    public static void handleSetting(User user) {
-        while(true) {
-            String newValue;
-            Menu.SettingMenu();
-            Vendilo.SettingMenu settingMenue = Menu.getSettingMenu();
-            switch (settingMenue) {
-                case EMAIL-> {
-                    newValue = Utils.readEmail();
-                    Utils.setAndUpdate(user, "email", newValue);
-                }
-                case PHONE_NUMBER-> {
-                    newValue = Utils.readPhoneNUmber();
-                    Utils.setAndUpdate(user, "phone_number", newValue);
-
-                }
-                case FIRST_NAME-> {
-                    System.out.print("Enter first name: ");
-                    newValue = ScannerWrapper.getInstance().nextLine();
-                    Utils.setAndUpdate(user, "first_name", newValue);
-
-                }
-                case LAST_NAME-> {
-                    System.out.print("Enter last name: ");
-                    newValue = ScannerWrapper.getInstance().nextLine();
-                    Utils.setAndUpdate(user, "last_name", newValue);
-
-                }
-                case PASSWORD-> {
-                    newValue = Utils.readPassword();
-                    Utils.setAndUpdate(user, "password", newValue);
-
-                }
-                case BACK-> {
-                    return;
-                }
-                case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
-                }                        
-            }
-        }
     
-    }
 }

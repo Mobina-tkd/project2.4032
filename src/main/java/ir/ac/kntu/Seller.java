@@ -89,23 +89,29 @@ public class Seller {
             String userPassword = ScannerWrapper.getInstance().nextLine(); 
     
             try (Connection conn = DriverManager.getConnection(DB_URL)) {
-                String sql = "SELECT password AND identity_varified AND massage FROM sellers WHERE agency_code = ?";
+                String sql = "SELECT password, identity_varified, message FROM sellers WHERE agency_code = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, username);
     
                 ResultSet rs = pstmt.executeQuery();
     
                 if (rs.next()) {
-                    String Password = rs.getString("password");
+                    String password = rs.getString("password");
                     int identityVarified = rs.getInt("identity_varified");
                     String message = rs.getString("message");
-                    if (userPassword.equals(Password) && identityVarified == 1) {
+                    if (userPassword.equals(password) && identityVarified == 1) {
                         System.out.println("Welcome dear seller");
                         return true;
                     }else if(identityVarified == 2) {
                         System.out.println(message);
+                        return true;
 
-                    }else {
+                    }else if(identityVarified == 0) {
+                        System.out.println("your identity is not varified yet");
+                        return false;
+
+                    }
+                    else {
                         System.out.println("Incorrect password. Try again.");
                     }
                 } else {
@@ -155,7 +161,7 @@ public class Seller {
                     while(true){
                         boolean canEnter = loginPage();
                         if(!canEnter){
-                            continue;
+                            return;
                         }
                         break;
                     }
@@ -253,73 +259,74 @@ public class Seller {
     }
 
     public static boolean  printSellersData() { //modify print format
-        String query = "SELECT * FROM WHERE identity_varified = 0";
+            String query = "SELECT * FROM sellers WHERE identity_varified = 0";
 
-    try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement pstmt = conn.prepareStatement(query)) {
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-        ResultSet rs = pstmt.executeQuery();
+                ResultSet rs = pstmt.executeQuery();
 
-        ResultSetMetaData meta = rs.getMetaData();
-        int columnCount = meta.getColumnCount();
+                ResultSetMetaData meta = rs.getMetaData();
+                int columnCount = meta.getColumnCount();
 
-        boolean found = false;
-        while (rs.next()) {
-            found = true;
-            for (int i = 2; i <= columnCount; i++) {
-                System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                boolean found = false;
+                while (rs.next()) {
+                    found = true;
+                    for (int i = 2; i <= columnCount; i++) {
+                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                    }
+                    System.out.println();
+                }
+
+                if (!found) {
+                    System.out.println("No products found with identity_varified 0");
+                    return false;
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Error: " + e.getMessage());
+                return false;
             }
-            System.out.println();
+            return true;
         }
 
-        if (!found) {
-            System.out.println("No products found with identity_varified 0");
-            return false;
-        }
-
-    } catch (SQLException e) {
-        System.out.println("Error: " + e.getMessage());
-        return false;
-    }
-    return true;
-
-    }
+    
 
     public static boolean printByAgencyCode(String agencyCode) { //modify print format
-        String query = "SELECT * FROM WHERE agency_code = ?";
+            String query = "SELECT * FROM sellers WHERE agency_code = ?";
 
-    try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement pstmt = conn.prepareStatement(query)) {
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            pstmt.setString(1, agencyCode);
+                pstmt.setString(1, agencyCode);
 
 
-        ResultSet rs = pstmt.executeQuery();
+                ResultSet rs = pstmt.executeQuery();
 
-        ResultSetMetaData meta = rs.getMetaData();
-        int columnCount = meta.getColumnCount();
+                ResultSetMetaData meta = rs.getMetaData();
+                int columnCount = meta.getColumnCount();
 
-        boolean found = false;
-        while (rs.next()) {
-            found = true;
-            for (int i = 2; i <= columnCount; i++) {
-                System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                boolean found = false;
+                while (rs.next()) {
+                    found = true;
+                    for (int i = 2; i <= columnCount; i++) {
+                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                    }
+                    System.out.println();
+                }
+
+                if (!found) {
+                    System.out.println("No products found with agency_code " + agencyCode );
+                    return false;
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Error: " + e.getMessage());
+                return false;
             }
-            System.out.println();
-        }
+            return true;
 
-        if (!found) {
-            System.out.println("No products found with agency_code " + agencyCode );
-            return false;
-        }
-
-    } catch (SQLException e) {
-        System.out.println("Error: " + e.getMessage());
-        return false;
-    }
-    return true;
-
-    }
+            }
 
 
 }
