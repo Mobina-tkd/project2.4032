@@ -1,0 +1,92 @@
+package ir.ac.kntu.helper.readData;
+
+import ir.ac.kntu.helper.ScannerWrapper;
+import ir.ac.kntu.helper.ValidationUtil;
+import ir.ac.kntu.model.Seller;
+import ir.ac.kntu.model.User;
+
+
+public class PersonFactory {
+    public static User readUserData(){
+    
+    System.out.print("Enter first name: ");
+    String firstName = ScannerWrapper.getInstance().nextLine();
+       
+    System.out.print("Enter last name: ");
+    String lastName = ScannerWrapper.getInstance().nextLine();
+
+    String email = readEmail();
+    String password = readPassword();
+    String phoneNumber = readPhoneNUmber();
+    
+    User user = new User(firstName, lastName, email, phoneNumber, password);
+    return user;
+    }
+    
+    public static Seller readSellerData(){
+
+        System.out.print("Enter first name: ");
+        String firstName = ScannerWrapper.getInstance().nextLine();
+           
+        System.out.print("Enter last name: ");
+        String lastName = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter stor name: ");
+        String storName = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter state: ");
+        String state = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter ID number: ");
+        String IDNumber = ScannerWrapper.getInstance().nextLine();
+
+        String phoneNumber = readPhoneNUmber();
+        String password = readPassword();
+          
+    
+        Seller seller = new Seller(firstName, lastName, IDNumber, storName, state, phoneNumber, password);
+        return seller;
+        }
+
+        public static String readPassword() {
+            while(true){
+                System.out.print("Enter password: ");
+                String password = ScannerWrapper.getInstance().nextLine();
+                if(!ValidationUtil.matchPassword(password)){
+                    System.out.println("Weak password"); 
+                    continue;   
+                }
+
+                return password;
+        
+            }
+        }
+
+        public static String readEmail() {
+            while(true){
+                System.out.print("Enter email: ");
+                String email = ScannerWrapper.getInstance().nextLine();
+                if(!ValidationUtil.matchEmail(email)){
+                    System.out.println("Invalid email address");
+                    continue;
+                }
+                return email;
+            }
+        
+        }
+
+    
+        public static String readPhoneNUmber() {
+            while(true){
+                System.out.print("Enter phone number: ");
+                String phoneNumber = ScannerWrapper.getInstance().nextLine();
+                if(!ValidationUtil.matchNumber(phoneNumber)){
+                    System.out.println("Invalid phone number");
+                    continue;
+                }
+                return phoneNumber;
+            }
+        }
+
+
+}
