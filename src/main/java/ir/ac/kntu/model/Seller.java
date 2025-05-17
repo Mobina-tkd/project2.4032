@@ -13,6 +13,7 @@ public class Seller {
     private String password;
     private boolean identityVerified = false;
     private String agencyCode;
+    private SellerWallet wallet = new SellerWallet();
 
     
 
@@ -53,6 +54,18 @@ public class Seller {
 
     public String getPassword() {
         return password;
+    }
+
+    public double getWalletBalance() {
+        return wallet.getWalletBalance();
+    }
+
+    public void addBalance(double balance) {
+        wallet.addBalance(balance);
+    }
+
+    public boolean  withdraw(double balance) {
+        return wallet.withdraw(balance);
     }
 
     public boolean isIdentityVerified() {
