@@ -9,9 +9,10 @@ import ir.ac.kntu.dao.MobileDAO;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.dao.UserDAO;
-import ir.ac.kntu.model.Seller;
-import ir.ac.kntu.model.Supporter;
-import ir.ac.kntu.model.User;
+import ir.ac.kntu.helper.controllers.SellerController;
+import ir.ac.kntu.helper.controllers.SupporterController;
+import ir.ac.kntu.helper.controllers.UserController;
+import ir.ac.kntu.helper.controllers.loginPageController;
 
 public class Vendilo{
     public enum MenuOption{USER, SELLER, SUPPORTER, UNDEFINED}
@@ -51,22 +52,22 @@ public class Vendilo{
             MenuOption menuOption = Menu.getMenuOption();
             switch (menuOption) {
                 case USER -> {
-                    User.handleUser();
+                    UserController.handleUserChoise();
                 } 
             
                 case SELLER -> { 
-                    Seller.handleSeller();
+                    SellerController.handleSellerChoise();
                 }
             
                 case SUPPORTER -> {
                     while(true){
-                        boolean canEnter = Supporter.loginPage();
+                        boolean canEnter = loginPageController.supporterLoginPage();
                         if(!canEnter){
                             continue;
                         }
                         break;
                     }
-                    Supporter.chooseOption();
+                    SupporterController.chooseSupporterOption();
                 }
             
                 case UNDEFINED -> {

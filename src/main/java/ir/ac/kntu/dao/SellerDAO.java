@@ -3,6 +3,8 @@ package ir.ac.kntu.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -66,6 +68,122 @@ public class SellerDAO {
             return false;
         }
     }
+
+    public static void setMessage(String message, String agencyCode) {
+        String sql = "UPDATE sellers SET message = ? WHERE agency_code = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, message);
+        stmt.setString(2, agencyCode);
+
+        int rowsUpdated = stmt.executeUpdate();
+        
+        if (rowsUpdated > 0) {
+            System.out.println("Seller data updated successfully.");
+        } else {
+            System.out.println("No update was made.");
+        }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setIdentityVarified(int value, String agencyCode) {
+        String sql = "UPDATE sellers SET identity_varified = ? WHERE agency_code = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, value);
+        stmt.setString(2, agencyCode);
+
+        int rowsUpdated = stmt.executeUpdate();
+        
+        if (rowsUpdated > 0) {
+            System.out.println("Seller data updated successfully.");
+        } else {
+            System.out.println("No update was made.");
+        }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean  printSellersData() { //modify print format
+            String query = "SELECT * FROM sellers WHERE identity_varified = 0";
+
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+                ResultSet rs = pstmt.executeQuery();
+
+                ResultSetMetaData meta = rs.getMetaData();
+                int columnCount = meta.getColumnCount();
+
+                boolean found = false;
+                while (rs.next()) {
+                    found = true;
+                    for (int i = 2; i <= columnCount; i++) {
+                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                    }
+                    System.out.println();
+                }
+
+                if (!found) {
+                    System.out.println("No products found with identity_varified 0");
+                    return false;
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Error: " + e.getMessage());
+                return false;
+            }
+            return true;
+        }
+
     
+
+    public static boolean printByAgencyCode(String agencyCode) { //modify print format
+            String query = "SELECT * FROM sellers WHERE agency_code = ?";
+
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+                pstmt.setString(1, agencyCode);
+
+
+                ResultSet rs = pstmt.executeQuery();
+
+                ResultSetMetaData meta = rs.getMetaData();
+                int columnCount = meta.getColumnCount();
+
+                boolean found = false;
+                while (rs.next()) {
+                    found = true;
+                    for (int i = 2; i <= columnCount; i++) {
+                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                    }
+                    System.out.println();
+                }
+
+                if (!found) {
+                    System.out.println("No products found with agency_code " + agencyCode );
+                    return false;
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Error: " + e.getMessage());
+                return false;
+            }
+            return true;
+
+            }
+    
+
+            
     
 }

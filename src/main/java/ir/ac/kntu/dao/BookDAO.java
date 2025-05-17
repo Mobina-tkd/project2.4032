@@ -3,10 +3,11 @@ package ir.ac.kntu.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.Book;
 
 
@@ -63,37 +64,29 @@ public class BookDAO {
         }
     }
 
-    
-    public static Book readData() {
+    public static void searchBookByTitle(String tableName, String title) {
 
-        String name = "Book";
-        
-        System.out.print("Enter book title: ");
-        String title = ScannerWrapper.getInstance().nextLine();
+        String query = "SELECT * FROM " + tableName + " WHERE title = " + "\'" + title + "\'";
 
-        System.out.print("Enter price: ");
-        double price = ScannerWrapper.getInstance().nextDouble();
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query)) {
 
-        System.out.print("Enter inventory count: ");
-        int inventory = ScannerWrapper.getInstance().nextInt();
+            ResultSetMetaData meta = rs.getMetaData();
+            int columnCount = meta.getColumnCount();
 
-        System.out.print("Enter writer's name: ");
-        String writerName = ScannerWrapper.getInstance().nextLine();
+            while (rs.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
+                }
+                System.out.println(); 
+            }
 
-        System.out.print("Enter page number: ");
-        int pageNumber = ScannerWrapper.getInstance().nextInt();
-
-        System.out.print("Enter genre: ");
-        String genre = ScannerWrapper.getInstance().nextLine();
-
-        System.out.print("Enter age group: ");
-        String ageGroup = ScannerWrapper.getInstance().nextLine();
-
-        System.out.print("Enter ISBN: ");
-        String isbn = ScannerWrapper.getInstance().nextLine();
-
-        return new Book(title, name, price, inventory, writerName, pageNumber, genre, ageGroup, isbn);
-        
+            } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
+
+
     
 }

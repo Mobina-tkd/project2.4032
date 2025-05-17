@@ -3,6 +3,7 @@ package ir.ac.kntu.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -48,6 +49,79 @@ public class UserDAO {
         } catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
             return false;
+        }
+    }
+
+    public static User findUser(String username) {
+        String sql = "SELECT first_name, last_name, email, phone_number, password FROM users WHERE email = ? OR phone_number = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, username);
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            if (resultSet.next()) {
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                String email = resultSet.getString("email");
+                String phone = resultSet.getString("phone_number");
+                String password = resultSet.getString("password");
+
+                return new User(firstName, lastName, email, phone, password);
+            } else {
+                System.out.println("No user found with email or phone: " + username);
+                return null;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error finding user: " + e.getMessage());
+            return null;
+        }
+    }
+
+
+    public static void setAndUpdateUserData(User user, String field, String newValue) {
+            
+        String sql = "UPDATE users SET " + field + " = ? WHERE email = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, newValue);
+        stmt.setString(2, user.getEmail()); 
+
+        int rowsUpdated = stmt.executeUpdate();
+
+        if (rowsUpdated > 0) {
+            System.out.println("User data updated successfully.");
+        } else {
+            System.out.println("No update was made.");
+        }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        switch (field) {
+            case "email" -> {
+                user.setEmail(newValue); 
+            }
+            case "phone_number" -> {
+                user.setPhoneNumber(newValue);
+            }
+            case "first_name"-> {
+                user.setFirstName(newValue);
+            }
+            case "last_name" -> {
+                user.setLastName(newValue);
+            }
+            case "password" -> {
+                user.setPassword(newValue);
+            }
+            default -> throw new AssertionError();
         }
     }
 }

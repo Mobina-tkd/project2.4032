@@ -1,12 +1,5 @@
 package ir.ac.kntu.model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
 
 public class Seller {
     private static final String DB_URL = "jdbc:sqlite:data.db";
@@ -73,83 +66,5 @@ public class Seller {
     public String getAgencyCode() {
         return agencyCode;
     }
-
-
-    
-
-
-    
-    
-
-    public static boolean  printSellersData() { //modify print format
-            String query = "SELECT * FROM sellers WHERE identity_varified = 0";
-
-            try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-                ResultSet rs = pstmt.executeQuery();
-
-                ResultSetMetaData meta = rs.getMetaData();
-                int columnCount = meta.getColumnCount();
-
-                boolean found = false;
-                while (rs.next()) {
-                    found = true;
-                    for (int i = 2; i <= columnCount; i++) {
-                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
-                    }
-                    System.out.println();
-                }
-
-                if (!found) {
-                    System.out.println("No products found with identity_varified 0");
-                    return false;
-                }
-
-            } catch (SQLException e) {
-                System.out.println("Error: " + e.getMessage());
-                return false;
-            }
-            return true;
-        }
-
-    
-
-    public static boolean printByAgencyCode(String agencyCode) { //modify print format
-            String query = "SELECT * FROM sellers WHERE agency_code = ?";
-
-            try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-                pstmt.setString(1, agencyCode);
-
-
-                ResultSet rs = pstmt.executeQuery();
-
-                ResultSetMetaData meta = rs.getMetaData();
-                int columnCount = meta.getColumnCount();
-
-                boolean found = false;
-                while (rs.next()) {
-                    found = true;
-                    for (int i = 2; i <= columnCount; i++) {
-                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
-                    }
-                    System.out.println();
-                }
-
-                if (!found) {
-                    System.out.println("No products found with agency_code " + agencyCode );
-                    return false;
-                }
-
-            } catch (SQLException e) {
-                System.out.println("Error: " + e.getMessage());
-                return false;
-            }
-            return true;
-
-            }
-
 
 }
