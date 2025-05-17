@@ -9,13 +9,13 @@ import ir.ac.kntu.model.Seller;
 
 public class SellerController {
 
-    public static void chooseSellerOption(){
+    public static void chooseSellerOption(String agencyCode){
         while(true){
             Menu.sellerMenu();
             Vendilo.SellerOption option = Menu.getSellerOption();
             switch (option) {
                 case PRODUCTS -> {
-                    ProductController.handleProduct();
+                    ProductController.handleProduct(agencyCode);
                 }
                 case WALLET-> {
                     break;
@@ -34,10 +34,11 @@ public class SellerController {
         }
     }  
 
-    public static void handleNewSeller() {
+    public static String handleNewSeller() {
+        String agencyCode;
         while(true){ 
             Seller seller = PersonFactory.readSellerData();
-            String agencyCode = DealerCodeGenerator.generateUniqueCode();
+            agencyCode = DealerCodeGenerator.generateUniqueCode();
             seller.setAgencyCode(agencyCode);
             Boolean inserted = SellerDAO.insertSeller(seller);
             if(inserted){
@@ -46,12 +47,13 @@ public class SellerController {
             }
         }
         while(true){
-            boolean canEnter = loginPageController.sellerLoginPage();
-            if(!canEnter){
+            agencyCode = loginPageController.sellerLoginPage();
+            if(agencyCode == null){
                 continue;
             }
             break;
         }
+        return agencyCode;
     }
 
 
@@ -62,18 +64,19 @@ public class SellerController {
             Vendilo.Statement statement = Menu.getStatementOption(); 
             switch (statement) {
                 case NEW_USER -> {
-                    handleNewSeller();
-                    chooseSellerOption();
+                    String agencyCode = handleNewSeller();
+                    chooseSellerOption(agencyCode);
                 }
                 case ALREADY_HAS_ACCOUNT -> {
+                    String agencyCode;
                     while(true){
-                        boolean canEnter = loginPageController.sellerLoginPage();
-                        if(!canEnter){
-                            return;
+                        agencyCode = loginPageController.sellerLoginPage();
+                        if(agencyCode == null){
+                            continue;
                         }
                         break;
                     }
-                    chooseSellerOption();
+                    chooseSellerOption(agencyCode);
                 } 
                 case BACK -> {
                     return;

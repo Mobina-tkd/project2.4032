@@ -5,6 +5,7 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.LaptopDAO;
 import ir.ac.kntu.dao.MobileDAO;
+import ir.ac.kntu.dao.ProductDAO;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.readData.ProductFactory;
 import ir.ac.kntu.model.Book;
@@ -14,13 +15,13 @@ import ir.ac.kntu.model.User;
 
 public class ProductController {
 
-    public static void handleProduct() {
+    public static void handleProduct(String agencyCode) {
         while(true) {
             Menu.productMenu();
             Vendilo.ProductOption productOption = Menu.getProductOption();
             switch (productOption) {
                 case INSERT_PRODUCT-> {
-                    handleInsertProduct();
+                    handleInsertProduct(agencyCode);
                 }
                 case SET_INVENTORY-> {
                 }
@@ -35,22 +36,22 @@ public class ProductController {
         }
     }
 
-    public static void handleInsertProduct() {
+    private static void handleInsertProduct(String agencyCode) {
         while(true) {
             Menu.productCategoryMenu();
             Vendilo.Product insertProduct = Menu.getProductCategory();
             switch (insertProduct) {
                 case MOBILE -> {
                     Mobile mobile = ProductFactory.readMobileData();
-                    MobileDAO.insertMobile(mobile);
+                    MobileDAO.insertMobile(mobile, agencyCode);
                 }
                 case LAPTOP -> {
                     Laptop laptop = ProductFactory.readLaptopData();
-                    LaptopDAO.insertLaptop(laptop);
+                    LaptopDAO.insertLaptop(laptop, agencyCode);
                 }
                 case BOOK -> {
                     Book book = ProductFactory.readBookData();
-                    BookDAO.insertBook(book);
+                    BookDAO.insertBook(book, agencyCode);
                 }
                 case BACK -> {
                     return;
@@ -62,6 +63,7 @@ public class ProductController {
             }
         }
     }
+
 
     public static void handleAddProductToList(String productType, User user) {
         while (true) { 
@@ -85,8 +87,9 @@ public class ProductController {
         
         while (true) { 
             System.out.println("Enter the id of the product you want to add to shopping cart: ");
-            int id = ScannerWrapper.getInstance().nextInt();         
-            boolean added = ShoppingCartController.addProductToShoppingCart(id, productType, user); //might product be soled out
+            int productId = ScannerWrapper.getInstance().nextInt();  
+            int sellerId = ProductDAO.findSellerId(productId, productType);     
+            boolean added = ShoppingCartController.addProductToShoppingCart(productId, sellerId, productType, user); //might product be soled out
             if(added) {
                 break;
             }else {

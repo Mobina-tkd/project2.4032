@@ -109,4 +109,24 @@ public class ProductDAO {
 
         return -1;
     }
+
+    public static int findSellerId(int productId, String productType) {
+        String query = "SELECT seller_id FROM " + productType + " WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, productId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("seller_id");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return -1;
+
+    }
 }

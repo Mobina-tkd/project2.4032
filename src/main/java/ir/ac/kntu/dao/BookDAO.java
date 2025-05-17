@@ -18,6 +18,7 @@ public class BookDAO {
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS Books ("
             + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + "seller_id INTEGER NOT NULL,"
             + "name TEXT NOT NULL,"
             + "title TEXT NOT NULL,"
             + "price REAL NOT NULL,"
@@ -26,7 +27,8 @@ public class BookDAO {
             + "pageNumber INTEGER NOT NULL,"
             + "genre TEXT NOT NULL,"
             + "ageGroup TEXT NOT NULL,"
-            + "ISBN TEXT NOT NULL"
+            + "ISBN TEXT NOT NULL,"
+            + "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE"
             + ");";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -38,27 +40,40 @@ public class BookDAO {
         }
     }
 
-    public static boolean insertBook(Book book) {
-        String sql = "INSERT INTO books(name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static boolean insertBook(Book book, String agencyCode) {
+        String query = "SELECT id FROM sellers WHERE agency_code = ?";
+        String sql = "INSERT INTO books(seller_id, name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    
-            pstmt.setString(1, "Book");
-            pstmt.setString(2, book.getTitle());
-            pstmt.setDouble(3, book.getPrice());
-            pstmt.setInt(4, book.getInventory());
-            pstmt.setString(5, book.getWriterName());
-            pstmt.setInt(6, book.getPageNumber());
-            pstmt.setString(7, book.getGenre());
-            pstmt.setString(8, book.getAgeGroup());
-            pstmt.setString(9, book.getISBN());
-    
-            pstmt.executeUpdate();
-            System.out.println("Book inserted successfully.");
-            return true;
-        } catch (SQLException e) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, agencyCode);
+                var rs = pstmt.executeQuery();
+        
+                if (rs.next()) {
+                    int sellerId = rs.getInt("id");
+        
+                try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+                    pstmt.setInt(1, sellerId);
+                    pstmt.setString(2, "Book");
+                    pstmt.setString(3, book.getTitle());
+                    pstmt.setDouble(4, book.getPrice());
+                    pstmt.setInt(5, book.getInventory());
+                    pstmt.setString(6, book.getWriterName());
+                    pstmt.setInt(7, book.getPageNumber());
+                    pstmt.setString(8, book.getGenre());
+                    pstmt.setString(9, book.getAgeGroup());
+                    pstmt.setString(10, book.getISBN());
+
+                    insertStmt.executeUpdate();
+                    System.out.println("book inserted successfully.");
+                    return true;
+                    } 
+                }else {
+                    return false;
+                }
+
+            }catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
             return false;
         }

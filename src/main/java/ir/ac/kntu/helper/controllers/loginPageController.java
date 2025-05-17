@@ -12,7 +12,7 @@ public class loginPageController {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
 
-    public static boolean sellerLoginPage() {
+    public static String sellerLoginPage() {
         while (true) {
             System.out.println("--------Login Page-------");
             System.out.print("Enter your agency code : ");
@@ -33,14 +33,14 @@ public class loginPageController {
                     String message = rs.getString("message");
                     if (userPassword.equals(password) && identityVarified == 1) {
                         System.out.println("Welcome dear seller");
-                        return true;
+                        return username;
                     }else if(identityVarified == 2) {
                         System.out.println(message);
-                        return true;
+                        return username;
 
                     }else if(identityVarified == 0) {
                         System.out.println("your identity is not varified yet");
-                        return false;
+                        return "";
 
                     }
                     else {
@@ -48,12 +48,12 @@ public class loginPageController {
                     }
                 } else {
                     System.out.println("We could not find this agency code.");
-                    return false;
+                    return "";
                 }
     
             } catch (SQLException e) {
                 System.out.println("Database error: " + e.getMessage());
-                return false;
+                return "";
             }
         }
     }

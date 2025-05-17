@@ -68,10 +68,10 @@ public class ShoppingCartController {
     }
 
     
-    public static boolean addProductToShoppingCart(int id, String productType, User user) {
-        String information = ProductDAO.getProductInfoById(id, productType);
-        double price = ProductDAO.getPriceById(id, productType);
-        ShoppingCart shoppingCart = new ShoppingCart(price, information);
+    public static boolean addProductToShoppingCart(int productId, int sellerId, String productType, User user) {
+        String information = ProductDAO.getProductInfoById(productId, productType);
+        double price = ProductDAO.getPriceById(productId, productType);
+        ShoppingCart shoppingCart = new ShoppingCart(price, information, sellerId);
         boolean inserted = ShoppingCartDAO.insertToShoppingCart(shoppingCart, user);
         return inserted;
     }

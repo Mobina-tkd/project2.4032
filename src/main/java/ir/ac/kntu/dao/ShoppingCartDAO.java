@@ -19,9 +19,11 @@ public class ShoppingCartDAO {
         String sql = "CREATE TABLE IF NOT EXISTS shoppingCart ("
                         + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                         + "user_id INTEGER NOT NULL,"
+                        + "seller_id INTEGER NOT NULL,"
                         + "information TEXT NOT NULL ,"  
                         + "price REAL NOT NULL,"
-                        + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+                        + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,"
+                        + "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE"
                         + ");";
                         
     try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -35,13 +37,16 @@ public class ShoppingCartDAO {
 
     public static boolean insertToShoppingCart(ShoppingCart shoppingCart, User user) {
         String sqlSelectUserId = "SELECT id FROM users WHERE email = ?";
-        String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, information, price) "
-                                + "VALUES (?, ?, ?)";
+        String sqlSelectSellerId = "SELECT id FROM sellers WHERE agencyCode = ?";
+        String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, seller_id, information, price) "
+                                + "VALUES (?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement selectStmt = conn.prepareStatement(sqlSelectUserId)) {
+             PreparedStatement selectStmt = conn.prepareStatement(sqlSelectUserId);
+             ) {
     
             selectStmt.setString(1, user.getEmail());
+
             var rs = selectStmt.executeQuery();
     
             if (rs.next()) {
@@ -49,8 +54,9 @@ public class ShoppingCartDAO {
     
                 try (PreparedStatement insertStmt = conn.prepareStatement(sqlInsertAddress)) {
                     insertStmt.setInt(1, userId);
-                    insertStmt.setString(2, shoppingCart.getInformation());
-                    insertStmt.setDouble(3, shoppingCart.getPrice());
+                    insertStmt.setInt(2, shoppingCart.getSellerId());
+                    insertStmt.setString(3, shoppingCart.getInformation());
+                    insertStmt.setDouble(4, shoppingCart.getPrice());
 
                     insertStmt.executeUpdate();
                     System.out.println("Product inserted successfully.");

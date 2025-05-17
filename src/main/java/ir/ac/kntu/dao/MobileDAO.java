@@ -16,6 +16,7 @@ public class MobileDAO {
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS Mobile ("
             + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + "seller_id INTEGER NOT NULL,"
             + "name TEXT NOT NULL,"
             + "price REAL NOT NULL,"
             + "inventory INTEGER NOT NULL,"
@@ -24,7 +25,8 @@ public class MobileDAO {
             + "RAM INTEGER NOT NULL,"
             + "rareCameraResolution TEXT,"
             + "frontCameraResolution TEXT,"
-            + "networkInternet TEXT"
+            + "networkInternet TEXT,"
+            + "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE"
             + ");";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -36,31 +38,42 @@ public class MobileDAO {
         }
     }
 
-    public static boolean insertMobile(Mobile mobile) {
-        String sql = "INSERT INTO mobiles(name, price, inventory, brand, memory, RAM, rareCameraResolution, frontCameraResolution, networkInternet)"
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static boolean insertMobile(Mobile mobile, String agencyCode) {
+        String query = "SELECT id FROM sellers WHERE agency_code = ?";
+        String sql = "INSERT INTO mobiles(seller_id, name, price, inventory, brand, memory, RAM, rareCameraResolution, frontCameraResolution, networkInternet)"
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    
-            pstmt.setString(1, mobile.getName());
-            pstmt.setDouble(2, mobile.getPrice());
-            pstmt.setInt(3, mobile.getInventory());
-            pstmt.setString(4, mobile.getBrand());
-            pstmt.setInt(5, mobile.getMemory());
-            pstmt.setInt(6, mobile.getRAM());
-            pstmt.setString(7, mobile.getRareCameraResolution());
-            pstmt.setString(8, mobile.getFrontCameraResolution());
-            pstmt.setString(9, mobile.getNetworkInternet());
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, agencyCode);
+                var rs = pstmt.executeQuery();
+        
+                if (rs.next()) {
+                    int sellerId = rs.getInt("id");
+        
+                try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+                    insertStmt.setInt(1,sellerId);
+                    insertStmt.setString(2, mobile.getName());
+                    insertStmt.setDouble(3, mobile.getPrice());
+                    insertStmt.setInt(4, mobile.getInventory());
+                    insertStmt.setString(5, mobile.getBrand());
+                    insertStmt.setInt(6, mobile.getMemory());
+                    insertStmt.setInt(7, mobile.getRAM());
+                    insertStmt.setString(8, mobile.getRareCameraResolution());
+                    insertStmt.setString(9, mobile.getFrontCameraResolution());
+                    insertStmt.setString(10, mobile.getNetworkInternet());
 
-    
-            pstmt.executeUpdate();
-            System.out.println("mobile inserted successfully.");
-            return true;
-        } catch (SQLException e) {
+                    insertStmt.executeUpdate();
+                    System.out.println("mobile inserted successfully.");
+                    return true;
+                    } 
+                }else {
+                    return false;
+                }
+
+            }catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
             return false;
         }
-    
     }
 }

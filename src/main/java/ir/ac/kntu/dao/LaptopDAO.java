@@ -16,6 +16,7 @@ public class LaptopDAO {
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS Laptop ("
             + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + "seller_id INTEGER NOT NULL,"
             + "name TEXT NOT NULL,"
             + "price REAL NOT NULL,"
             + "inventory INTEGER NOT NULL,"
@@ -25,7 +26,8 @@ public class LaptopDAO {
             + "model TEXT NOT NULL,"
             + "GPU TEXT NOT NULL,"
             + "hasBluetooth BOOLEAN NOT NULL,"
-            + "hasWebcam BOOLEAN NOT NULL"
+            + "hasWebcam BOOLEAN NOT NULL,"
+            + "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE"
             + ");";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -37,29 +39,40 @@ public class LaptopDAO {
         }
     }
 
-    public static boolean insertLaptop(Laptop laptop) {
-        String sql = "INSERT INTO laptops(name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam )"
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static boolean insertLaptop(Laptop laptop, String agencyCode) {
+        String query = "SELECT id FROM sellers WHERE agency_code = ?";
+        String sql = "INSERT INTO laptops(seller_id, name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam )"
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    
-            pstmt.setString(1, laptop.getName());
-            pstmt.setDouble(2, laptop.getPrice());
-            pstmt.setInt(3, laptop.getInventory());
-            pstmt.setString(4, laptop.getBrand());
-            pstmt.setInt(5, laptop.getMemory());
-            pstmt.setInt(6, laptop.getRAM());
-            pstmt.setString(7, laptop.getModel());
-            pstmt.setString(8, laptop.getGPU());
-            pstmt.setBoolean(9, laptop.HasBluetooth());
-            pstmt.setBoolean(10, laptop.HasWebcam());
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, agencyCode);
+                var rs = pstmt.executeQuery();
+        
+                if (rs.next()) {
+                    int sellerId = rs.getInt("id");
+        
+                try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+                    pstmt.setInt(1, sellerId);
+                    pstmt.setString(2, laptop.getName());
+                    pstmt.setDouble(3, laptop.getPrice());
+                    pstmt.setInt(4, laptop.getInventory());
+                    pstmt.setString(5, laptop.getBrand());
+                    pstmt.setInt(6, laptop.getMemory());
+                    pstmt.setInt(7, laptop.getRAM());
+                    pstmt.setString(8, laptop.getModel());
+                    pstmt.setString(9, laptop.getGPU());
+                    pstmt.setBoolean(10, laptop.HasBluetooth());
+                    pstmt.setBoolean(11, laptop.HasWebcam());
+                    insertStmt.executeUpdate();
+                    System.out.println("mobile inserted successfully.");
+                    return true;
+                    } 
+                }else {
+                    return false;
+                }
 
-    
-            pstmt.executeUpdate();
-            System.out.println("laptop inserted successfully.");
-            return true;
-        } catch (SQLException e) {
+            }catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
             return false;
         }
