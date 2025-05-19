@@ -31,6 +31,7 @@ public class Vendilo{
     public enum ChooseAddress{CHOOSE, NEW, BACK, UNDEFINED}
     public enum PayMenu{PAY, BACK, UNDEFINED}
     public enum chargeWalletOption{CHARGE, BACK, UNDEFINED}
+    public enum PurchaseMenu{INFO, RATE, BACK, UNDEFINED}
 
     public static void main(String[] args) {
         UserDAO.createTable();

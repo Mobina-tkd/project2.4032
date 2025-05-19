@@ -131,6 +131,13 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
+    public static void purchaseMenu() {
+        System.out.println("1) See more information of a product");
+        System.out.println("2) Rate");
+        System.out.println("3) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
     public static <T extends Enum<T>> T getEnumOption(Class<T> enumType, T undefinedOption) {
         T[] options = enumType.getEnumConstants();
         int userInput = ScannerWrapper.getInstance().nextInt();
@@ -208,5 +215,9 @@ public class Menu {
 
     public static Vendilo.chargeWalletOption getChargeWalletOPtion() {
         return getEnumOption(Vendilo.chargeWalletOption.class, Vendilo.chargeWalletOption.UNDEFINED);
+    }
+
+    public static Vendilo.PurchaseMenu getPurchaseOption() {
+        return getEnumOption(Vendilo.PurchaseMenu.class, Vendilo.PurchaseMenu.UNDEFINED);
     }
 } 

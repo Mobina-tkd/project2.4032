@@ -20,7 +20,8 @@ public class ShoppingCartDAO {
                         + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                         + "user_id INTEGER NOT NULL,"
                         + "seller_id INTEGER NOT NULL,"
-                        + "information TEXT NOT NULL ,"  
+                        + "name TEXT NOT NULL,"
+                        + "information TEXT NOT NULL,"  
                         + "price REAL NOT NULL,"
                         + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,"
                         + "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE"
@@ -37,8 +38,8 @@ public class ShoppingCartDAO {
 
     public static boolean insertToShoppingCart(ShoppingCart shoppingCart, User user) {
         String sqlSelectUserId = "SELECT id FROM users WHERE email = ?";
-        String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, seller_id, information, price) "
-                                + "VALUES (?, ?, ?, ?)";
+        String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, seller_id,name, information, price) "
+                                + "VALUES (?, ?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement selectStmt = conn.prepareStatement(sqlSelectUserId);
@@ -54,6 +55,7 @@ public class ShoppingCartDAO {
                 try (PreparedStatement insertStmt = conn.prepareStatement(sqlInsertAddress)) {
                     insertStmt.setInt(1, userId);
                     insertStmt.setInt(2, shoppingCart.getSellerId());
+                    insertStmt.setString(3, shoppingCart.getName());
                     insertStmt.setString(3, shoppingCart.getInformation());
                     insertStmt.setDouble(4, shoppingCart.getPrice());
 
@@ -170,7 +172,7 @@ public class ShoppingCartDAO {
 
 
     public static void printInfoById(int id) {
-        String query = "SELECT price, information FROM shoppingCart WHERE id = ?";
+        String query = "SELECT name, price, information FROM shoppingCart WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -179,8 +181,10 @@ public class ShoppingCartDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                String name = rs.getString("name");
                 double price = rs.getDouble("price");
                 String information = rs.getString("information");
+                System.out.println("Name: " + name);
                 System.out.println("Price: " + price);
                 System.out.println("Information: " + information);
             }

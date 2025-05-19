@@ -5,19 +5,25 @@ public class ShoppingCart {
     private String  information;
     private int sellerId;
     private int productId;
+    private String name;
 
-    public ShoppingCart(double price, String informaton, int sellerId, int productId) {
+    public ShoppingCart(String name, double price, String informaton, int sellerId, int productId) {
+        this.name = name;
         this.price = price;
         this.information = informaton;
         this.sellerId = sellerId;
         this.productId = productId;
     }
 
-    public double  getPrice() {
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
         return price;
     }
 
-    public String  getInformation() {
+    public String getInformation() {
         return information;
     }
 

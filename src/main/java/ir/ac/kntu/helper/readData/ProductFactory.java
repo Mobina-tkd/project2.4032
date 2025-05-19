@@ -72,9 +72,7 @@ public class ProductFactory {
     }
 
     public static Laptop readLaptopData() {
-        System.out.print("Enter name: ");
-        String name = ScannerWrapper.getInstance().nextLine();
-
+        String name = "Laptop";
         System.out.print("Enter price: ");
         double price = ScannerWrapper.getInstance().nextDouble();
 

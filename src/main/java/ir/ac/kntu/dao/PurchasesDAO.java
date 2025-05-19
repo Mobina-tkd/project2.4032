@@ -1,6 +1,7 @@
 package ir.ac.kntu.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -119,5 +120,68 @@ public class PurchasesDAO {
     }
 }
 
-   
+
+    public static void printUserPUrchases(User user) {
+        String queryUserId = "SELECT id FROM users WHERE email = ?";
+        String queryPurchases = "SELECT id, name, date, price FROM purchases WHERE user_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+
+            // Step 1: Get user ID from email
+            int userId = -1;
+            try (PreparedStatement stmt = conn.prepareStatement(queryUserId)) {
+                stmt.setString(1, user.getEmail());
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    userId = rs.getInt("id");
+                } else {
+                    System.out.println("User not found.");
+                    return;
+                }
+            }
+
+            // Step 2: Get purchases for that user ID
+            try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
+                stmt.setInt(1, userId);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    Date date = rs.getDate("date");
+                    double price = rs.getDouble("price");
+                    System.out.printf("ID: %d | Purchase: %s | Date: %s | Price: %.2f%n", id, name, date, price);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void printAllInfoById(int id) {
+        String sql = "SELECT * FROM purchases WHERE id = ?";
+        try (
+            Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+    
+            while (rs.next()) {
+                int purchaseId = rs.getInt("id");
+                String name = rs.getString("name");
+                Date date = rs.getDate("date");
+                double price = rs.getDouble("price");
+                int userId = rs.getInt("user_id");
+    
+                System.out.printf("Purchase ID: %d | Name: %s | Date: %s | Price: %.2f | User ID: %d%n",
+                                  purchaseId, name, date, price, userId);
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }
+

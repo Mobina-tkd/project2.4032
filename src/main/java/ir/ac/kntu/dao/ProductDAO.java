@@ -71,6 +71,7 @@ public class ProductDAO {
 
     public static ShoppingCart makeShoppingCartObject(int productId,int sellerId, String tableName) {
         double price;
+        String name;
         String query = "SELECT * FROM " + tableName + " WHERE id = ?";
         StringBuilder information = new StringBuilder();
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -84,6 +85,7 @@ public class ProductDAO {
             if (rs.next()) {
                 
                 price = rs.getDouble("price");
+                name = rs.getString("name");
 
                 for (int i = 1; i <= columnCount; i++) {
                     information.append(meta.getColumnName(i))
@@ -99,8 +101,9 @@ public class ProductDAO {
             System.out.println("Error: " + e.getMessage());
             return null ;
         }
+        
 
-        return new ShoppingCart(price, information.toString(), sellerId, productId);
+        return new ShoppingCart(name, price, information.toString(), sellerId, productId);
     }
 
     public static double getPriceById(int id, String tableName) {

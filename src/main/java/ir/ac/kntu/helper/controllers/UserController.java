@@ -23,6 +23,8 @@ public class UserController {
                     SettingController.handleSetting(user);
                 }
                 case RECENT_PURCHASES-> {
+                    PurchaseController.handlePurchases(user);
+                    
                     break;
                 }
                 case ADRESSES -> {
