@@ -15,6 +15,11 @@ public class loginPageController {
     public static String sellerLoginPage() {
         while (true) {
             System.out.println("--------Login Page-------");
+            System.out.print("Do you want to login? Y/N: ");
+            String login = ScannerWrapper.getInstance().nextLine(); 
+            if (login.equalsIgnoreCase("N")) {
+                return "Back";
+            }
             System.out.print("Enter your agency code : ");
             String username = ScannerWrapper.getInstance().nextLine(); 
             System.out.print("Enter your password : ");
@@ -40,7 +45,7 @@ public class loginPageController {
 
                     }else if(identityVarified == 0) {
                         System.out.println("your identity is not varified yet");
-                        return "";
+                        return null;
 
                     }
                     else {
@@ -48,12 +53,12 @@ public class loginPageController {
                     }
                 } else {
                     System.out.println("We could not find this agency code.");
-                    return "";
+                    return null;
                 }
     
             } catch (SQLException e) {
                 System.out.println("Database error: " + e.getMessage());
-                return "";
+                return null;
             }
         }
     }
@@ -63,6 +68,11 @@ public class loginPageController {
         String url = "jdbc:sqlite:data.db";  
         while (true){
             System.out.println("--------Login Page-------");
+            System.out.print("Do you want to login? Y/N: ");
+            String login = ScannerWrapper.getInstance().nextLine(); 
+            if (login.equalsIgnoreCase("N")) {
+                return "Back";
+            }
             System.out.print("Enter your username(Phone Number or Email Address) :  ");
             String username = ScannerWrapper.getInstance().nextLine(); 
             System.out.print("Enter you password : ");

@@ -11,6 +11,7 @@ import ir.ac.kntu.helper.readData.ProductFactory;
 import ir.ac.kntu.model.Book;
 import ir.ac.kntu.model.Laptop;
 import ir.ac.kntu.model.Mobile;
+import ir.ac.kntu.model.ShoppingCart;
 import ir.ac.kntu.model.User;
 
 public class ProductController {
@@ -66,12 +67,18 @@ public class ProductController {
 
 
     public static void handleAddProductToList(String productType, User user) {
+
         while (true) { 
+        System.out.println("Enter the id of the product you want to add to shopping cart: ");
+        int productId = ScannerWrapper.getInstance().nextInt(); 
+        int sellerId = ProductDAO.findSellerId(productId, productType);
+        ShoppingCart shoppingCart = ProductDAO.makeShoppingCartObject(productId, sellerId, productType);
+        System.out.println(shoppingCart.getInformation());
             Menu.addToListMenu();
             Vendilo.AddToList option = Menu.getAddToListOption();
             switch (option) {
                 case ADD -> {
-                    chooseProduct(productType, user);
+                    addProductHandler(productType, productId, user);
                 }
                 case BACK -> {
                     return;
@@ -83,11 +90,8 @@ public class ProductController {
         }
     }   
     
-    public static void chooseProduct(String productType, User user) {
-        
+    public static void addProductHandler(String productType, int productId, User user) {
         while (true) { 
-            System.out.println("Enter the id of the product you want to add to shopping cart: ");
-            int productId = ScannerWrapper.getInstance().nextInt();  
             int sellerId = ProductDAO.findSellerId(productId, productType);     
             boolean added = ShoppingCartController.addProductToShoppingCart(productId, sellerId, productType, user); //might product be soled out
             if(added) {

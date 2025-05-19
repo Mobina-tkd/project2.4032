@@ -28,5 +28,12 @@ public class Address {
         return houseNumber;
     }
 
+    @Override
+
+    public String toString() {
+        return "Address(locaion : " + location + " state: " + state +
+         " street: " + street + " houseNumber: " + houseNumber;
+    }
+
     
 }

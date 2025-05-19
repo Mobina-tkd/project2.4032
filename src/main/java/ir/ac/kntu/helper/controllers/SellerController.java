@@ -73,6 +73,8 @@ public class SellerController {
                         agencyCode = loginPageController.sellerLoginPage();
                         if(agencyCode == null){
                             continue;
+                        }else if(agencyCode.equals("Back")) {
+                            return;
                         }
                         break;
                     }

@@ -41,7 +41,7 @@ public class LaptopDAO {
 
     public static boolean insertLaptop(Laptop laptop, String agencyCode) {
         String query = "SELECT id FROM sellers WHERE agency_code = ?";
-        String sql = "INSERT INTO laptops(seller_id, name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam )"
+        String sql = "INSERT INTO Laptop(seller_id, name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam )"
         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);

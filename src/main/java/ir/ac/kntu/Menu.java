@@ -119,6 +119,18 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
+    public static void payMenu() {
+        System.out.println("1) Pay");
+        System.out.println("2) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void chargeWallet() {
+        System.out.println("1) Charge");
+        System.out.println("2) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
     public static <T extends Enum<T>> T getEnumOption(Class<T> enumType, T undefinedOption) {
         T[] options = enumType.getEnumConstants();
         int userInput = ScannerWrapper.getInstance().nextInt();
@@ -188,5 +200,13 @@ public class Menu {
 
     public static Vendilo.ChooseAddress getChooseOrAddAddress() {
         return getEnumOption(Vendilo.ChooseAddress.class, Vendilo.ChooseAddress.UNDEFINED);
+    }
+
+    public static Vendilo.PayMenu getPayOption() {
+        return getEnumOption(Vendilo.PayMenu.class, Vendilo.PayMenu.UNDEFINED);
+    }
+
+    public static Vendilo.chargeWalletOption getChargeWalletOPtion() {
+        return getEnumOption(Vendilo.chargeWalletOption.class, Vendilo.chargeWalletOption.UNDEFINED);
     }
 } 

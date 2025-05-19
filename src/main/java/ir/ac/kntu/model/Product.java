@@ -5,6 +5,13 @@ public class Product {
     double price;
     int inventory;
 
+    public Product(String name, double price, int inventory) {
+        this.name = name;
+        this.price = price;
+        this.inventory = inventory;
+    }
+
+    public Product() {}
 
     public String getName() {
         return name;

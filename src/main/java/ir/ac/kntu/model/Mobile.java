@@ -7,11 +7,7 @@ public class Mobile extends Digital{
 
     public Mobile(String name, double price, int inventory, String brand, int memory,
      int RAM, String rareCameraResolution, String frontCameraResolution, String networkInternet ) {
-        this.name = name;
-        this.price = price;
-        this.inventory = inventory;
-        this.brand = brand;
-        this.memory = memory;
+        super(name, price, inventory, brand,  memory,  RAM);
         this.RAM = RAM;
         this.rareCameraResolution = rareCameraResolution;
         this.frontCameraResolution = frontCameraResolution;

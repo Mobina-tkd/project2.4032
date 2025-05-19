@@ -77,8 +77,8 @@ public class AddressDAO {
         }
     }
 
-    public static String findState(int id) {
-        String query = "SELECT state FROM addresses WHERE id = ?";
+    public static Address findAddress(int id) {
+        String query = "SELECT * FROM addresses WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement selectStmt = conn.prepareStatement(query)) {
@@ -87,17 +87,20 @@ public class AddressDAO {
             selectStmt.setInt(1,id);
     
             if (rs.next()) {
+                String location = rs.getString("location");
                 String state = rs.getString("state");
-                return state;
+                String street = rs.getString("street");
+                String houseNumber = rs.getString("housNumber");
+                return new Address(location, state, street, houseNumber);
     
             } else {
                 System.out.println("Address not found with id: " + id);
-                return "";
+                return null;
             }
     
         } catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
-            return "";
+            return null;
         }
     }
     

@@ -83,6 +83,8 @@ public class UserController {
                         username = loginPageController.userLoginPage();
                         if(username == null){
                             continue;
+                        }else if(username.equals("Back")) {
+                            return;
                         }
                         break;
                     }

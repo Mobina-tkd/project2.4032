@@ -114,23 +114,24 @@ public class SellerDAO {
     }
 
     public static boolean  printSellersData() { //modify print format
-            String query = "SELECT * FROM sellers WHERE identity_varified = 0";
+            String query = "SELECT first_name, last_name, store_name, agency_code FROM sellers WHERE identity_varified = 0";
 
             try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
                 ResultSet rs = pstmt.executeQuery();
 
-                ResultSetMetaData meta = rs.getMetaData();
-                int columnCount = meta.getColumnCount();
 
                 boolean found = false;
                 while (rs.next()) {
                     found = true;
-                    for (int i = 2; i <= columnCount; i++) {
-                        System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "\t");
-                    }
-                    System.out.println();
+                    String first_name = rs.getString("first_name");
+                    String last_name = rs.getString("last_name");
+                    String agency_code = rs.getString("agency_code");
+                    String store_name = rs.getString("store_name");
+
+
+                    System.out.printf("name: %s %s, store name: %s, agency code: %s\n",first_name, last_name, store_name, agency_code);
                 }
 
                 if (!found) {

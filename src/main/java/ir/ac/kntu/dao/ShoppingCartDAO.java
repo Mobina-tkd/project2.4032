@@ -37,7 +37,6 @@ public class ShoppingCartDAO {
 
     public static boolean insertToShoppingCart(ShoppingCart shoppingCart, User user) {
         String sqlSelectUserId = "SELECT id FROM users WHERE email = ?";
-        String sqlSelectSellerId = "SELECT id FROM sellers WHERE agencyCode = ?";
         String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, seller_id, information, price) "
                                 + "VALUES (?, ?, ?, ?)";
     
@@ -98,51 +97,96 @@ public class ShoppingCartDAO {
     }
 
     public static void printAllOptionsInCart(User user) {
-            String query1 = "SELECT id FROM users WHERE email = ?";
-            String query2 = "SELECT * FROM shoppingCart WHERE user_id = ?";
-            double sum = 0;
+        String query1 = "SELECT id FROM users WHERE email = ?";
+        String query2 = "SELECT name, id, price FROM shoppingCart WHERE user_id = ?";
+        double sum = 0;
+    
+        try (
+            Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement stmt1 = conn.prepareStatement(query1);
+            PreparedStatement stmt2 = conn.prepareStatement(query2)
+        ) {
+            // Get user ID from email
+            stmt1.setString(1, user.getEmail());
+            ResultSet rs1 = stmt1.executeQuery();
+    
+            if (rs1.next()) {
+                int userId = rs1.getInt("id");
+    
+                // Get shopping cart items
+                stmt2.setInt(1, userId);
+                ResultSet rs2 = stmt2.executeQuery();
+    
+                System.out.println("Items in shopping cart for user: " + user.getEmail());
+                System.out.println("--------------------------------------------------");
+    
+                while (rs2.next()) {
+                    String name = rs2.getString("name");
+                    int id = rs2.getInt("id");
+                    double price = rs2.getDouble("price");
+    
+                    System.out.printf("Name: %s | ID: %d | Price: $%.2f%n", name, id, price);
+                    sum += price;
+                }
+    
+                System.out.println("--------------------------------------------------");
+                System.out.printf("Total Price: $%.2f%n", sum);
+            } else {
+                System.out.println("User not found.");
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
+        public static void clearShoppingCart(User user) {
+            String sql1 = "SELECT id FROM users WHERE email = ?";
+            String sql2 = "DELETE FROM shoppingCart WHERE user_id = ?";
         
-            try (
-                Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement stmt1 = conn.prepareStatement(query1);
-                PreparedStatement stmt2 = conn.prepareStatement(query2)
-            ) {
-                // Get user ID from email
-                stmt1.setString(1, user.getEmail());
-                ResultSet rs1 = stmt1.executeQuery();
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                 PreparedStatement ps1 = conn.prepareStatement(sql1);
+                 PreparedStatement ps2 = conn.prepareStatement(sql2)) {
         
-                if (rs1.next()) {
-                    int userId = rs1.getInt("id");
+                ps1.setString(1, user.getEmail());
+                ResultSet rs = ps1.executeQuery();
         
-                    // Get shopping cart items
-                    stmt2.setInt(1, userId);
-                    ResultSet rs2 = stmt2.executeQuery();
+                if (rs.next()) {
+                    int userId = rs.getInt("id");
         
-                    boolean hasItems = false;
-                    while (rs2.next()) {
-                        double price = rs2.getDouble("price");
-                        sum += price;
-                        hasItems = true;
-                        System.out.println("price: " + price);
-                        System.out.println("Product Name: " + rs2.getString("information") + "\n");
-                        
-                    }
-                    System.out.println("You must pay: " + sum);
+                    ps2.setInt(1, userId);
+                    ps2.executeUpdate();
         
-                    if (!hasItems) {
-                        System.out.println("Shopping cart is empty.");
-                    }
-        
+                    System.out.println("Shopping cart cleared for user.");
                 } else {
-                    System.out.println("No user found with email: " + user.getEmail());
+                    System.out.println("User not found.");
                 }
         
             } catch (SQLException e) {
                 e.printStackTrace();
-                System.out.println("Database error: " + e.getMessage());
             }
         }
 
-    
 
+    public static void printInfoById(int id) {
+        String query = "SELECT price, information FROM shoppingCart WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                double price = rs.getDouble("price");
+                String information = rs.getString("information");
+                System.out.println("Price: " + price);
+                System.out.println("Information: " + information);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

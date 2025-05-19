@@ -42,7 +42,7 @@ public class BookDAO {
 
     public static boolean insertBook(Book book, String agencyCode) {
         String query = "SELECT id FROM sellers WHERE agency_code = ?";
-        String sql = "INSERT INTO books(seller_id, name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
+        String sql = "INSERT INTO Books(seller_id, name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN)"
         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);

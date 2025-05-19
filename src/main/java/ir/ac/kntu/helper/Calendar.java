@@ -10,7 +10,7 @@ public final class Calendar {
     private Calendar() {
     }
 
-    public static Instant now() {
-        return Instant.ofEpochMilli(start.toEpochMilli() + (Instant.now().toEpochMilli() - start.toEpochMilli()) * TIME_SPEED);
+    public static String now() {
+        return (Instant.ofEpochMilli(start.toEpochMilli() + (Instant.now().toEpochMilli() - start.toEpochMilli()) * TIME_SPEED)).toString();
     }
 }

@@ -8,12 +8,8 @@ public class Laptop extends Digital {
 
     public Laptop(String name, double price, int inventory, String brand, int memory,
                   int RAM, String model, String GPU, boolean hasBluetooth, boolean hasWebcam) {
-        this.name = name;
+        super(name, price, inventory, brand,  memory,  RAM);
         this.price = price;
-        this.inventory = inventory;
-        this.brand = brand;
-        this.memory = memory;
-        this.RAM = RAM;
         this.model = model;
         this.GPU = GPU;
         this.hasBluetooth = hasBluetooth;

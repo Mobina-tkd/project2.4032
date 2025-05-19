@@ -1,7 +1,5 @@
 package  ir.ac.kntu;
 
-import java.sql.ResultSet;
-
 import ir.ac.kntu.dao.AddressDAO;
 import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.LaptopDAO;
@@ -20,12 +18,7 @@ public class Vendilo{
     ADRESSES, WALLET, CUSTOMER_SUPPORT, BACK, UNDEFINED }
     public enum SellerOption{PRODUCTS, WALLET, RECENT_PURCHASES, BACK, UNDEFINED}
     public enum SupporterOption{FOLLOW_UP_REQUEST, IDENTITY_VERIFICATION, RECENT_PURCHASES, BACK, UNDEFINED}
-    public enum Statement{NEW_USER, ALREADY_HAS_ACCOUNT,BACK, UNDEFINED;
-
-        public ResultSet executeQuery(String query) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
+    public enum Statement{NEW_USER, ALREADY_HAS_ACCOUNT,BACK, UNDEFINED}
     public enum AddressOption{INSERT_NEW_ADDRESS, VIEW_ADDRESSES, EDIT_ADDRESSES, DELETE_ADDRESSES, BACK, UNDEFINED}
     public enum ProductOption{INSERT_PRODUCT, SET_INVENTORY, BACK, UNDEFINED}
     public enum Product{MOBILE, LAPTOP, BOOK, BACK, UNDEFINED}
@@ -36,6 +29,8 @@ public class Vendilo{
     public enum AddToList{ADD, BACK, UNDEFINED}
     public enum DeleteFromCart{DELETE,BUY, BACK, UNDEFINED}
     public enum ChooseAddress{CHOOSE, NEW, BACK, UNDEFINED}
+    public enum PayMenu{PAY, BACK, UNDEFINED}
+    public enum chargeWalletOption{CHARGE, BACK, UNDEFINED}
 
     public static void main(String[] args) {
         UserDAO.createTable();
@@ -72,7 +67,7 @@ public class Vendilo{
             
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\n");
-                    break;
+                    
                 }
             }
             
