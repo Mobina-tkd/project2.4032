@@ -5,6 +5,8 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.User;
+import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
+import main.java.ir.ac.kntu.helper.controllers.RequestController;
 
 public class UserController {
 
@@ -34,6 +36,7 @@ public class UserController {
                     break;
                 }
                 case CUSTOMER_SUPPORT -> {
+                    handleCostumerSupport(user);
                     break;
                 }
                 case BACK -> {
@@ -46,6 +49,45 @@ public class UserController {
             }
         }
     }  
+
+    private static void handleCostumerSupport(User user) {
+        while (true) { 
+            Menu.printSupportOptions();
+            Vendilo.UserSupporterOptions option = Menu.getUserSupportOption();
+            switch (option) {
+                case PRREVIOUS_REQUESTS -> {
+                    RequestController.handlePreviousRequests(user.getEmail());
+                }
+                case REPORT -> {
+                    RequestController.sendRequest(user.getEmail(), "Report");
+                    break;
+                }
+                case WRONG_PRODUCT_SENT -> {
+                    RequestController.sendRequest(user.getEmail(), "Wrong product sent");
+                    break;
+                }
+                case SETTING-> {
+                    RequestController.sendRequest(user.getEmail(), "Setting");
+                    break;
+                } 
+                case ORDER_NOT_RECEIVED-> {
+                   RequestController.sendRequest(user.getEmail(), "Order not received");
+                    break;
+                } 
+                case BACK-> {
+                    return;
+                } 
+                case UNDEFINED -> {
+                    System.out.println("Undefined Choice; Try again...\\n");
+                }
+                    
+            }
+        }
+
+    }
+
+    
+
 
     public static User handleNewUser() {
         User user = new User();

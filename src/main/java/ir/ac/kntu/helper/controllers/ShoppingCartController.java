@@ -13,6 +13,7 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.AddressDAO;
 import ir.ac.kntu.dao.ProductDAO;
 import ir.ac.kntu.dao.PurchasesDAO;
+import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.readData.ReadAddress;
@@ -110,6 +111,7 @@ public class ShoppingCartController {
             switch (choise) {
                 case PAY -> {
                     boolean bought = user.getWallet().purchase(balance);
+                    SellerDAO.chargeWallet(user, address.getState());
                     if(bought) {
                         System.out.println("Thanks for buying <3");
                         String date = ir.ac.kntu.helper.Calendar.now();

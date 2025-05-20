@@ -100,7 +100,7 @@ public class ProductDAO {
             return null ;
         }
 
-        return new ShoppingCart(price, information.toString(), sellerId, productId);
+        return new ShoppingCart(tableName, price, information.toString(), sellerId, productId);
     }
 
     public static double getPriceById(int id, String tableName) {

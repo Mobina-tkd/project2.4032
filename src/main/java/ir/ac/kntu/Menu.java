@@ -138,6 +138,27 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
+    public static void printSupportOptions() {
+        System.out.println("1) Report");
+        System.out.println("2) Wrong product sent");
+        System.out.println("3) Setting");
+        System.out.println("4) Order not received");
+        System.out.println("5) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void setMessageMenu() {
+        System.out.println("1) Set message");
+        System.out.println("3) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void watchRespondMenu() {
+        System.out.println("1) Show supporter resopnd");
+        System.out.println("2) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
     public static <T extends Enum<T>> T getEnumOption(Class<T> enumType, T undefinedOption) {
         T[] options = enumType.getEnumConstants();
         int userInput = ScannerWrapper.getInstance().nextInt();
@@ -219,5 +240,17 @@ public class Menu {
 
     public static Vendilo.PurchaseMenu getPurchaseOption() {
         return getEnumOption(Vendilo.PurchaseMenu.class, Vendilo.PurchaseMenu.UNDEFINED);
+    }
+
+    public static Vendilo.UserSupporterOptions getUserSupportOption() {
+        return getEnumOption(Vendilo.UserSupporterOptions.class, Vendilo.UserSupporterOptions.UNDEFINED);
+    }
+
+    public static Vendilo.SetMessage getSetMessageOption() {
+        return getEnumOption(Vendilo.SetMessage.class, Vendilo.SetMessage.UNDEFINED);
+    }
+
+    public static Vendilo.watchRespond getWatchRespondOPtion() {
+        return getEnumOption(Vendilo.watchRespond.class, Vendilo.watchRespond.UNDEFINED);
     }
 } 

@@ -76,19 +76,17 @@ public class PurchasesDAO {
         while (rs2.next()) {
             hasItems = true;
             int sellerId = rs2.getInt("seller_id");
-            int productId = rs2.getInt("product_id");
             String name = rs2.getString("name");
             String info = rs2.getString("information");
             double price = rs2.getDouble("price");
 
             pstmt3.setInt(1, userId);
             pstmt3.setInt(2, sellerId);
-            pstmt3.setInt(3, productId);
-            pstmt3.setString(4, name);
-            pstmt3.setString(5, info);
-            pstmt3.setDouble(6, price);
-            pstmt3.setString(7, date);
-            pstmt3.setString(8, address);
+            pstmt3.setString(3, name);
+            pstmt3.setString(4, info);
+            pstmt3.setDouble(5, price);
+            pstmt3.setString(6, date);
+            pstmt3.setString(7, address);
 
             pstmt3.addBatch();
         }

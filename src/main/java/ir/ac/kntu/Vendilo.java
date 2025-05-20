@@ -32,6 +32,9 @@ public class Vendilo{
     public enum PayMenu{PAY, BACK, UNDEFINED}
     public enum chargeWalletOption{CHARGE, BACK, UNDEFINED}
     public enum PurchaseMenu{INFO, RATE, BACK, UNDEFINED}
+    public enum UserSupporterOptions{PRREVIOUS_REQUESTS, REPORT, WRONG_PRODUCT_SENT, SETTING, ORDER_NOT_RECEIVED, BACK, UNDEFINED}
+    public enum SetMessage{SET_MESSAGE, BACK, UNDEFINED}
+    public enum watchRespond{SHOW_RESOPND, BACK, UNDEFINED}
 
     public static void main(String[] args) {
         UserDAO.createTable();

@@ -7,8 +7,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 import ir.ac.kntu.model.Seller;
+import ir.ac.kntu.model.User;
 
 
 public class SellerDAO {
@@ -26,6 +29,7 @@ public class SellerDAO {
                     + "phone_number TEXT UNIQUE,"
                     + "password TEXT NOT NULL,"
                     + "identity_varified INTEGER,"
+                    + "wallet_balance REAL,"
                     + "message TEXT"
                     + ");";
 
@@ -183,7 +187,85 @@ public class SellerDAO {
             return true;
 
             }
+
+
+
+            
+            public static void chargeWallet(User user, String userState) {
+                String sqlGetUserId = "SELECT id FROM user WHERE email = ?";
+                String sqlGetCart = "SELECT price, seller_id FROM shoppingCart WHERE user_id = ?";
+                String sqlGetSellerState = "SELECT state FROM seller WHERE id = ?";
+                String sqlUpdateWallet = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
+            
+                try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            
+                    int userId = -1;
+                    try (PreparedStatement ps = conn.prepareStatement(sqlGetUserId)) {
+                        ps.setString(1, user.getEmail());
+                        ResultSet rs = ps.executeQuery();
+                        if (rs.next()) {
+                            userId = rs.getInt("id");
+                        } else {
+                            System.out.println("User not found.");
+                            return;
+                        }
+                    }
+            
+                    Map<Integer, Double> sellerTotals = new HashMap<>(); 
+                    try (PreparedStatement ps = conn.prepareStatement(sqlGetCart)) {
+                        ps.setInt(1, userId);
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
+                            double price = rs.getDouble("price");
+                            int sellerId = rs.getInt("seller_id");
+                            sellerTotals.put(sellerId, sellerTotals.getOrDefault(sellerId, 0.0) + price);
+                        }
+                    }
+            
+                    for (Map.Entry<Integer, Double> entry : sellerTotals.entrySet()) {
+                        int sellerId = entry.getKey();
+                        double totalPrice = entry.getValue();
+            
+                        String sellerState = "";
+                        try (PreparedStatement ps = conn.prepareStatement(sqlGetSellerState)) {
+                            ps.setInt(1, sellerId);
+                            ResultSet rs = ps.executeQuery();
+                            if (rs.next()) {
+                                sellerState = rs.getString("state");
+                            } else {
+                                System.out.println("Seller not found: ID " + sellerId);
+                                continue;
+                            }
+                        }
+            
+                        int postCost = userState.equalsIgnoreCase(sellerState) ? 10 : 30;
+                        double finalAmount = totalPrice + postCost;
+            
+                        try (PreparedStatement ps = conn.prepareStatement(sqlUpdateWallet)) {
+                            ps.setDouble(1, (finalAmount* 0.9));
+                            ps.setInt(2, sellerId);
+                            ps.executeUpdate();
+                        }
+                    }
+            
+                    System.out.println("Wallets updated successfully.");
+            
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            
     
+
+
+
+
+
+
+
+
+
+
 
             
     

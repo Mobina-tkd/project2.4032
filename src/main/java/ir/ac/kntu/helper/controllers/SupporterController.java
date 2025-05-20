@@ -13,6 +13,7 @@ public class SupporterController {
             Vendilo.SupporterOption option = Menu.getSupporterOption();
             switch (option) {
                 case FOLLOW_UP_REQUEST-> {
+                    RequestController.handleRequest();
                 }
                 case IDENTITY_VERIFICATION-> {
                     handleIdentityVerification();
@@ -30,6 +31,7 @@ public class SupporterController {
         }
     }
 
+    
     
 
     public static void handleIdentityVerification() { //fix back option here
