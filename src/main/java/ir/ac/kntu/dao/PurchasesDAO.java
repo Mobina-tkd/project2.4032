@@ -119,61 +119,159 @@ public class PurchasesDAO {
 }
 
 
-    public static void printUserPUrchases(User user) {
-        String queryUserId = "SELECT id FROM users WHERE email = ?";
-        String queryPurchases = "SELECT id, name, date, price FROM purchases WHERE user_id = ?";
+public static void printUserPurchases(User user) {
+    String queryUserId = "SELECT id FROM users WHERE email = ?";
+    String queryPurchases = "SELECT id, name, seller_id, date, price FROM purchases WHERE user_id = ?";
+    String queryStoreName = "SELECT store_name FROM sellers WHERE id = ?";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+    try (Connection conn = DriverManager.getConnection(DB_URL)) {
 
-            // Step 1: Get user ID from email
-            int userId = -1;
-            try (PreparedStatement stmt = conn.prepareStatement(queryUserId)) {
-                stmt.setString(1, user.getEmail());
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    userId = rs.getInt("id");
-                } else {
-                    System.out.println("User not found.");
-                    return;
-                }
+        // Step 1: Get user ID from email
+        int userId = -1;
+        try (PreparedStatement stmt = conn.prepareStatement(queryUserId)) {
+            stmt.setString(1, user.getEmail());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("id");
+            } else {
+                System.out.println("User not found.");
+                return;
             }
-
-            // Step 2: Get purchases for that user ID
-            try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
-                stmt.setInt(1, userId);
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    Date date = rs.getDate("date");
-                    double price = rs.getDouble("price");
-                    System.out.printf("ID: %d | Purchase: %s | Date: %s | Price: %.2f%n", id, name, date, price);
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-    }
 
-    public static void printAllInfoById(int id) {
-        String sql = "SELECT * FROM purchases WHERE id = ?";
-        try (
-            Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement pstmt = conn.prepareStatement(sql)
-        ) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-    
+        // Step 2: Get purchases for that user ID
+        try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
                 int purchaseId = rs.getInt("id");
                 String name = rs.getString("name");
+                int sellerId = rs.getInt("seller_id");
                 Date date = rs.getDate("date");
                 double price = rs.getDouble("price");
-                int userId = rs.getInt("user_id");
+
+                // Step 3: Get store name for each purchase
+                String storeName = "Unknown";
+                try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
+                    storeStmt.setInt(1, sellerId);
+                    ResultSet storeRs = storeStmt.executeQuery();
+                    if (storeRs.next()) {
+                        storeName = storeRs.getString("store_name");
+                    }
+                }
+
+                // Print purchase details
+                System.out.printf("ID: %d | Purchase: %s | Store: %s | Date: %s | Price: %.2f%n",
+                        purchaseId, name, storeName, date.toString(), price);
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+
+
+
+public static void printAllPurchases() {
+    String queryPurchases = "SELECT id, name, seller_id, user_id, date, price FROM purchases";
+    String queryStoreName = "SELECT store_name FROM sellers WHERE id = ?";
+    String queryUserEmail = "SELECT email FROM users WHERE id = ?";
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement stmtPurchases = conn.prepareStatement(queryPurchases);
+         ResultSet rs = stmtPurchases.executeQuery()) {
+
+        while (rs.next()) {
+            int purchaseId = rs.getInt("id");
+            String name = rs.getString("name");
+            int sellerId = rs.getInt("seller_id");
+            int userId = rs.getInt("user_id");
+            Date date = rs.getDate("date");
+            double price = rs.getDouble("price");
+
+            // Get store name
+            String storeName = "Unknown";
+            try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
+                storeStmt.setInt(1, sellerId);
+                ResultSet storeRs = storeStmt.executeQuery();
+                if (storeRs.next()) {
+                    storeName = storeRs.getString("store_name");
+                }
+            }
+
+            // Get user email
+            String email = "Unknown";
+            try (PreparedStatement userStmt = conn.prepareStatement(queryUserEmail)) {
+                userStmt.setInt(1, userId);
+                ResultSet userRs = userStmt.executeQuery();
+                if (userRs.next()) {
+                    email = userRs.getString("email");
+                }
+            }
+
+            System.out.printf("Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
+                    purchaseId, name, storeName, date.toString(), price, email);
+        }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+    }
+
+
+
+
+    public static void printAllSellerPurchases(String agencyCode) {
+        String querySellerId = "SELECT id, store_name FROM sellers WHERE agency_code = ?";
+        String queryPurchases = "SELECT id, name, user_id, date, price FROM purchases WHERE seller_id = ?";
+        String queryUserEmail = "SELECT email FROM users WHERE id = ?";
     
-                System.out.printf("Purchase ID: %d | Name: %s | Date: %s | Price: %.2f | User ID: %d%n",
-                                  purchaseId, name, date, price, userId);
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            
+            // Step 1: Get the seller's ID and store name using agency code
+            int sellerId = -1;
+            String storeName = "Unknown";
+            try (PreparedStatement stmt = conn.prepareStatement(querySellerId)) {
+                stmt.setString(1, agencyCode);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sellerId = rs.getInt("id");
+                    storeName = rs.getString("store_name");
+                } else {
+                    System.out.println("Seller not found.");
+                    return;
+                }
+            }
+    
+            // Step 2: Get purchases by that seller
+            try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
+                stmt.setInt(1, sellerId);
+                ResultSet rs = stmt.executeQuery();
+    
+                while (rs.next()) {
+                    int purchaseId = rs.getInt("id");
+                    String name = rs.getString("name");
+                    int userId = rs.getInt("user_id");
+                    Date date = rs.getDate("date");
+                    double price = rs.getDouble("price");
+    
+                    // Step 3: Get the user's email
+                    String email = "Unknown";
+                    try (PreparedStatement userStmt = conn.prepareStatement(queryUserEmail)) {
+                        userStmt.setInt(1, userId);
+                        ResultSet userRs = userStmt.executeQuery();
+                        if (userRs.next()) {
+                            email = userRs.getString("email");
+                        }
+                    }
+    
+                    // Print the result
+                    System.out.printf("Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
+                            purchaseId, name, storeName, date.toString(), price, email);
+                }
             }
     
         } catch (SQLException e) {
@@ -181,5 +279,58 @@ public class PurchasesDAO {
         }
     }
     
-}
 
+
+
+
+
+    public static void printAlldetailsOfPurchase(int id) {
+        String query1 = "SELECT * FROM purchases WHERE id = ?";
+        String query2 = "SELECT email FROM users WHERE id = ?";
+        String query3 = "SELECT store_name FROM sellers WHERE id = ?";
+    
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt1 = conn.prepareStatement(query1)) {
+    
+            stmt1.setInt(1, id);
+            ResultSet rs1 = stmt1.executeQuery();
+    
+            if (rs1.next()) {
+                String name = rs1.getString("name");
+                double price = rs1.getDouble("price");
+                String date = rs1.getString("date");
+                int userId = rs1.getInt("user_id");
+                int sellerId = rs1.getInt("seller_id");
+                String info = rs1.getString("information");
+    
+                String email = "";
+                try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+                    stmt2.setInt(1, userId);
+                    ResultSet rs2 = stmt2.executeQuery();
+                    if (rs2.next()) {
+                        email = rs2.getString("email");
+                    }
+                }
+    
+                String storeName = "";
+                try (PreparedStatement stmt3 = conn.prepareStatement(query3)) {
+                    stmt3.setInt(1, sellerId);
+                    ResultSet rs3 = stmt3.executeQuery();
+                    if (rs3.next()) {
+                        storeName = rs3.getString("store_name");
+                    }
+                }
+    
+                System.out.printf("Name: %s, Price: %.2f, Date: %s, User email: %s, Store name: %s, More information: %s\n",
+                        name, price, date, email, storeName, info);
+            } else {
+                System.out.println("Purchase not found.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
+    
+}

@@ -7,7 +7,7 @@ import ir.ac.kntu.helper.ScannerWrapper;
 
 public class RequestController {
 
-    private static void handleRequest() {
+    public static void handleRequest() {
         while(true) {
             Menu.printSupportOptions();
             Vendilo.UserSupporterOptions option = Menu.getUserSupportOption();

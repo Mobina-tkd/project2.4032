@@ -21,6 +21,7 @@ public class SellerController {
                     break;
                 }
                 case RECENT_PURCHASES-> {
+                    PurchaseController.handleSellerPurchase(agencyCode);
                     break;
                 }
                 case BACK-> {

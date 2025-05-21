@@ -5,8 +5,6 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.User;
-import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
-import main.java.ir.ac.kntu.helper.controllers.RequestController;
 
 public class UserController {
 
@@ -25,8 +23,7 @@ public class UserController {
                     SettingController.handleSetting(user);
                 }
                 case RECENT_PURCHASES-> {
-                    PurchaseController.handlePurchases(user);
-                    
+                    PurchaseController.handleUserPurchases(user);
                     break;
                 }
                 case ADRESSES -> {

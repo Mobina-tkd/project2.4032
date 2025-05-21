@@ -8,9 +8,9 @@ import ir.ac.kntu.model.User;
 
 public class PurchaseController {
 
-    public static void handlePurchases(User user) {
+    public static void handleUserPurchases(User user) {
         while(true) {
-            PurchasesDAO.printUserPUrchases(user);
+            PurchasesDAO.printUserPurchases(user);
             Menu.purchaseMenu();
             Vendilo.PurchaseMenu option = Menu.getPurchaseOption();
 
@@ -18,13 +18,8 @@ public class PurchaseController {
                 case INFO -> {
                     System.out.println("Enter the id of your purchase to see more information");
                     int id = ScannerWrapper.getInstance().nextInt();
-                    PurchasesDAO.printAllInfoById(id);
+                    PurchasesDAO.printAlldetailsOfPurchase(id);
                 }
-                case RATE -> {
-                    System.out.println("Enter the id of your purchase to rate");
-                    int id = ScannerWrapper.getInstance().nextInt();
-                    ratePurchase(id);
-                }       
                 case BACK -> {
                     return;
                 }
@@ -34,5 +29,48 @@ public class PurchaseController {
              }
         }
     }
-    
+
+    public static void handleSupporterPurchase() {
+        while(true) {
+            PurchasesDAO.printAllPurchases();
+            Menu.purchaseMenu();
+            Vendilo.PurchaseMenu option = Menu.getPurchaseOption();
+
+            switch (option) {
+                case INFO -> {
+                    System.out.println("Enter the id of your purchase to see more information");
+                    int id = ScannerWrapper.getInstance().nextInt();
+                    PurchasesDAO.printAlldetailsOfPurchase(id);
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println("Undefined Choice; Try again...\\n");
+                }    
+             }
+        }
+    }  
+
+    public static void handleSellerPurchase(String agencyCode) {
+        while(true) {
+            PurchasesDAO.printAllSellerPurchases(agencyCode);
+            Menu.purchaseMenu();
+            Vendilo.PurchaseMenu option = Menu.getPurchaseOption();
+
+            switch (option) {
+                case INFO -> {
+                    System.out.println("Enter the id of your purchase to see more information");
+                    int id = ScannerWrapper.getInstance().nextInt();
+                    PurchasesDAO.printAlldetailsOfPurchase(id);
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println("Undefined Choice; Try again...\\n");
+                }    
+             }
+        }
+    }  
 }

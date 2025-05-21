@@ -133,8 +133,7 @@ public class Menu {
 
     public static void purchaseMenu() {
         System.out.println("1) See more information of a product");
-        System.out.println("2) Rate");
-        System.out.println("3) Back");
+        System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 

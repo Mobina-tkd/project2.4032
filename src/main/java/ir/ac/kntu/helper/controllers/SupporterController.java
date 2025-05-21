@@ -2,6 +2,7 @@ package ir.ac.kntu.helper.controllers;
 
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
+import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.helper.ScannerWrapper;
 
@@ -19,6 +20,7 @@ public class SupporterController {
                     handleIdentityVerification();
                 }
                 case RECENT_PURCHASES-> {
+                    PurchaseController.handleSupporterPurchase();
                 }
                 case BACK-> {
                     return;
@@ -81,5 +83,6 @@ public class SupporterController {
         SellerDAO.setIdentityVarified(2, agencyCode);
         SellerDAO.setMessage(message, agencyCode);
     }
+
     
 }
