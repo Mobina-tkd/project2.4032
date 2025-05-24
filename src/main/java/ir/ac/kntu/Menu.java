@@ -1,6 +1,6 @@
 package ir.ac.kntu;
-import ir.ac.kntu.helper.ScannerWrapper;
 
+import ir.ac.kntu.helper.ScannerWrapper;
 
 public class Menu {
 
@@ -85,10 +85,12 @@ public class Menu {
     }
 
     public static void settingMenu() {
-        System.out.println("1) Show all");
-        System.out.println("2) Search by price");
-        System.out.println("3) Search by title");
-        System.out.println("4) Back");
+        System.out.println("1) Email");
+        System.out.println("2) Phone number");
+        System.out.println("3) First name");
+        System.out.println("4) Last name");
+        System.out.println("5) Password ");
+        System.out.println("6) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
@@ -152,9 +154,24 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
-    public static void watchRespondMenu() {
+    public static void WatchRespondMenu() {
         System.out.println("1) Show supporter resopnd");
         System.out.println("2) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void walletMenu() {
+        System.out.println("1) See your current balance");
+        System.out.println("2) Charge wallet");
+        System.out.println("3) Recent transactions");
+        System.out.println("4) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void transactionsMenu() {
+        System.out.println("1) Show all");
+        System.out.println("2) Filter by time");
+        System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
@@ -233,8 +250,8 @@ public class Menu {
         return getEnumOption(Vendilo.PayMenu.class, Vendilo.PayMenu.UNDEFINED);
     }
 
-    public static Vendilo.chargeWalletOption getChargeWalletOPtion() {
-        return getEnumOption(Vendilo.chargeWalletOption.class, Vendilo.chargeWalletOption.UNDEFINED);
+    public static Vendilo.ChargeWalletOption getChargeWalletOPtion() {
+        return getEnumOption(Vendilo.ChargeWalletOption.class, Vendilo.ChargeWalletOption.UNDEFINED);
     }
 
     public static Vendilo.PurchaseMenu getPurchaseOption() {
@@ -249,7 +266,15 @@ public class Menu {
         return getEnumOption(Vendilo.SetMessage.class, Vendilo.SetMessage.UNDEFINED);
     }
 
-    public static Vendilo.watchRespond getWatchRespondOPtion() {
-        return getEnumOption(Vendilo.watchRespond.class, Vendilo.watchRespond.UNDEFINED);
+    public static Vendilo.WatchRespond getWatchRespondOPtion() {
+        return getEnumOption(Vendilo.WatchRespond.class, Vendilo.WatchRespond.UNDEFINED);
     }
-} 
+
+    public static Vendilo.WalletOption getUserWalletOption() {
+        return getEnumOption(Vendilo.WalletOption.class, Vendilo.WalletOption.UNDEFINED);
+    }
+
+    public static Vendilo.ShowTransaction getTransactionOption() {
+        return getEnumOption(Vendilo.ShowTransaction.class, Vendilo.ShowTransaction.UNDEFINED);
+    }
+}

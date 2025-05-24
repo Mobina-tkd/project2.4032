@@ -8,26 +8,26 @@ import ir.ac.kntu.model.User;
 
 public class UserController {
 
-    public static void chooseUserOption(User user){
-        while(true){
+    public static void chooseUserOption(User user) {
+        while (true) {
             Menu.userMenu();
             Vendilo.UserOption option = Menu.getUserOption();
             switch (option) {
                 case SEARCH_FOR_PRODUCTS -> {
                     SearchProductController.HandleSearchProduct(user);
                 }
-                case SHOPPING_CART-> {
+                case SHOPPING_CART -> {
                     ShoppingCartController.handleShoppingCart(user);
                 }
-                case SETTING-> {
+                case SETTING -> {
                     SettingController.handleSetting(user);
                 }
-                case RECENT_PURCHASES-> {
+                case RECENT_PURCHASES -> {
                     PurchaseController.handleUserPurchases(user);
                     break;
                 }
                 case ADRESSES -> {
-                    AddressController.handleAddress(user);    
+                    AddressController.handleAddress(user);
                 }
                 case WALLET -> {
                     break;
@@ -42,13 +42,14 @@ public class UserController {
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
                 }
-                
+                default -> throw new AssertionError();
+
             }
         }
-    }  
+    }
 
     private static void handleCostumerSupport(User user) {
-        while (true) { 
+        while (true) {
             Menu.printSupportOptions();
             Vendilo.UserSupporterOptions option = Menu.getUserSupportOption();
             switch (option) {
@@ -63,84 +64,82 @@ public class UserController {
                     RequestController.sendRequest(user.getEmail(), "Wrong product sent");
                     break;
                 }
-                case SETTING-> {
+                case SETTING -> {
                     RequestController.sendRequest(user.getEmail(), "Setting");
                     break;
-                } 
-                case ORDER_NOT_RECEIVED-> {
-                   RequestController.sendRequest(user.getEmail(), "Order not received");
+                }
+                case ORDER_NOT_RECEIVED -> {
+                    RequestController.sendRequest(user.getEmail(), "Order not received");
                     break;
-                } 
-                case BACK-> {
+                }
+                case BACK -> {
                     return;
-                } 
+                }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
                 }
-                    
+                default -> throw new AssertionError();
+
             }
         }
 
     }
 
-    
-
-
     public static User handleNewUser() {
         User user = new User();
-        while(true){ 
+        while (true) {
             user = PersonFactory.readUserData();
             Boolean inserted = UserDAO.insertUser(user);
-            if(!inserted){
-            continue;
+            if (!inserted) {
+                continue;
             }
             break;
         }
-            while(true){
+        while (true) {
             String username = loginPageController.userLoginPage();
-            if(username == null){
+            if (username == null) {
                 continue;
             }
             return user;
         }
-        
+
     }
 
-
-    public static void handleUserChoise(){  
-        while(true){
+    public static void handleUserChoise() {
+        while (true) {
             Menu.chooseStatementMenu();
             Vendilo.Statement statement = Menu.getStatementOption();
             User user = new User();
             switch (statement) {
                 case NEW_USER -> {
-                    user = handleNewUser(); 
+                    user = handleNewUser();
                     UserController.chooseUserOption(user);
                 }
 
                 case ALREADY_HAS_ACCOUNT -> {
-                    String  username ="";
-                    while(true){
+                    String username = "";
+                    while (true) {
                         username = loginPageController.userLoginPage();
-                        if(username == null){
+                        if (username == null) {
                             continue;
-                        }else if(username.equals("Back")) {
+                        } else if (username.equals("Back")) {
                             return;
                         }
                         break;
                     }
                     user = UserDAO.findUser(username);
                     UserController.chooseUserOption(user);
-                } 
+                }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice");
                     break;
-                }        
+                }
+                default -> throw new AssertionError();
             }
         }
     }
-    
+
 }

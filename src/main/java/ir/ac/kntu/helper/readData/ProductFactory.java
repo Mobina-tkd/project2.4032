@@ -18,13 +18,13 @@ public class ProductFactory {
 
         System.out.print("Enter inventory: ");
         int inventory = ScannerWrapper.getInstance().nextInt();
-        ScannerWrapper.getInstance().nextLine(); 
+        ScannerWrapper.getInstance().nextLine();
         System.out.print("Enter writer name: ");
         String writerName = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter page number: ");
         int pageNumber = ScannerWrapper.getInstance().nextInt();
-        ScannerWrapper.getInstance().nextLine(); 
+        ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter genre: ");
         String genre = ScannerWrapper.getInstance().nextLine();
@@ -37,16 +37,16 @@ public class ProductFactory {
         return new Book(name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN);
     }
 
-    public static Mobile readMobileData(){
-        
-        String name ="Mobile";
+    public static Mobile readMobileData() {
+
+        String name = "Mobile";
 
         System.out.print("Enter price: ");
         double price = ScannerWrapper.getInstance().nextDouble();
 
         System.out.print("Enter inventory: ");
         int inventory = ScannerWrapper.getInstance().nextInt();
-        ScannerWrapper.getInstance().nextLine(); 
+        ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter brand: ");
         String brand = ScannerWrapper.getInstance().nextLine();
@@ -56,7 +56,7 @@ public class ProductFactory {
 
         System.out.print("Enter RAM (GB): ");
         int RAM = ScannerWrapper.getInstance().nextInt();
-        ScannerWrapper.getInstance().nextLine(); 
+        ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter rare camera resolution: ");
         String rareCameraResolution = ScannerWrapper.getInstance().nextLine();
@@ -68,7 +68,7 @@ public class ProductFactory {
         String networkInternet = ScannerWrapper.getInstance().nextLine();
 
         return new Mobile(name, price, inventory, brand, memory, RAM,
-                          rareCameraResolution, frontCameraResolution, networkInternet);
+                rareCameraResolution, frontCameraResolution, networkInternet);
     }
 
     public static Laptop readLaptopData() {
@@ -78,7 +78,7 @@ public class ProductFactory {
 
         System.out.print("Enter inventory: ");
         int inventory = ScannerWrapper.getInstance().nextInt();
-        ScannerWrapper.getInstance().nextLine(); 
+        ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter brand: ");
         String brand = ScannerWrapper.getInstance().nextLine();
@@ -87,14 +87,14 @@ public class ProductFactory {
         int memory = ScannerWrapper.getInstance().nextInt();
 
         System.out.print("Enter RAM : ");
-        int RAM = ScannerWrapper.getInstance().nextInt();
-        ScannerWrapper.getInstance().nextLine(); 
+        int ram = ScannerWrapper.getInstance().nextInt();
+        ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter model: ");
         String model = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter GPU: ");
-        String GPU = ScannerWrapper.getInstance().nextLine();
+        String gpu = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Has Bluetooth? (true/false): ");
         boolean hasBluetooth = ScannerWrapper.getInstance().nextBoolean();
@@ -102,7 +102,7 @@ public class ProductFactory {
         System.out.print("Has Webcam? (true/false): ");
         boolean hasWebcam = ScannerWrapper.getInstance().nextBoolean();
 
-        return new Laptop(name, price, inventory, brand, memory, RAM, model, GPU, hasBluetooth, hasWebcam);
+        return new Laptop(name, price, inventory, brand, memory, ram, model, gpu, hasBluetooth, hasWebcam);
     }
-    
+
 }

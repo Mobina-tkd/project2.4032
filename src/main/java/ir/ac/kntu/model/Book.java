@@ -2,25 +2,26 @@ package ir.ac.kntu.model;
 
 public class Book extends Product {
 
-    String title;
-    String writerName;
-    int pageNumber;
-    String genre;
-    String ageGroup;
-    String ISBN;
+    private String title;
+    private String writerName;
+    private int pageNumber;
+    private String genre;
+    private String ageGroup;
+    private String isbn;
 
     public Book(String name, String title, double price, int inventory, String writerName,
-                 int pageNumber, String genre, String ageGroup, String ISBN) {
+            int pageNumber, String genre, String ageGroup, String isbn) {
         super(name, price, inventory);
         this.title = title;
         this.writerName = writerName;
         this.pageNumber = pageNumber;
         this.genre = genre;
         this.ageGroup = ageGroup;
-        this.ISBN = ISBN;
+        this.isbn = isbn;
     }
 
-    public Book() {}
+    public Book() {
+    }
 
     public String getTitle() {
         return title;
@@ -42,9 +43,8 @@ public class Book extends Product {
         return ageGroup;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getIsbn() {
+        return isbn;
     }
-
 
 }

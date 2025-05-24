@@ -1,12 +1,11 @@
 package ir.ac.kntu.model;
 
-
 public class Seller {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
     private String firstName;
     private String lastName;
-    private String IDNumber;
+    private String idNumber;
     private String storeName;
     private String state;
     private String phoneNumber;
@@ -15,13 +14,11 @@ public class Seller {
     private String agencyCode;
     private SellerWallet wallet = new SellerWallet();
 
-    
-
-    public Seller(String firstName, String lastName, String IDNumber, String storeName,
-        String state, String phoneNumber, String password) {
+    public Seller(String firstName, String lastName, String idNumber, String storeName,
+            String state, String phoneNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.IDNumber = IDNumber;
+        this.idNumber = idNumber;
         this.storeName = storeName;
         this.state = state;
         this.phoneNumber = phoneNumber;
@@ -36,8 +33,8 @@ public class Seller {
         return lastName;
     }
 
-    public String getIDNumber() {
-        return IDNumber;
+    public String getidNumber() {
+        return idNumber;
     }
 
     public String getStoreName() {
@@ -64,7 +61,7 @@ public class Seller {
         wallet.addBalance(balance);
     }
 
-    public boolean  withdraw(double balance) {
+    public boolean withdraw(double balance) {
         return wallet.withdraw(balance);
     }
 

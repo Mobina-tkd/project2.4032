@@ -1,36 +1,36 @@
 package ir.ac.kntu.model;
 
 public class Laptop extends Digital {
-    String model;
-    String GPU;
-    boolean hasBluetooth;
-    boolean hasWebcam;
+    private String model;
+    private String gpu;
+    private boolean hasBluetooth;
+    private boolean hasWebcam;
 
     public Laptop(String name, double price, int inventory, String brand, int memory,
-                  int RAM, String model, String GPU, boolean hasBluetooth, boolean hasWebcam) {
-        super(name, price, inventory, brand,  memory,  RAM);
-        this.price = price;
+            int ram, String model, String gpu, boolean hasBluetooth, boolean hasWebcam) {
+        super(name, price, inventory, brand, memory, ram);
         this.model = model;
-        this.GPU = GPU;
+        this.gpu = gpu;
         this.hasBluetooth = hasBluetooth;
         this.hasWebcam = hasWebcam;
     }
 
-    public Laptop() {}
+    public Laptop() {
+    }
 
     public String getModel() {
-    return model;
+        return model;
     }
 
-    public String getGPU() {
-        return GPU;
+    public String getGpu() {
+        return gpu;
     }
 
-    public boolean HasBluetooth() {
+    public boolean hasBluetooth() {
         return hasBluetooth;
     }
 
-    public boolean HasWebcam() {
+    public boolean hasWebcam() {
         return hasWebcam;
     }
 

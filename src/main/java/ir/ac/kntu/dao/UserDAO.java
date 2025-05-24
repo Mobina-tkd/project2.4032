@@ -14,13 +14,13 @@ public class UserDAO {
 
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS users ("
-                   + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                   + "first_name TEXT,"
-                   + "last_name TEXT,"
-                   + "email TEXT UNIQUE NOT NULL,"
-                   + "phone_number TEXT UNIQUE,"
-                   + "password TEXT NOT NULL"
-                   + ");";
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "first_name TEXT,"
+                + "last_name TEXT,"
+                + "email TEXT UNIQUE NOT NULL,"
+                + "phone_number TEXT UNIQUE,"
+                + "password TEXT NOT NULL"
+                + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
@@ -56,24 +56,24 @@ public class UserDAO {
         String sql = "SELECT first_name, last_name, email, phone_number, password FROM users WHERE email = ? OR phone_number = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, username);
             stmt.setString(2, username);
 
-            ResultSet resultSet = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    String firstName = resultSet.getString("first_name");
+                    String lastName = resultSet.getString("last_name");
+                    String email = resultSet.getString("email");
+                    String phone = resultSet.getString("phone_number");
+                    String password = resultSet.getString("password");
 
-            if (resultSet.next()) {
-                String firstName = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
-                String email = resultSet.getString("email");
-                String phone = resultSet.getString("phone_number");
-                String password = resultSet.getString("password");
-
-                return new User(firstName, lastName, email, phone, password);
-            } else {
-                System.out.println("No user found with email or phone: " + username);
-                return null;
+                    return new User(firstName, lastName, email, phone, password);
+                } else {
+                    System.out.println("No user found with email or phone: " + username);
+                    return null;
+                }
             }
 
         } catch (SQLException e) {
@@ -82,47 +82,35 @@ public class UserDAO {
         }
     }
 
-
     public static void setAndUpdateUserData(User user, String field, String newValue) {
-            
+
         String sql = "UPDATE users SET " + field + " = ? WHERE email = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        stmt.setString(1, newValue);
-        stmt.setString(2, user.getEmail()); 
+            stmt.setString(1, newValue);
+            stmt.setString(2, user.getEmail());
 
-        int rowsUpdated = stmt.executeUpdate();
+            int rowsUpdated = stmt.executeUpdate();
 
-        if (rowsUpdated > 0) {
-            System.out.println("User data updated successfully.");
-        } else {
-            System.out.println("No update was made.");
-        }
+            if (rowsUpdated > 0) {
+                System.out.println("User data updated successfully.");
+            } else {
+                System.out.println("No update was made.");
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
 
         switch (field) {
-            case "email" -> {
-                user.setEmail(newValue); 
-            }
-            case "phone_number" -> {
-                user.setPhoneNumber(newValue);
-            }
-            case "first_name"-> {
-                user.setFirstName(newValue);
-            }
-            case "last_name" -> {
-                user.setLastName(newValue);
-            }
-            case "password" -> {
-                user.setPassword(newValue);
-            }
-            default -> throw new AssertionError();
+            case "email" -> user.setEmail(newValue);
+            case "phone_number" -> user.setPhoneNumber(newValue);
+            case "first_name" -> user.setFirstName(newValue);
+            case "last_name" -> user.setLastName(newValue);
+            case "password" -> user.setPassword(newValue);
+            default -> throw new AssertionError("Unknown field: " + field);
         }
     }
 }
-

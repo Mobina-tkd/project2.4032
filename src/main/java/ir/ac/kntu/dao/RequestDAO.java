@@ -11,20 +11,19 @@ public class RequestDAO {
 
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
-
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS requests ("
-            + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + "user_id INTEGER NOT NULL,"
-            + "title TEXT NOT NULL,"
-            + "request_context TEXT,"
-            + "status TEXT,"
-            + "resopnd TEXT"
-            + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
-            + ");";
-    
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "user_id INTEGER NOT NULL,"
+                + "title TEXT NOT NULL,"
+                + "request_context TEXT,"
+                + "status TEXT,"
+                + "respond TEXT,"
+                + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+                + ");";
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
-            Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Table created or already exists.");
         } catch (SQLException e) {
@@ -33,174 +32,178 @@ public class RequestDAO {
     }
 
     public static boolean insertRequest(String email, String title, String requestContext) {
-        String query = "SELECT id FROM users WHERE email = ?";
-        String sql = "INSERT INTO Books(user_id, title, request_context, status)"
-        + "VALUES (?, ?, ?)";
+        String queryUserId = "SELECT id FROM users WHERE email = ?";
+        String insertSql = "INSERT INTO requests(user_id, title, request_context, status) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            // Find user id
+            int userId;
+            try (PreparedStatement pstmt = conn.prepareStatement(queryUserId)) {
                 pstmt.setString(1, email);
-                var rs = pstmt.executeQuery();
-        
-                if (rs.next()) {
-                    int userId = rs.getInt("user_id");
-                    
-        
-                try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
-                    pstmt.setInt(1, userId);
-                    pstmt.setString(2, title);
-                    pstmt.setString(3,requestContext);
-                    pstmt.setString(4, "Following up");
-                    
-
-                    insertStmt.executeUpdate();
-                    System.out.println("Your request regestered successfully.");
-                    return true;
-                    } 
-                }else {
-                    return false;
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return false; // user not found
+                    }
+                    userId = rs.getInt("id");
                 }
+            }
 
-            }catch (SQLException e) {
+            // Insert request
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                insertStmt.setInt(1, userId);
+                insertStmt.setString(2, title);
+                insertStmt.setString(3, requestContext);
+                insertStmt.setString(4, "Following up");
+
+                insertStmt.executeUpdate();
+                System.out.println("Your request registered successfully.");
+                return true;
+            }
+
+        } catch (SQLException e) {
             System.out.println("Insert failed: " + e.getMessage());
             return false;
         }
     }
 
     public static void printRequestsByFieldName(String fieldName) {
-    String query1 = "SELECT id, user_id FROM requests WHERE title = ?";
-    String query2 = "SELECT email FROM users WHERE id = ?";
-
-    try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement stmt1 = conn.prepareStatement(query1);
-         PreparedStatement stmt2 = conn.prepareStatement(query2)) {
-        
-        stmt1.setString(1, fieldName);
-        ResultSet rs1 = stmt1.executeQuery();
-
-        while (rs1.next()) {
-            int requestId = rs1.getInt("id");
-            int userId = rs1.getInt("user_id");
-
-            stmt2.setInt(1, userId);
-            ResultSet rs2 = stmt2.executeQuery();
-
-            if (rs2.next()) {
-                String email = rs2.getString("email");
-                System.out.println("Request ID: " + requestId + ", Email: " + email);
-            }
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
-
-    public static void printAllRequestInfoById(int id) {
-        String query1 = "SELECT * FROM requests WHERE id = ?";
-        String query2 = "SELECT email FROM users WHERE id = ?";
-
+        String queryRequests = "SELECT id, user_id FROM requests WHERE title = ?";
+        String queryEmail = "SELECT email FROM users WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement stmt1 = conn.prepareStatement(query1);
-         PreparedStatement stmt2 = conn.prepareStatement(query2)) {
-        
-        stmt1.setInt(1, id);
-        ResultSet rs1 = stmt1.executeQuery();
+                PreparedStatement stmtRequests = conn.prepareStatement(queryRequests);
+                PreparedStatement stmtEmail = conn.prepareStatement(queryEmail)) {
 
-        while (rs1.next()) {
-            int requestId = rs1.getInt("id");
-            int userId = rs1.getInt("user_id");
-            String title  = rs1.getString("title");
-            String context = rs1.getString("request_context");
+            stmtRequests.setString(1, fieldName);
+            try (ResultSet rsRequests = stmtRequests.executeQuery()) {
+                while (rsRequests.next()) {
+                    int requestId = rsRequests.getInt("id");
+                    int userId = rsRequests.getInt("user_id");
 
-            stmt2.setInt(1, userId);
-            ResultSet rs2 = stmt2.executeQuery();
-
-            if (rs2.next()) {
-                String email = rs2.getString("email");
-                System.out.println("Request title: " + title);
-                System.out.println("Request id: " + requestId);
-                System.out.println("User email: " + email);
-                System.out.println("User context: " + context);
-
+                    stmtEmail.setInt(1, userId);
+                    try (ResultSet rsEmail = stmtEmail.executeQuery()) {
+                        if (rsEmail.next()) {
+                            String email = rsEmail.getString("email");
+                            System.out.println("Request ID: " + requestId + ", Email: " + email);
+                        }
+                    }
+                }
             }
-        }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-
-    }
-
-    public static void setMessageAndUpdateStatus(String message, int id) {
-        String query = "UPDATE requests SET message = ? WHERE id = ?";
-    
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-    
-            pstmt.setString(1, message);
-            pstmt.setInt(2, id);
-            pstmt.executeUpdate();
-    
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getMessage();
+        }
+    }
+
+    public static void printAllRequestInfoById(int requestId) {
+        String queryRequest = "SELECT * FROM requests WHERE id = ?";
+        String queryEmail = "SELECT email FROM users WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmtRequest = conn.prepareStatement(queryRequest);
+                PreparedStatement stmtEmail = conn.prepareStatement(queryEmail)) {
+
+            stmtRequest.setInt(1, requestId);
+            try (ResultSet rsRequest = stmtRequest.executeQuery()) {
+                if (rsRequest.next()) {
+                    int userId = rsRequest.getInt("user_id");
+                    String title = rsRequest.getString("title");
+                    String context = rsRequest.getString("request_context");
+
+                    stmtEmail.setInt(1, userId);
+                    try (ResultSet rsEmail = stmtEmail.executeQuery()) {
+                        if (rsEmail.next()) {
+                            String email = rsEmail.getString("email");
+                            System.out.println("Request title: " + title);
+                            System.out.println("Request id: " + requestId);
+                            System.out.println("User email: " + email);
+                            System.out.println("Request context: " + context);
+                        }
+                    }
+                } else {
+                    System.out.println("Request not found.");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.getMessage();
+        }
+    }
+
+    public static void setMessageAndUpdateStatus(String message, int requestId) {
+        String query = "UPDATE requests SET respond = ? WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, message);
+            pstmt.setInt(2, requestId);
+            int updated = pstmt.executeUpdate();
+
+            if (updated > 0) {
+                System.out.println("Request updated successfully.");
+            } else {
+                System.out.println("Request not found.");
+            }
+
+        } catch (SQLException e) {
+            e.getMessage();
         }
     }
 
     public static void printRequestsByEmail(String email) {
-        String query1 = "SELECT id FROM users WHERE email = ?";
-        String query2 = "SELECT id, title, status FROM requests WHERE user_id = ?";
+        String queryUserId = "SELECT id FROM users WHERE email = ?";
+        String queryRequests = "SELECT id, title, status FROM requests WHERE user_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement stmt1 = conn.prepareStatement(query1);
-         PreparedStatement stmt2 = conn.prepareStatement(query2)) {
-        
-        stmt1.setString(1, email);
-        ResultSet rs1 = stmt1.executeQuery();
+                PreparedStatement stmtUserId = conn.prepareStatement(queryUserId);
+                PreparedStatement stmtRequests = conn.prepareStatement(queryRequests)) {
 
-        while (rs1.next()) {
-            int userId = rs1.getInt("user_id");
+            stmtUserId.setString(1, email);
+            try (ResultSet rsUserId = stmtUserId.executeQuery()) {
+                if (rsUserId.next()) {
+                    int userId = rsUserId.getInt("id");
 
-            stmt2.setInt(1, userId);
-            ResultSet rs2 = stmt2.executeQuery();
-
-            if (rs2.next()) {
-                int id = rs2.getInt("id");
-                String title = rs2.getString("title");
-                String status = rs2.getString("status");
-                System.out.println("Request title: " + title + ", Request id: " + id + ", status: " + status);
+                    stmtRequests.setInt(1, userId);
+                    try (ResultSet rsRequests = stmtRequests.executeQuery()) {
+                        while (rsRequests.next()) {
+                            int requestId = rsRequests.getInt("id");
+                            String title = rsRequests.getString("title");
+                            String status = rsRequests.getString("status");
+                            System.out.println(
+                                    "Request title: " + title + ", Request id: " + requestId + ", status: " + status);
+                        }
+                    }
+                } else {
+                    System.out.println("User not found.");
+                }
             }
-        }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
-    public static void printRespondOfRequest(int id) {
-        String query = "SELECT request_context, status, respond FROM requests WHERE id = ?";
+    public static void printRespondOfRequest(int requestId) {
+        String query = "SELECT request_context, respond FROM requests WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement stmt = conn.prepareStatement(query)) {
-        
-        stmt.setInt(1, id);
-        ResultSet rs = stmt.executeQuery();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        while (rs.next()) {
+            stmt.setInt(1, requestId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String context = rs.getString("request_context");
+                    String respond = rs.getString("respond");
+                    System.out.println("Request context: " + context + ",\nSupporter respond: " + respond);
+                } else {
 
-            stmt.setInt(1, id);
-
-            String context = rs.getString("request_context");
-            String respond = rs.getString("respond");
-            System.out.println("Request context: " + context + ",\nSupporter respond: " + respond);
-        
-        }
+                    System.out.println("Request not found.");
+                }
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
-
     }
 }

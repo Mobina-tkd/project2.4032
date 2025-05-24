@@ -12,17 +12,14 @@ public class Supporter {
                 "firstName", "Sara",
                 "lastName", "Hasani",
                 "userName", "Sara_H82",
-                "password", "S1382ara_"
-        ));
+                "password", "S1382ara_"));
 
         admin.put("admin2", Map.of(
                 "firstName", "Mohammad",
                 "lastName", "Lotfi",
                 "userName", "mmd_L80",
-                "password", "M1380md_"
-        ));
+                "password", "M1380md_"));
 
     }
 
-    
 }

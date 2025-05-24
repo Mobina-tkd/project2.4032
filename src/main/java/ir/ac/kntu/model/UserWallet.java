@@ -3,7 +3,7 @@ package ir.ac.kntu.model;
 public class UserWallet {
     private double balance;
 
-    public void UserWallet() {
+    public UserWallet() {
         this.balance = 0;
     }
 
@@ -14,14 +14,13 @@ public class UserWallet {
     public void charge(double balance) {
         this.balance += balance;
     }
-    
-    public boolean  purchase(double balance) {
-        if (this.balance < balance){
+
+    public boolean purchase(double balance) {
+        if (this.balance < balance) {
             return false;
         }
         this.balance -= balance;
         return true;
     }
 
-    
 }

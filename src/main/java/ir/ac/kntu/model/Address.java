@@ -7,7 +7,6 @@ public class Address {
     private String street;
     private String houseNumber;
 
-    
     public Address(String location, String state, String street, String houseNumber) {
         this.location = location;
         this.state = state;
@@ -18,12 +17,15 @@ public class Address {
     public String getLocation() {
         return location;
     }
+
     public String getState() {
         return state;
     }
+
     public String getStreet() {
         return street;
     }
+
     public String getHouseNumber() {
         return houseNumber;
     }
@@ -32,8 +34,7 @@ public class Address {
 
     public String toString() {
         return "Address(locaion : " + location + " state: " + state +
-         " street: " + street + " houseNumber: " + houseNumber;
+                " street: " + street + " houseNumber: " + houseNumber;
     }
 
-    
 }

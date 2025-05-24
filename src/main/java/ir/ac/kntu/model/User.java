@@ -1,6 +1,5 @@
 package ir.ac.kntu.model;
 
-
 public class User {
     private String firstName;
     private String lastName;
@@ -17,15 +16,31 @@ public class User {
         this.password = password;
         userWallet = new UserWallet();
     }
+
     public User() {
 
     }
-    
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
-    public String getEmail() { return email; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getPassword() { return password; }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     public UserWallet getWallet() {
         return userWallet;
     }
@@ -33,7 +48,7 @@ public class User {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -49,6 +64,5 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
 
 }

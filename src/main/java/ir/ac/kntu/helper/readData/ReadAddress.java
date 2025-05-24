@@ -18,5 +18,5 @@ public class ReadAddress {
         Address address = new Address(location, state, street, houseNumber);
         return address;
     }
-    
+
 }

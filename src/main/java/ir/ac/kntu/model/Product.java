@@ -1,9 +1,9 @@
 package ir.ac.kntu.model;
 
 public class Product {
-    String name;
-    double price;
-    int inventory;
+    private String name;
+    private double price;
+    private int inventory;
 
     public Product(String name, double price, int inventory) {
         this.name = name;
@@ -11,7 +11,8 @@ public class Product {
         this.inventory = inventory;
     }
 
-    public Product() {}
+    public Product() {
+    }
 
     public String getName() {
         return name;
@@ -24,5 +25,5 @@ public class Product {
     public int getInventory() {
         return inventory;
     }
-    
+
 }

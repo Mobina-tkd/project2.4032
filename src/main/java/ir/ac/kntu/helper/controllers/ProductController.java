@@ -17,28 +17,29 @@ import ir.ac.kntu.model.User;
 public class ProductController {
 
     public static void handleProduct(String agencyCode) {
-        while(true) {
+        while (true) {
             Menu.productMenu();
             Vendilo.ProductOption productOption = Menu.getProductOption();
             switch (productOption) {
-                case INSERT_PRODUCT-> {
+                case INSERT_PRODUCT -> {
                     handleInsertProduct(agencyCode);
                 }
-                case SET_INVENTORY-> {
+                case SET_INVENTORY -> {
                 }
                 case BACK -> {
                     return;
                 }
-                case UNDEFINED-> {
+                case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\n");
 
                 }
+                default -> throw new AssertionError();
             }
         }
     }
 
     private static void handleInsertProduct(String agencyCode) {
-        while(true) {
+        while (true) {
             Menu.productCategoryMenu();
             Vendilo.Product insertProduct = Menu.getProductCategory();
             switch (insertProduct) {
@@ -61,19 +62,22 @@ public class ProductController {
                     System.out.println("Undefined Choice; Try again...\n");
 
                 }
+                default -> throw new AssertionError();
             }
         }
     }
 
-
     public static void handleAddProductToList(String productType, User user) {
 
-        while (true) { 
-        System.out.println("Enter the id of the product you want to add to shopping cart: ");
-        int productId = ScannerWrapper.getInstance().nextInt(); 
-        int sellerId = ProductDAO.findSellerId(productId, productType);
-        ShoppingCart shoppingCart = ProductDAO.makeShoppingCartObject(productId, sellerId, productType);
-        System.out.println(shoppingCart.getInformation());
+        while (true) {
+            System.out.print("Enter the id of a product to see more information\n (if you want to go back enter \"0\"): ");
+            int productId = ScannerWrapper.getInstance().nextInt();
+            if(productId == 0) {
+                return;
+            }
+            int sellerId = ProductDAO.findSellerId(productId, productType);
+            ShoppingCart shoppingCart = ProductDAO.makeShoppingCartObject(productId, sellerId, productType);
+            System.out.println(shoppingCart.getInformation());
             Menu.addToListMenu();
             Vendilo.AddToList option = Menu.getAddToListOption();
             switch (option) {
@@ -85,23 +89,24 @@ public class ProductController {
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\n");
-                }       
+                }
+                default -> throw new AssertionError();
             }
         }
-    }   
-    
+    }
+
     public static void addProductHandler(String productType, int productId, User user) {
-        while (true) { 
-            int sellerId = ProductDAO.findSellerId(productId, productType);     
-            boolean added = ShoppingCartController.addProductToShoppingCart(productId, sellerId, productType, user); //might product be soled out
-            if(added) {
+        while (true) {
+            int sellerId = ProductDAO.findSellerId(productId, productType);
+            boolean added = ShoppingCartController.addProductToShoppingCart(productId, sellerId, productType, user); 
+            if (added) {
                 break;
-            }else {
+            } else {
                 System.out.println("The product didnt add to you shopping cart :( please try again...");
 
             }
 
         }
     }
-    
+
 }

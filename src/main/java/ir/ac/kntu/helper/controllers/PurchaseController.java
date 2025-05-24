@@ -9,7 +9,7 @@ import ir.ac.kntu.model.User;
 public class PurchaseController {
 
     public static void handleUserPurchases(User user) {
-        while(true) {
+        while (true) {
             PurchasesDAO.printUserPurchases(user);
             Menu.purchaseMenu();
             Vendilo.PurchaseMenu option = Menu.getPurchaseOption();
@@ -17,21 +17,22 @@ public class PurchaseController {
             switch (option) {
                 case INFO -> {
                     System.out.println("Enter the id of your purchase to see more information");
-                    int id = ScannerWrapper.getInstance().nextInt();
-                    PurchasesDAO.printAlldetailsOfPurchase(id);
+                    int purchaseId = ScannerWrapper.getInstance().nextInt();
+                    PurchasesDAO.printAlldetailsOfPurchase(purchaseId);
                 }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
-                }    
-             }
+                }
+                default -> throw new AssertionError();
+            }
         }
     }
 
     public static void handleSupporterPurchase() {
-        while(true) {
+        while (true) {
             PurchasesDAO.printAllPurchases();
             Menu.purchaseMenu();
             Vendilo.PurchaseMenu option = Menu.getPurchaseOption();
@@ -39,21 +40,22 @@ public class PurchaseController {
             switch (option) {
                 case INFO -> {
                     System.out.println("Enter the id of your purchase to see more information");
-                    int id = ScannerWrapper.getInstance().nextInt();
-                    PurchasesDAO.printAlldetailsOfPurchase(id);
+                    int purchaseId = ScannerWrapper.getInstance().nextInt();
+                    PurchasesDAO.printAlldetailsOfPurchase(purchaseId);
                 }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
-                }    
-             }
+                }
+                default -> throw new AssertionError();
+            }
         }
-    }  
+    }
 
     public static void handleSellerPurchase(String agencyCode) {
-        while(true) {
+        while (true) {
             PurchasesDAO.printAllSellerPurchases(agencyCode);
             Menu.purchaseMenu();
             Vendilo.PurchaseMenu option = Menu.getPurchaseOption();
@@ -61,16 +63,17 @@ public class PurchaseController {
             switch (option) {
                 case INFO -> {
                     System.out.println("Enter the id of your purchase to see more information");
-                    int id = ScannerWrapper.getInstance().nextInt();
-                    PurchasesDAO.printAlldetailsOfPurchase(id);
+                    int purchaseId = ScannerWrapper.getInstance().nextInt();
+                    PurchasesDAO.printAlldetailsOfPurchase(purchaseId);
                 }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
-                }    
-             }
+                }
+                default -> throw new AssertionError();
+            }
         }
-    }  
+    }
 }

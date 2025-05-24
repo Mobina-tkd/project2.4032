@@ -1,8 +1,8 @@
 package ir.ac.kntu.model;
 
 public class ShoppingCart {
-    private double  price;
-    private String  information;
+    private double price;
+    private String information;
     private int sellerId;
     private int productId;
     private String name;
@@ -34,5 +34,5 @@ public class ShoppingCart {
     public int getProcuctId() {
         return productId;
     }
-    
+
 }

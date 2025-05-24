@@ -9,47 +9,48 @@ import ir.ac.kntu.model.Seller;
 
 public class SellerController {
 
-    public static void chooseSellerOption(String agencyCode){
-        while(true){
+    public static void chooseSellerOption(String agencyCode) {
+        while (true) {
             Menu.sellerMenu();
             Vendilo.SellerOption option = Menu.getSellerOption();
             switch (option) {
                 case PRODUCTS -> {
                     ProductController.handleProduct(agencyCode);
                 }
-                case WALLET-> {
+                case WALLET -> {
                     break;
                 }
-                case RECENT_PURCHASES-> {
+                case RECENT_PURCHASES -> {
                     PurchaseController.handleSellerPurchase(agencyCode);
                     break;
                 }
-                case BACK-> {
+                case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
                 }
-                
+                default -> throw new AssertionError();
+
             }
         }
-    }  
+    }
 
     public static String handleNewSeller() {
         String agencyCode;
-        while(true){ 
+        while (true) {
             Seller seller = PersonFactory.readSellerData();
             agencyCode = DealerCodeGenerator.generateUniqueCode();
             seller.setAgencyCode(agencyCode);
             Boolean inserted = SellerDAO.insertSeller(seller);
-            if(inserted){
+            if (inserted) {
                 System.out.println("Here is your agency code : " + agencyCode);
                 break;
             }
         }
-        while(true){
+        while (true) {
             agencyCode = loginPageController.sellerLoginPage();
-            if(agencyCode == null){
+            if (agencyCode == null) {
                 continue;
             }
             break;
@@ -57,40 +58,41 @@ public class SellerController {
         return agencyCode;
     }
 
-
-
-    public static void handleSellerChoise(){
-        while(true){
+    public static void handleSellerChoise() {
+        while (true) {
             Menu.chooseStatementMenu();
-            Vendilo.Statement statement = Menu.getStatementOption(); 
+            Vendilo.Statement statement = Menu.getStatementOption();
             switch (statement) {
                 case NEW_USER -> {
                     String agencyCode = handleNewSeller();
+                    if ("Back".equals(agencyCode)) {
+                        continue;
+                    }
                     chooseSellerOption(agencyCode);
                 }
                 case ALREADY_HAS_ACCOUNT -> {
                     String agencyCode;
-                    while(true){
+                    while (true) {
                         agencyCode = loginPageController.sellerLoginPage();
-                        if(agencyCode == null){
+                        if (agencyCode == null) {
                             continue;
-                        }else if(agencyCode.equals("Back")) {
+                        } else if (agencyCode.equals("Back")) {
                             return;
                         }
                         break;
                     }
                     chooseSellerOption(agencyCode);
-                } 
+                }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice");
                     break;
-                }        
+                }
+                default -> throw new AssertionError();
             }
         }
     }
 
-    
 }

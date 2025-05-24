@@ -8,7 +8,7 @@ import ir.ac.kntu.helper.ScannerWrapper;
 public class RequestController {
 
     public static void handleRequest() {
-        while(true) {
+        while (true) {
             Menu.printSupportOptions();
             Vendilo.UserSupporterOptions option = Menu.getUserSupportOption();
             switch (option) {
@@ -20,25 +20,25 @@ public class RequestController {
                     disPlayRequest("Wrong product sent");
                     break;
                 }
-                case SETTING-> {
+                case SETTING -> {
                     disPlayRequest("Setting");
                     break;
-                } 
-                case ORDER_NOT_RECEIVED-> {
+                }
+                case ORDER_NOT_RECEIVED -> {
                     disPlayRequest("Order not received");
                     break;
-                } 
-                case BACK-> {
+                }
+                case BACK -> {
                     return;
-                } 
+                }
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
                 }
-                  
+                default -> throw new AssertionError();
             }
         }
     }
-    
+
     public static void sendRequest(String email, String title) {
         System.out.print("Your request: ");
         String message = ScannerWrapper.getInstance().nextLine();
@@ -48,20 +48,20 @@ public class RequestController {
     private static void disPlayRequest(String field) {
         RequestDAO.printRequestsByFieldName(field);
         System.out.print("Enter the id of request: ");
-        int id = ScannerWrapper.getInstance().nextInt();
-        RequestDAO.printAllRequestInfoById(id);
-        handleSettingMessage(id);
-        
+        int requestId = ScannerWrapper.getInstance().nextInt();
+        RequestDAO.printAllRequestInfoById(requestId);
+        handleSettingMessage(requestId);
+
     }
 
-    private static void handleSettingMessage(int id) {
-        while(true) {
+    private static void handleSettingMessage(int userId) {
+        while (true) {
             Menu.setMessageMenu();
             Vendilo.SetMessage option = Menu.getSetMessageOption();
 
             switch (option) {
                 case SET_MESSAGE -> {
-                    setMessage(id);
+                    setMessage(userId);
                 }
                 case BACK -> {
                     return;
@@ -69,39 +69,40 @@ public class RequestController {
                 case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
                 }
+                default -> throw new AssertionError();
             }
         }
     }
 
-    private static void setMessage(int id) {
+    private static void setMessage(int userId) {
         System.out.println("Your message for user: ");
         String message = ScannerWrapper.getInstance().nextLine();
-        RequestDAO.setMessageAndUpdateStatus(message, id);
+        RequestDAO.setMessageAndUpdateStatus(message, userId);
     }
 
-
     public static void handlePreviousRequests(String email) {
-        while (true) { 
+        while (true) {
             RequestDAO.printRequestsByEmail(email);
-            Menu.watchRespondMenu();
-            Vendilo.watchRespond option = Menu.getWatchRespondOPtion();
+            Menu.WatchRespondMenu();
+            Vendilo.WatchRespond option = Menu.getWatchRespondOPtion();
             switch (option) {
                 case SHOW_RESOPND -> {
                     System.out.println("Enter the id of you request: ");
-                    int id = ScannerWrapper.getInstance().nextInt();
-                    RequestDAO.printRespondOfRequest(id);
+                    int requestId = ScannerWrapper.getInstance().nextInt();
+                    RequestDAO.printRespondOfRequest(requestId);
                     break;
                 }
                 case BACK -> {
                     return;
-                } 
-                case UNDEFINED-> {
+                }
+                case UNDEFINED -> {
                     System.out.println("Undefined Choice; Try again...\\n");
-                }     
+                }
+                default -> throw new AssertionError();
             }
-            
+
         }
 
     }
-    
+
 }

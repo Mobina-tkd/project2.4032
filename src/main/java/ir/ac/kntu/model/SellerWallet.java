@@ -1,9 +1,9 @@
 package ir.ac.kntu.model;
 
 public class SellerWallet {
-    double walletBalance =0;
+    private double walletBalance = 0;
 
-    public void SellerWallet() {
+    public SellerWallet() {
 
     }
 
@@ -15,12 +15,12 @@ public class SellerWallet {
         walletBalance += balance;
     }
 
-    public boolean  withdraw(double balance) {
-        if(walletBalance >= balance) {
-        walletBalance -= balance;
-        return true;
+    public boolean withdraw(double balance) {
+        if (walletBalance >= balance) {
+            walletBalance -= balance;
+            return true;
         }
         return false;
     }
-    
+
 }
