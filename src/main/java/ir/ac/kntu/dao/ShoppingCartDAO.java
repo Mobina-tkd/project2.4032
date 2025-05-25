@@ -16,6 +16,7 @@ public class ShoppingCartDAO {
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS shoppingCart ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "product_id INTEGER NOT NULL,"
                 + "user_id INTEGER NOT NULL,"
                 + "seller_id INTEGER NOT NULL,"
                 + "name TEXT NOT NULL,"
@@ -26,7 +27,7 @@ public class ShoppingCartDAO {
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Table created or already exists.");
         } catch (SQLException e) {
@@ -34,13 +35,13 @@ public class ShoppingCartDAO {
         }
     }
 
-    public static boolean insertToShoppingCart(ShoppingCart shoppingCart, User user) {
+    public static boolean insertToShoppingCart(ShoppingCart shoppingCart, User user, int productId) {
         String sqlSelectUserId = "SELECT id FROM users WHERE email = ?";
-        String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, seller_id, name, information, price) "
-                + "VALUES (?, ?, ?, ?, ?)";
+        String sqlInsertAddress = "INSERT INTO shoppingCart(user_id, seller_id, name, information, price, product_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement selectStmt = conn.prepareStatement(sqlSelectUserId)) {
+                PreparedStatement selectStmt = conn.prepareStatement(sqlSelectUserId)) {
 
             selectStmt.setString(1, user.getEmail());
 
@@ -54,6 +55,7 @@ public class ShoppingCartDAO {
                         insertStmt.setString(3, shoppingCart.getName());
                         insertStmt.setString(4, shoppingCart.getInformation());
                         insertStmt.setDouble(5, shoppingCart.getPrice());
+                        insertStmt.setInt(6, productId);
 
                         insertStmt.executeUpdate();
                         System.out.println("Product inserted successfully.");
@@ -76,7 +78,7 @@ public class ShoppingCartDAO {
         String query = "DELETE FROM shoppingCart WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, productId);
             int affectedRows = stmt.executeUpdate();
 
@@ -98,8 +100,8 @@ public class ShoppingCartDAO {
         double sum = 0;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt1 = conn.prepareStatement(query1);
-             PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+                PreparedStatement stmt1 = conn.prepareStatement(query1);
+                PreparedStatement stmt2 = conn.prepareStatement(query2)) {
 
             // Get user ID from email
             stmt1.setString(1, user.getEmail());
@@ -142,8 +144,8 @@ public class ShoppingCartDAO {
         String sql2 = "DELETE FROM shoppingCart WHERE user_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps1 = conn.prepareStatement(sql1);
-             PreparedStatement ps2 = conn.prepareStatement(sql2)) {
+                PreparedStatement ps1 = conn.prepareStatement(sql1);
+                PreparedStatement ps2 = conn.prepareStatement(sql2)) {
 
             ps1.setString(1, user.getEmail());
 
@@ -169,7 +171,7 @@ public class ShoppingCartDAO {
         String query = "SELECT name, price, information FROM shoppingCart WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setInt(1, cartId);
 

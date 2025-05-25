@@ -1,5 +1,11 @@
 package ir.ac.kntu.helper.controllers;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.BookDAO;
@@ -133,4 +139,91 @@ public class SearchProductController {
         }
     }
 
+    public static void reduceInventory(User user) {
+        Connection conn = null;
+        PreparedStatement getUserIdStmt = null;
+        PreparedStatement getCartStmt = null;
+        PreparedStatement getInvStmt = null;
+        PreparedStatement updateStmt = null;
+    
+        ResultSet userRs = null;
+        ResultSet cartRs = null;
+        ResultSet invRs = null;
+    
+        try {
+            conn = DriverManager.getConnection("jdbc:sqlite:your_database_file.db");
+            conn.setAutoCommit(false); // Start transaction
+    
+            // Get user ID from email
+            String getUserIdQuery = "SELECT id FROM users WHERE email = ?";
+            getUserIdStmt = conn.prepareStatement(getUserIdQuery);
+            getUserIdStmt.setString(1, user.getEmail());
+            userRs = getUserIdStmt.executeQuery();
+    
+            if (!userRs.next()) {
+                System.out.println("User not found.");
+                return;
+            }
+    
+            int userId = userRs.getInt("id");
+    
+            // Get products from shopping cart
+            String getCartQuery = "SELECT product_id, name FROM shoppingCart WHERE user_id = ?";
+            getCartStmt = conn.prepareStatement(getCartQuery);
+            getCartStmt.setInt(1, userId);
+            cartRs = getCartStmt.executeQuery();
+    
+            while (cartRs.next()) {
+                int productId = cartRs.getInt("product_id");
+                String tableName = cartRs.getString("name");
+    
+               
+    
+                String getInventoryQuery = "SELECT inventory FROM " + tableName + " WHERE product_id = ?";
+                getInvStmt = conn.prepareStatement(getInventoryQuery);
+                getInvStmt.setInt(1, productId);
+                invRs = getInvStmt.executeQuery();
+    
+                if (invRs.next()) {
+                    int inventory = invRs.getInt("inventory");
+    
+                    if (inventory > 0) {
+                        // Reduce inventory by 1
+                        String updateInventoryQuery = "UPDATE " + tableName + " SET inventory = ? WHERE product_id = ?";
+                        updateStmt = conn.prepareStatement(updateInventoryQuery);
+                        updateStmt.setInt(1, inventory - 1);
+                        updateStmt.setInt(2, productId);
+                        updateStmt.executeUpdate();
+                    } else {
+                        System.out.println("Product ID " + productId + " is out of stock.");
+                    }
+                }
+    
+                if (invRs != null) invRs.close();
+                if (getInvStmt != null) getInvStmt.close();
+                if (updateStmt != null) updateStmt.close();
+            }
+    
+            conn.commit(); // Finish transaction
+    
+        } catch (SQLException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            try {
+                if (conn != null) conn.rollback(); // Undo changes
+            } catch (SQLException rollbackEx) {
+                System.out.println("Rollback failed: " + rollbackEx.getMessage());
+            }
+        } finally {
+            try {
+                if (userRs != null) userRs.close();
+                if (cartRs != null) cartRs.close();
+                if (getUserIdStmt != null) getUserIdStmt.close();
+                if (getCartStmt != null) getCartStmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.out.println("Cleanup error: " + e.getMessage());
+            }
+        }
+    }
 }
+  

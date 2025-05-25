@@ -60,9 +60,9 @@ public class ShoppingCartController {
             ShoppingCartDAO.printInfoById(productId);
             System.out.print("Are you sure you want to delete this product? Y/N: ");
             String delete = ScannerWrapper.getInstance().nextLine();
-            if (delete.equalsIgnoreCase("Y")) {
+            if ("y".equalsIgnoreCase(delete)) {
                 ShoppingCartDAO.deleteProductFromCart(productId);
-            } else if (delete.equalsIgnoreCase("N")) {
+            } else if ("n".equalsIgnoreCase(delete)) {
                 return;
             } else {
                 System.out.println("Invalid choise :( please try again...");
@@ -85,7 +85,7 @@ public class ShoppingCartController {
                         continue;
                     }
                     System.out.println("Total cost including shipping cost:  " + totalCost);
-                    handleBuyingAfterChoosingAddress(user, totalCost, address);
+                    handlePaying(user, totalCost, address);
 
 
                 }
@@ -96,7 +96,7 @@ public class ShoppingCartController {
                     String state = address.getState();
                     double totalCost = countTotalCost(user, state);
                     System.out.println("Total cost including shipping cost:  " + totalCost);
-                    handleBuyingAfterChoosingAddress(user, totalCost, address);
+                    handlePaying(user, totalCost, address);
                     return;
                 }
                 case BACK -> {
@@ -111,21 +111,22 @@ public class ShoppingCartController {
         }
     }
 
-    private static void handleBuyingAfterChoosingAddress(User user, double balance, Address address) {
+    private static void handlePaying(User user, double balance, Address address) {
         while (true) {
             Menu.payMenu();
             Vendilo.PayMenu choise = Menu.getPayOption();
             switch (choise) {
                 case PAY -> {
                     boolean bought = user.getWallet().purchase(balance);
-                    SellerDAO.chargeWallet(user, address.getState());
                     if (bought) {
                         System.out.println("Thanks for buying <3");
                         String date = ir.ac.kntu.helper.Calendar.now().toString();
                         Transaction transaction = new Transaction(balance, date, "withdraw");
                         TransactionDAO.insertTransaction(user.getEmail(), transaction);
                         PurchasesDAO.insertToPurchases(user, date, address.toString());
+                        SearchProductController.reduceInventory(user);
                         ShoppingCartDAO.clearShoppingCart(user);
+                        SellerDAO.chargeWallet(user, address.getState());
                         return;
                     } else {
                         System.out.println("There is not enough money in your wallet :(");
@@ -146,7 +147,7 @@ public class ShoppingCartController {
     public static boolean addProductToShoppingCart(int productId, int sellerId, String productType, User user) {
 
         ShoppingCart shoppingCart = ProductDAO.makeShoppingCartObject(productId, sellerId, productType);
-        boolean inserted = ShoppingCartDAO.insertToShoppingCart(shoppingCart, user);
+        boolean inserted = ShoppingCartDAO.insertToShoppingCart(shoppingCart, user, productId);
         return inserted;
     }
 
