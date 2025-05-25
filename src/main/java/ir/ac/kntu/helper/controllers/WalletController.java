@@ -19,7 +19,7 @@ public class WalletController {
             switch (option) {
                 case CURRETN_BALANCE -> {
                     double balance = user.getWallet().getBalance();
-                    System.out.println("Your current balance: " + balance);
+                    System.out.println("Your current balance: " + ConsoleColors.GREEN  + balance  + ConsoleColors.RESET);
                 }
                 case CHARGE -> {
                     handelChargeWallet(user);
@@ -31,7 +31,7 @@ public class WalletController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -56,7 +56,7 @@ public class WalletController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -93,7 +93,7 @@ public class WalletController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }

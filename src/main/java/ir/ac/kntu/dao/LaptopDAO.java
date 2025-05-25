@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.Laptop;
 
 public class LaptopDAO {
@@ -68,13 +69,13 @@ public class LaptopDAO {
                         insertStmt.setBoolean(11, laptop.hasWebcam());
     
                         insertStmt.executeUpdate();
-                        System.out.println("Laptop inserted successfully.");
+                        System.out.println(ConsoleColors.GREEN +"Laptop inserted successfully." + ConsoleColors.RESET);
                         return true;
                     }
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage() + ConsoleColors.RESET);
         }
     
         return false;

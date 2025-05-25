@@ -3,8 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package ir.ac.kntu.dao;
+package ir.ac.kntu.helper.controllers;
 
-class conn {
+class ConsoleColors {
 
 }

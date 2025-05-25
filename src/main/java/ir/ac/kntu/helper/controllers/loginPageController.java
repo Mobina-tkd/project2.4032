@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 
 public class loginPageController {
@@ -64,7 +65,7 @@ public class loginPageController {
     public static String userLoginPage() {
         String url = "jdbc:sqlite:data.db";
         while (true) {
-            System.out.println("--------Login Page-------");
+            System.out.println(ConsoleColors.RED +"---------"+ ConsoleColors.RESET+"Login Page"+ConsoleColors.RED +"--------"+ ConsoleColors.RESET);
             System.out.print("Do you want to login? Y/N: ");
             String login = ScannerWrapper.getInstance().nextLine();
             if ("n".equalsIgnoreCase(login)) {
@@ -88,19 +89,19 @@ public class loginPageController {
                 if (resultSet.next()) {
                     String storedPassword = resultSet.getString("password");
                     if (storedPassword.equals(password)) {
-                        System.out.println("Login successful! Welcome.");
+                        System.out.println(ConsoleColors.GREEN +"Login successful! Welcome."+ ConsoleColors.RESET);
                         return username;
                     } else {
-                        System.out.println("Incorrect password.");
+                        System.out.println(ConsoleColors.RED +"Incorrect password." + ConsoleColors.RESET);
                         return null;
                     }
                 } else {
-                    System.out.println("No account found with that email or phone number.");
+                    System.out.println(ConsoleColors.RED +"No account found with that email or phone number." + ConsoleColors.RESET);
                     return null;
                 }
 
             } catch (SQLException e) {
-                System.out.println("Database error: " + e.getMessage());
+                System.out.println(ConsoleColors.RED + "Database error: " + e.getMessage() + ConsoleColors.RESET);
             }
 
         }

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.User;
 
 public class UserDAO {
@@ -44,10 +45,10 @@ public class UserDAO {
             pstmt.setString(5, user.getPassword());
 
             pstmt.executeUpdate();
-            System.out.println("User inserted successfully.");
+            System.out.println(ConsoleColors.GREEN +"User inserted successfully." + ConsoleColors.RESET);
             return true;
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
     }
@@ -71,13 +72,13 @@ public class UserDAO {
 
                     return new User(firstName, lastName, email, phone, password);
                 } else {
-                    System.out.println("No user found with email or phone: " + username);
+                    System.out.println(ConsoleColors.RED +"No user found with email or phone: " + ConsoleColors.RESET + username);
                     return null;
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("Error finding user: " + e.getMessage());
+            System.err.println(ConsoleColors.RED +"Error finding user: " + e.getMessage() + ConsoleColors.RESET);
             return null;
         }
     }
@@ -95,9 +96,9 @@ public class UserDAO {
             int rowsUpdated = stmt.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("User data updated successfully.");
+                System.out.println(ConsoleColors.GREEN +"User data updated successfully." + ConsoleColors.RESET);
             } else {
-                System.out.println("No update was made.");
+                System.out.println(ConsoleColors.RED +"No update was made." + ConsoleColors.RESET);
             }
 
         } catch (SQLException e) {

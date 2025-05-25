@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.User;
 
 public class PurchasesDAO {
@@ -103,7 +104,7 @@ public class PurchasesDAO {
                     if (resultSet.next()) {
                         userId = resultSet.getInt("id");
                     } else {
-                        System.out.println("User not found.");
+                        System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                         return;
                     }
                 }
@@ -198,7 +199,7 @@ public class PurchasesDAO {
                         sellerId = resultSet.getInt("id");
                         storeName = resultSet.getString("store_name");
                     } else {
-                        System.out.println("Seller not found.");
+                        System.out.println(ConsoleColors.RED +"Seller not found." + ConsoleColors.RESET);
                         return;
                     }
                 }
@@ -275,7 +276,7 @@ public class PurchasesDAO {
                             "Name: %s, Price: %.2f, Date: %s, User email: %s, Store name: %s, More information: %s\n",
                             name, price, date, email, storeName, info);
                 } else {
-                    System.out.println("Purchase not found.");
+                    System.out.println(ConsoleColors.RED +"Purchase not found." + ConsoleColors.RESET);
                 }
             }
         } catch (SQLException e) {

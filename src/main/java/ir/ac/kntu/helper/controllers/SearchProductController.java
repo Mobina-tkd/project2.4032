@@ -10,10 +10,12 @@ import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.ProductDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.User;
 
 public class SearchProductController {
+    private static final String DB_URL = "jdbc:sqlite:data.db";
 
     public static void HandleSearchProduct(User user) {
         while (true) {
@@ -36,7 +38,7 @@ public class SearchProductController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
 
                 }
                 default -> throw new AssertionError();
@@ -75,7 +77,7 @@ public class SearchProductController {
                 }
 
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
@@ -104,7 +106,7 @@ public class SearchProductController {
                 return;
             }
             case UNDEFINED -> {
-                System.out.println("Undefined Choice; Try again...\n");
+                System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 break;
             }
             default -> throw new AssertionError();
@@ -132,7 +134,7 @@ public class SearchProductController {
                 return;
             }
             case UNDEFINED -> {
-                System.out.println("Undefined Choice; Try again...\n");
+                System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 break;
             }
             default -> throw new AssertionError();
@@ -151,7 +153,7 @@ public class SearchProductController {
         ResultSet invRs = null;
     
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:your_database_file.db");
+            conn = DriverManager.getConnection(DB_URL);
             conn.setAutoCommit(false); // Start transaction
     
             // Get user ID from email
@@ -161,7 +163,7 @@ public class SearchProductController {
             userRs = getUserIdStmt.executeQuery();
     
             if (!userRs.next()) {
-                System.out.println("User not found.");
+                System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                 return;
             }
     

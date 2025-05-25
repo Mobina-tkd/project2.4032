@@ -3,6 +3,7 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.PurchasesDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.User;
 
@@ -24,7 +25,7 @@ public class PurchaseController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -47,7 +48,7 @@ public class PurchaseController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -70,7 +71,7 @@ public class PurchaseController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }

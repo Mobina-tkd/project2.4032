@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.Transaction;
 
 public class TransactionDAO {
@@ -20,7 +21,7 @@ public class TransactionDAO {
                 + "user_id INTEGER NOT NULL,"
                 + "type TEXT NOT NULL,"
                 + "date TEXT NOT NULL,"
-                + "amount REAL NOT NULL"
+                + "amount REAL NOT NULL,"
                 + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
                 + ");";
 
@@ -56,13 +57,13 @@ public class TransactionDAO {
                         insertStmt.setDouble(4, transaction.getAmount());
                         
                         insertStmt.executeUpdate();
-                        System.out.println("transaction inserted successfully.");
+                        System.out.println(ConsoleColors.GREEN +"transaction inserted successfully." + ConsoleColors.RESET);
                         return true;
                     }
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage() + ConsoleColors.RESET);
         }
     
         return false;
@@ -92,7 +93,7 @@ public class TransactionDAO {
                         }
                     }
                 } else {
-                    System.out.println("Transaction not found.");
+                    System.out.println(ConsoleColors.RED +"Transaction not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -131,18 +132,18 @@ public class TransactionDAO {
                             }
                         }
                         if (!found) {
-                            System.out.println("No transactions found in the given date range.");
+                            System.out.println(ConsoleColors.RED +"No transactions found in the given date range." + ConsoleColors.RESET);
                         }
                     }
                 } else {
-                    System.out.println("User not found.");
+                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            System.err.println(ConsoleColors.RED +"Database error: " + e.getMessage()+ ConsoleColors.RESET);
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            System.err.println(ConsoleColors.RED +"Error: " + e.getMessage()+ ConsoleColors.RESET);
         }
     }
 }

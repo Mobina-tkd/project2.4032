@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.Mobile;
 
 public class MobileDAO {
@@ -39,7 +40,7 @@ public class MobileDAO {
 
     public static boolean insertMobile(Mobile mobile, String agencyCode) {
         if (mobile == null || agencyCode == null || agencyCode.isBlank()) {
-            System.out.println("Invalid input: mobile or agencyCode is null.");
+            System.out.println(ConsoleColors.RED +"Invalid input: mobile or agencyCode is null." + ConsoleColors.RESET);
             return false;
         }
 
@@ -54,7 +55,7 @@ public class MobileDAO {
             int sellerId;
             try (ResultSet resultSet = pstmt.executeQuery()) {
                 if (!resultSet.next()) {
-                    System.out.println("No seller found for agency code: " + agencyCode);
+                    System.out.println(ConsoleColors.RED + "No seller found for agency code: " + ConsoleColors.RESET + agencyCode);
                     resultSet.close();
                     return false;
                 }  
@@ -74,12 +75,12 @@ public class MobileDAO {
                 insertStmt.setString(10, mobile.getNetType());
 
                 insertStmt.executeUpdate();
-                System.out.println("Mobile inserted successfully.");
+                System.out.println(ConsoleColors.GREEN +"Mobile inserted successfully." + ConsoleColors.RESET);
                 return true;
             }
 
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage()+ ConsoleColors.RESET);
             e.getMessage();
             return false;
         }

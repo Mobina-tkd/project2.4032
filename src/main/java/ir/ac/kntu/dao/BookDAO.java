@@ -8,6 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.Book;
 
 public class BookDAO {
@@ -67,13 +68,13 @@ public class BookDAO {
                         insertStmt.setString(10, book.getIsbn());
     
                         insertStmt.executeUpdate();
-                        System.out.println("Book inserted successfully.");
+                        System.out.println(ConsoleColors.GREEN +"Book inserted successfully." + ConsoleColors.RESET);
                         return true;
                     }
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage() + ConsoleColors.RESET);
         }
     
         return false;
@@ -100,7 +101,7 @@ public class BookDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 }

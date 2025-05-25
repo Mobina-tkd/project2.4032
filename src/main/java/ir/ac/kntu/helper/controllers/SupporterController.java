@@ -3,7 +3,10 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.SellerDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
+import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
+import main.java.ir.ac.kntu.helper.controllers.RequestController;
 
 public class SupporterController {
 
@@ -25,7 +28,7 @@ public class SupporterController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
@@ -62,7 +65,7 @@ public class SupporterController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
@@ -72,7 +75,7 @@ public class SupporterController {
 
     private static void handleConfirm(String agencyCode) {
         SellerDAO.setIdentityVerified(1, agencyCode);
-        System.out.println("The seller confirmed");
+        System.out.println(ConsoleColors.GREEN +"The seller confirmed" + ConsoleColors.RESET);
     }
 
     private static void handleDeny(String agencyCode) {

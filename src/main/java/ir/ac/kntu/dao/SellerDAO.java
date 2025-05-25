@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.Seller;
 import ir.ac.kntu.model.User;
 
@@ -103,9 +104,9 @@ public class SellerDAO {
             int rowsUpdated = stmt.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("Seller data updated successfully.");
+                System.out.println(ConsoleColors.GREEN +"Seller data updated successfully." + ConsoleColors.RESET);
             } else {
-                System.out.println("No update was made.");
+                System.out.println(ConsoleColors.RED +"No update was made."+ ConsoleColors.RESET);
             }
 
         } catch (SQLException e) {
@@ -132,12 +133,12 @@ public class SellerDAO {
             }
 
             if (!found) {
-                System.out.println("No sellers found with identity_verified = 0");
+                System.out.println(ConsoleColors.RED +"No sellers found with identity_verified = 0" + ConsoleColors.RESET);
                 return false;
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED + "Error: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
         return true;
@@ -165,13 +166,13 @@ public class SellerDAO {
                 }
 
                 if (!found) {
-                    System.out.println("No sellers found with agency_code " + agencyCode);
+                    System.out.println(ConsoleColors.RED +"No sellers found with agency_code "+ ConsoleColors.RESET + agencyCode);
                     return false;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED + "Error: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
         return true;
@@ -193,7 +194,7 @@ public class SellerDAO {
                     if (resultSet.next()) {
                         userId = resultSet.getInt("id");
                     } else {
-                        System.out.println("User not found.");
+                        System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                         return;
                     }
                 }
@@ -222,7 +223,7 @@ public class SellerDAO {
                         if (resultSet.next()) {
                             sellerState = resultSet.getString("state");
                         } else {
-                            System.out.println("Seller not found: ID " + sellerId);
+                            System.out.println(ConsoleColors.RED +"Seller not found: ID " + ConsoleColors.RESET + sellerId);
                             continue;
                         }
                     }
@@ -238,7 +239,7 @@ public class SellerDAO {
                 }
             }
 
-            System.out.println("Wallets updated successfully.");
+            System.out.println(ConsoleColors.GREEN +"Wallets updated successfully." + ConsoleColors.RESET);
 
         } catch (SQLException e) {
             e.getMessage();

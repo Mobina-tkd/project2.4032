@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.Address;
 import ir.ac.kntu.model.User;
@@ -50,7 +51,7 @@ public class AddressDAO {
             }
 
             if (userId == -1) {
-                System.out.println("User not found with email: " + user.getEmail());
+                System.out.println(ConsoleColors.RED + "User not found with email: " + ConsoleColors.RESET + user.getEmail());
                 return false;
             }
 
@@ -62,12 +63,12 @@ public class AddressDAO {
                 insertStmt.setString(5, address.getHouseNumber());
 
                 insertStmt.executeUpdate();
-                System.out.println("Address inserted successfully.");
+                System.out.println(ConsoleColors.GREEN + "Address inserted successfully." + ConsoleColors.RESET);
                 return true;
             }
 
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
     }
@@ -87,13 +88,13 @@ public class AddressDAO {
                     String houseNumber = resultSet.getString("houseNumber");
                     return new Address(location, state, street, houseNumber);
                 } else {
-                    System.out.println("Address not found with id: " + addressId);
+                    System.out.println(ConsoleColors.RED +"Address not found with id: "+ ConsoleColors.RESET + addressId );
                     return null;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Find failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Find failed: " + e.getMessage() + ConsoleColors.RESET);
             return null;
         }
     }
@@ -115,7 +116,7 @@ public class AddressDAO {
             }
 
             if (userId == -1) {
-                System.out.println("No user found with email: " + email);
+                System.out.println(ConsoleColors.RED +"No user found with email: " + ConsoleColors.RESET + email);
                 return;
             }
 
@@ -137,7 +138,7 @@ public class AddressDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error retrieving addresses: " + e.getMessage());
+            System.err.println(ConsoleColors.RED + "Error retrieving addresses: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
@@ -158,7 +159,7 @@ public class AddressDAO {
             }
 
             if (userId == -1) {
-                System.out.println("No user found with email: " + email);
+                System.out.println(ConsoleColors.RED +"No user found with email: " + ConsoleColors.RESET + email);
                 return;
             }
 
@@ -168,14 +169,14 @@ public class AddressDAO {
 
                 int affectedRows = deleteStmt.executeUpdate();
                 if (affectedRows > 0) {
-                    System.out.println("Address with location '" + location + "' deleted successfully.");
+                    System.out.println(ConsoleColors.GREEN +"Address with location '" + ConsoleColors.RESET+ location + ConsoleColors.GREEN + "' deleted successfully."+ ConsoleColors.RESET );
                 } else {
                     System.out.println("No address found for location: " + location);
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("Error deleting address: " + e.getMessage());
+            System.err.println(ConsoleColors.RED + "Error deleting address: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
@@ -205,7 +206,7 @@ public class AddressDAO {
             }
 
             if (userId == -1) {
-                System.out.println("No user found with email: " + email);
+                System.out.println(ConsoleColors.RED +"No user found with email: "+ ConsoleColors.RESET + email);
                 return;
             }
 
@@ -218,14 +219,14 @@ public class AddressDAO {
 
                 int rowsUpdated = updateStmt.executeUpdate();
                 if (rowsUpdated > 0) {
-                    System.out.println("Address updated successfully.");
+                    System.out.println(ConsoleColors.GREEN +"Address updated successfully."+ ConsoleColors.RESET);
                 } else {
-                    System.out.println("No address found for the given location.");
+                    System.out.println(ConsoleColors.RED +"No address found for the given location."+ ConsoleColors.RESET);
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("Error updating address: " + e.getMessage());
+            System.err.println(ConsoleColors.RED +"Error updating address: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 }

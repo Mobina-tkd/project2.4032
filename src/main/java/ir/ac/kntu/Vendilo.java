@@ -7,7 +7,9 @@ import ir.ac.kntu.dao.MobileDAO;
 import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
+import ir.ac.kntu.dao.TransactionDAO;
 import ir.ac.kntu.dao.UserDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.controllers.SellerController;
 import ir.ac.kntu.helper.controllers.SupporterController;
 import ir.ac.kntu.helper.controllers.UserController;
@@ -116,7 +118,7 @@ public class Vendilo {
         BookDAO.createTable();
         ShoppingCartDAO.createTable();
         PurchasesDAO.createTable();
-
+        TransactionDAO.createTable();
 
         while (true) {
             Menu.choosingRoleMenu();
@@ -142,7 +144,7 @@ public class Vendilo {
                 }
 
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
 
                 }
                 default -> throw new AssertionError();

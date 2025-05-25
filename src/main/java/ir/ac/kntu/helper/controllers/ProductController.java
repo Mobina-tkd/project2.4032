@@ -6,6 +6,7 @@ import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.LaptopDAO;
 import ir.ac.kntu.dao.MobileDAO;
 import ir.ac.kntu.dao.ProductDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.readData.ProductFactory;
 import ir.ac.kntu.model.Book;
@@ -30,7 +31,7 @@ public class ProductController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
 
                 }
                 default -> throw new AssertionError();
@@ -59,7 +60,7 @@ public class ProductController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
 
                 }
                 default -> throw new AssertionError();
@@ -88,7 +89,7 @@ public class ProductController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -102,7 +103,7 @@ public class ProductController {
             if (added) {
                 break;
             } else {
-                System.out.println("The product didnt add to you shopping cart :( please try again...");
+                System.out.println(ConsoleColors.RED +"The product didnt add to you shopping cart :( please try again..." + ConsoleColors.RESET);
 
             }
 

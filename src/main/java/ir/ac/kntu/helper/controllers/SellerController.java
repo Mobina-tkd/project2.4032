@@ -3,9 +3,11 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.SellerDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.DealerCodeGenerator;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.Seller;
+import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
 
 public class SellerController {
 
@@ -44,7 +46,7 @@ public class SellerController {
             seller.setAgencyCode(agencyCode);
             Boolean inserted = SellerDAO.insertSeller(seller);
             if (inserted) {
-                System.out.println("Here is your agency code : " + agencyCode);
+                System.out.println("Here is your agency code : " +ConsoleColors.GREEN  + agencyCode + ConsoleColors.RESET);
                 break;
             }
         }
@@ -87,7 +89,7 @@ public class SellerController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();

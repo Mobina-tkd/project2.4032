@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.ShoppingCart;
 import ir.ac.kntu.model.User;
 
@@ -58,18 +59,18 @@ public class ShoppingCartDAO {
                         insertStmt.setInt(6, productId);
 
                         insertStmt.executeUpdate();
-                        System.out.println("Product inserted successfully.");
+                        System.out.println(ConsoleColors.GREEN +"Product inserted successfully." + ConsoleColors.RESET);
                         return true;
                     }
 
                 } else {
-                    System.out.println("User not found with email: " + user.getEmail());
+                    System.out.println(ConsoleColors.RED +"User not found with email: " + ConsoleColors.RESET + user.getEmail());
                     return false;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
     }
@@ -83,14 +84,14 @@ public class ShoppingCartDAO {
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows > 0) {
-                System.out.println("Product with ID " + productId + " was deleted from the cart.");
+                System.out.println(ConsoleColors.GREEN +"Product with ID " + productId + " was deleted from the cart." + ConsoleColors.RESET);
             } else {
-                System.out.println("No product found in the cart with ID " + productId + ".");
+                System.out.println(ConsoleColors.RED +"No product found in the cart with ID "+ ConsoleColors.RESET + productId );
             }
 
         } catch (SQLException e) {
             e.getMessage();
-            System.out.println("Database error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Database error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
@@ -114,8 +115,9 @@ public class ShoppingCartDAO {
                     stmt2.setInt(1, userId);
 
                     try (ResultSet resultSet2 = stmt2.executeQuery()) {
+                        System.out.println(ConsoleColors.RED +"--------------------------------------------------" + ConsoleColors.RESET);
                         System.out.println("Items in shopping cart for user: " + user.getEmail());
-                        System.out.println("--------------------------------------------------");
+                        System.out.println(ConsoleColors.RED +"--------------------------------------------------" + ConsoleColors.RESET);
 
                         while (resultSet2.next()) {
                             String name = resultSet2.getString("name");
@@ -126,11 +128,11 @@ public class ShoppingCartDAO {
                             sum += price;
                         }
 
-                        System.out.println("--------------------------------------------------");
+                        System.out.println(ConsoleColors.RED +"--------------------------------------------------" + ConsoleColors.RESET);
                         System.out.printf("Total Price: $%.2f%n", sum);
                     }
                 } else {
-                    System.out.println("User not found.");
+                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -156,9 +158,9 @@ public class ShoppingCartDAO {
                     ps2.setInt(1, userId);
                     ps2.executeUpdate();
 
-                    System.out.println("Shopping cart cleared for user.");
+                    System.out.println(ConsoleColors.GREEN +"Shopping cart cleared for user." + ConsoleColors.RESET);
                 } else {
-                    System.out.println("User not found.");
+                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -187,7 +189,7 @@ public class ShoppingCartDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println(ConsoleColors.RED +e.getMessage() + ConsoleColors.RESET);
         }
     }
 }

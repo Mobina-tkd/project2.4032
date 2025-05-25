@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
+
 public class RequestDAO {
 
     private static final String DB_URL = "jdbc:sqlite:data.db";
@@ -56,12 +58,12 @@ public class RequestDAO {
                 insertStmt.setString(4, "Following up");
 
                 insertStmt.executeUpdate();
-                System.out.println("Your request registered successfully.");
+                System.out.println(ConsoleColors.GREEN +"Your request registered successfully." + ConsoleColors.RESET);
                 return true;
             }
 
         } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage()+ ConsoleColors.RESET);
             return false;
         }
     }
@@ -121,7 +123,7 @@ public class RequestDAO {
                         }
                     }
                 } else {
-                    System.out.println("Request not found.");
+                    System.out.println(ConsoleColors.RED +"Request not found."+ ConsoleColors.RESET);
                 }
             }
 
@@ -141,9 +143,9 @@ public class RequestDAO {
             int updated = pstmt.executeUpdate();
 
             if (updated > 0) {
-                System.out.println("Request updated successfully.");
+                System.out.println(ConsoleColors.GREEN +"Request updated successfully." + ConsoleColors.RESET);
             } else {
-                System.out.println("Request not found.");
+                System.out.println(ConsoleColors.RED +"Request not found." + ConsoleColors.RESET);
             }
 
         } catch (SQLException e) {
@@ -175,7 +177,7 @@ public class RequestDAO {
                         }
                     }
                 } else {
-                    System.out.println("User not found.");
+                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -198,7 +200,7 @@ public class RequestDAO {
                     System.out.println("Request context: " + context + ",\nSupporter respond: " + respond);
                 } else {
 
-                    System.out.println("Request not found.");
+                    System.out.println(ConsoleColors.RED +"Request not found." + ConsoleColors.RESET);
                 }
             }
 

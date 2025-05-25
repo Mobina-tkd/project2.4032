@@ -3,6 +3,7 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.RequestDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 
 public class RequestController {
@@ -32,7 +33,7 @@ public class RequestController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -67,7 +68,7 @@ public class RequestController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -96,7 +97,7 @@ public class RequestController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println("Undefined Choice; Try again...\\n");
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }

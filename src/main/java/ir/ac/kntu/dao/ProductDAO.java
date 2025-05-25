@@ -8,6 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.ShoppingCart;
 
 public class ProductDAO {
@@ -31,7 +32,7 @@ public class ProductDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
@@ -57,12 +58,12 @@ public class ProductDAO {
                 }
 
                 if (!found) {
-                    System.out.println("No products found in that range.");
+                    System.out.println(ConsoleColors.RED +"No products found in that range."+ ConsoleColors.RESET);
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
@@ -96,7 +97,7 @@ public class ProductDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage() + ConsoleColors.RESET);
             return null;
         }
 
@@ -117,7 +118,7 @@ public class ProductDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage() + ConsoleColors.RESET);
         }
 
         return -1;
@@ -137,7 +138,7 @@ public class ProductDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(ConsoleColors.RED + "Error: " + e.getMessage()+ ConsoleColors.RESET);
         }
 
         return -1;
