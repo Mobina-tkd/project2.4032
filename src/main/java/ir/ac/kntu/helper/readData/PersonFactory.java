@@ -30,14 +30,13 @@ public class PersonFactory {
         System.out.print("Enter last name: ");
         String lastName = ScannerWrapper.getInstance().nextLine();
 
-        System.out.print("Enter stor name: ");
+        System.out.print("Enter store name: ");
         String storName = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter state: ");
         String state = ScannerWrapper.getInstance().nextLine();
 
-        System.out.print("Enter ID number: ");
-        String idNumber = ScannerWrapper.getInstance().nextLine();
+        String idNumber = readIdNumber();
 
         String phoneNumber = readPhoneNUmber();
         String password = readPassword();
@@ -46,7 +45,7 @@ public class PersonFactory {
         return seller;
     }
 
-    public static String readPassword() {
+    private static String readPassword() {
         while (true) {
             System.out.print("Enter password: ");
             String password = ScannerWrapper.getInstance().nextLine();
@@ -60,7 +59,7 @@ public class PersonFactory {
         }
     }
 
-    public static String readEmail() {
+    private static String readEmail() {
         while (true) {
             System.out.print("Enter email: ");
             String email = ScannerWrapper.getInstance().nextLine();
@@ -73,7 +72,7 @@ public class PersonFactory {
 
     }
 
-    public static String readPhoneNUmber() {
+    private static String readPhoneNUmber() {
         while (true) {
             System.out.print("Enter phone number: ");
             String phoneNumber = ScannerWrapper.getInstance().nextLine();
@@ -84,5 +83,20 @@ public class PersonFactory {
             return phoneNumber;
         }
     }
+
+    private static String readIdNumber() {
+        while(true) {
+            System.err.println("Enter your id number: "); 
+            String idNumber = ScannerWrapper.getInstance().nextLine();
+            if (!ValidationUtil.matchIdNumber(idNumber)) {
+                System.out.println("Invalid phone id number");
+                continue;
+            }
+        }
+
+
+    }
+
+    
 
 }

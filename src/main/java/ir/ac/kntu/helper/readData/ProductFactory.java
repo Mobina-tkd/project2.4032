@@ -1,6 +1,7 @@
 package ir.ac.kntu.helper.readData;
 
 import ir.ac.kntu.helper.ScannerWrapper;
+import ir.ac.kntu.helper.ValidationUtil;
 import ir.ac.kntu.model.Book;
 import ir.ac.kntu.model.Laptop;
 import ir.ac.kntu.model.Mobile;
@@ -31,8 +32,7 @@ public class ProductFactory {
 
         System.out.print("Enter age group (ADULT, TEENAGER, CHILDREN): ");
         String ageGroup = ScannerWrapper.getInstance().nextLine();
-        System.out.print("Enter ISBN: ");
-        String ISBN = ScannerWrapper.getInstance().nextLine();
+        String ISBN = readIsbn();
 
         return new Book(name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN);
     }
@@ -103,6 +103,17 @@ public class ProductFactory {
         boolean hasWebcam = ScannerWrapper.getInstance().nextBoolean();
 
         return new Laptop(name, price, inventory, brand, memory, ram, model, gpu, hasBluetooth, hasWebcam);
+    }
+
+    private static String readIsbn() {
+        while(true) {
+            System.err.println("Enter ISBN: "); 
+            String isbn = ScannerWrapper.getInstance().nextLine();
+            if (!ValidationUtil.matchIsbn(isbn)) {
+                System.out.println("Invalid ISBN");
+                continue;
+            }
+        }        
     }
 
 }

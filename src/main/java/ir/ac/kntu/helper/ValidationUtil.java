@@ -26,4 +26,18 @@ public class ValidationUtil {
 
     }
 
+    public static boolean matchIdNumber(String idNumber) {
+        Pattern pattern = Pattern.compile("^\\d{10}$");
+        Matcher matcher = pattern.matcher(idNumber);
+        return matcher.find();
+    }
+
+    public static boolean matchIsbn(String isbn) {
+        Pattern pattern = Pattern.compile("^\\d{13}$");
+        Matcher matcher = pattern.matcher(isbn);
+        return matcher.find();
+    }
+
+
+
 }
