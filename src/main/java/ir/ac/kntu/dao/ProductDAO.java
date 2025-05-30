@@ -26,7 +26,7 @@ public class ProductDAO {
                 String name = resultSet.getString("name");
                 double price = resultSet.getDouble("price");
                 int inventory = resultSet.getInt("inventory");
-
+                System.out.println("");
                 System.out.printf("Product name: %s, ID: %d, Price: %.2f, Inventory: %d%n",
                         name, productId, price, inventory);
             }
@@ -52,7 +52,7 @@ public class ProductDAO {
                     String name = resultSet.getString("name");
                     double price = resultSet.getDouble("price");
                     int inventory = resultSet.getInt("inventory");
-
+                    System.out.println("");
                     System.out.printf("Product name: %s, ID: %d, Price: %.2f, Inventory: %d%n",
                             name, productId, price, inventory);
                 }
@@ -84,7 +84,7 @@ public class ProductDAO {
 
                     ResultSetMetaData meta = resultSet.getMetaData();
                     int columnCount = meta.getColumnCount();
-
+                    information.append("\n");
                     for (int i = 1; i <= columnCount; i++) {
                         information.append(meta.getColumnName(i))
                                 .append(": ")

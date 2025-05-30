@@ -3,10 +3,10 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.UserDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.User;
-import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
-import main.java.ir.ac.kntu.helper.controllers.RequestController;
+
 
 public class UserController {
 
@@ -32,6 +32,7 @@ public class UserController {
                     AddressController.handleAddress(user);
                 }
                 case WALLET -> {
+                    WalletController.handleWallet(user);
                     break;
                 }
                 case CUSTOMER_SUPPORT -> {
@@ -99,6 +100,9 @@ public class UserController {
         }
         while (true) {
             String username = loginPageController.userLoginPage();
+            if(username.equals("Back")) {
+                return null;
+            }
             if (username == null) {
                 continue;
             }
@@ -115,6 +119,9 @@ public class UserController {
             switch (statement) {
                 case NEW_USER -> {
                     user = handleNewUser();
+                    if(user == null) {
+                        continue;
+                    }
                     UserController.chooseUserOption(user);
                 }
 

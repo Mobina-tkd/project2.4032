@@ -5,6 +5,7 @@ import java.time.Instant;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.TransactionDAO;
+import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.Transaction;
 import ir.ac.kntu.model.User;
@@ -12,14 +13,14 @@ import ir.ac.kntu.model.User;
 public class WalletController {
 
     public static void handleWallet(User user) {
-        while (true) { 
+        while (true) {
             Menu.walletMenu();
             Vendilo.WalletOption option = Menu.getUserWalletOption();
 
             switch (option) {
                 case CURRETN_BALANCE -> {
                     double balance = user.getWallet().getBalance();
-                    System.out.println("Your current balance: " + ConsoleColors.GREEN  + balance  + ConsoleColors.RESET);
+                    System.out.println("Your current balance: " + ConsoleColors.GREEN + balance + ConsoleColors.RESET);
                 }
                 case CHARGE -> {
                     handelChargeWallet(user);
@@ -31,17 +32,15 @@ public class WalletController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
         }
     }
 
-
-
     public static void handleRecentTransaction(User user) {
-        while (true) { 
+        while (true) {
             Menu.transactionsMenu();
             Vendilo.ShowTransaction option = Menu.getTransactionOption();
 
@@ -56,24 +55,22 @@ public class WalletController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
-        } 
+        }
     }
-
 
     public static void handleFilterByTime(String email) {
         System.out.print("Enter first date: ");
-        Instant start = ir.ac.kntu.helper.Calendar.now();
+        String firstDate = ScannerWrapper.getInstance().nextLine();
+        Instant start = Instant.parse(firstDate.trim());
         System.out.print("Enter second date: ");
-        Instant end = ir.ac.kntu.helper.Calendar.now();
+        String secondDate = ScannerWrapper.getInstance().nextLine();
+        Instant end = Instant.parse(secondDate.trim());
         TransactionDAO.printByDate(start, end, email);
     }
-
-
-
 
     public static void handelChargeWallet(User user) {
         while (true) {
@@ -93,7 +90,7 @@ public class WalletController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }

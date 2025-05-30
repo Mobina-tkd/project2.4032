@@ -71,7 +71,7 @@ public class TransactionDAO {
 
     public static void showAllTransactions(String email) {
         String queryUserId = "SELECT id FROM users WHERE email = ?";
-        String queryRequests = "SELECT * FROM requests WHERE user_id = ?";
+        String queryRequests = "SELECT * FROM transactions WHERE user_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmtUserId = conn.prepareStatement(queryUserId);

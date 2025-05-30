@@ -7,7 +7,6 @@ import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.DealerCodeGenerator;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.Seller;
-import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
 
 public class SellerController {
 

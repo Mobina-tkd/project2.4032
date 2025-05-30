@@ -5,14 +5,14 @@ import ir.ac.kntu.helper.ScannerWrapper;
 public class Menu {
 
     public static void choosingRoleMenu() {
-        System.out.println("1) User");
+        System.out.println("\n1) User");
         System.out.println("2) Seller");
         System.out.println("3) Supporter");
         System.out.print("Please choose Your Role: ");
     }
 
     public static void addressMenu() {
-        System.out.println("1) Insert new address");
+        System.out.println("\n1) Insert new address");
         System.out.println("2) View my addresses");
         System.out.println("3) Edit address");
         System.out.println("4) Delete address");
@@ -20,7 +20,7 @@ public class Menu {
     }
 
     public static void userMenu() {
-        System.out.println("1) Search For Products");
+        System.out.println("\n1) Search For Products");
         System.out.println("2) Shopping Cart");
         System.out.println("3) Setting");
         System.out.println("4) Recent Purchases");
@@ -32,7 +32,7 @@ public class Menu {
     }
 
     public static void sellerMenu() {
-        System.out.println("1) Products");
+        System.out.println("\n1) Products");
         System.out.println("2) Wallet");
         System.out.println("3) Recent Purchases");
         System.out.println("4) Back");
@@ -40,7 +40,7 @@ public class Menu {
     }
 
     public static void supporterMenu() {
-        System.out.println("1) Follow-Up Request");
+        System.out.println("\n1) Follow-Up Request");
         System.out.println("2) Identity Verification");
         System.out.println("3) Recent Purchases");
         System.out.println("4) Back");
@@ -48,21 +48,21 @@ public class Menu {
     }
 
     public static void chooseStatementMenu() {
-        System.out.println("1) New User");
+        System.out.println("\n1) New User");
         System.out.println("2) I Already Have An Account");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void productMenu() {
-        System.out.println("1) Insert product");
+        System.out.println("\n1) Insert product");
         System.out.println("2) Set inventory");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void productCategoryMenu() {
-        System.out.println("1) Mobile");
+        System.out.println("\n1) Mobile");
         System.out.println("2) Laptop");
         System.out.println("3) Book");
         System.out.println("4) Back");
@@ -70,14 +70,14 @@ public class Menu {
     }
 
     public static void searchMenu() {
-        System.out.println("1) Show all");
+        System.out.println("\n1) Show all");
         System.out.println("2) Search by price");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void searchBookMenu() {
-        System.out.println("1) Show all");
+        System.out.println("\n1) Show all");
         System.out.println("2) Search by price");
         System.out.println("3) Search by title");
         System.out.println("4) Back");
@@ -85,7 +85,7 @@ public class Menu {
     }
 
     public static void settingMenu() {
-        System.out.println("1) Email");
+        System.out.println("\n1) Email");
         System.out.println("2) Phone number");
         System.out.println("3) First name");
         System.out.println("4) Last name");
@@ -95,52 +95,52 @@ public class Menu {
     }
 
     public static void verificationMenu() {
-        System.out.println("1) Confirm");
+        System.out.println("\n1) Confirm");
         System.out.println("2) Deny");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void addToListMenu() {
-        System.out.println("1) Add product to shopping cart");
+        System.out.println("\n1) Add product to shopping cart");
         System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void buyOrdeleteFromCartMenu() {
-        System.out.println("1) Delete product from shopping cart");
+        System.out.println("\n1) Delete product from shopping cart");
         System.out.println("2) Buy all");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void chooseAddressMenu() {
-        System.out.println("1) Choose one address");
+        System.out.println("\n1) Choose one address");
         System.out.println("2) Add new address");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void payMenu() {
-        System.out.println("1) Pay");
+        System.out.println("\n1) Pay");
         System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void chargeWallet() {
-        System.out.println("1) Charge");
+        System.out.println("\n1) Charge");
         System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void purchaseMenu() {
-        System.out.println("1) See more information of a product");
+        System.out.println("\n1) See more information of a product");
         System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void printSupportOptions() {
-        System.out.println("1) Report");
+        System.out.println("\n1) Report");
         System.out.println("2) Wrong product sent");
         System.out.println("3) Setting");
         System.out.println("4) Order not received");
@@ -149,19 +149,19 @@ public class Menu {
     }
 
     public static void setMessageMenu() {
-        System.out.println("1) Set message");
-        System.out.println("3) Back");
+        System.out.println("\n1) Set message");
+        System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void WatchRespondMenu() {
-        System.out.println("1) Show supporter resopnd");
+        System.out.println("\n1) Show supporter resopnd");
         System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void walletMenu() {
-        System.out.println("1) See your current balance");
+        System.out.println("\n1) See your current balance");
         System.out.println("2) Charge wallet");
         System.out.println("3) Recent transactions");
         System.out.println("4) Back");
@@ -169,7 +169,7 @@ public class Menu {
     }
 
     public static void transactionsMenu() {
-        System.out.println("1) Show all");
+        System.out.println("\n1) Show all");
         System.out.println("2) Filter by time");
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");

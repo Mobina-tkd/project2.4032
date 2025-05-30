@@ -6,7 +6,7 @@ import ir.ac.kntu.model.Address;
 public class ReadAddress {
 
     public static Address readAddress() {
-        System.out.print("Enter the location: ");
+        System.out.print("\nEnter the location: ");
         String location = ScannerWrapper.getInstance().nextLine();
         System.out.print("Enter the state: ");
         String state = ScannerWrapper.getInstance().nextLine();

@@ -8,7 +8,7 @@ import ir.ac.kntu.model.User;
 public class PersonFactory {
     public static User readUserData() {
 
-        System.out.print("Enter first name: ");
+        System.out.print("\nEnter first name: ");
         String firstName = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter last name: ");
@@ -24,7 +24,7 @@ public class PersonFactory {
 
     public static Seller readSellerData() {
 
-        System.out.print("Enter first name: ");
+        System.out.print("\nEnter first name: ");
         String firstName = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter last name: ");

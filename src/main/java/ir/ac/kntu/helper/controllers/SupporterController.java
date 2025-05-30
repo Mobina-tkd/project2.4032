@@ -5,8 +5,6 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
-import main.java.ir.ac.kntu.helper.controllers.PurchaseController;
-import main.java.ir.ac.kntu.helper.controllers.RequestController;
 
 public class SupporterController {
 

@@ -1,7 +1,6 @@
 package ir.ac.kntu.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,7 +66,16 @@ public class PurchasesDAO {
                     try (PreparedStatement pstmt3 = conn.prepareStatement(sql3)) {
                         while (resultSet2.next()) {
                             hasItems = true;
-                            setValues(resultSet2, pstmt3, userId, date, address);
+
+                            // Set parameters for insert statement here:
+                            pstmt3.setInt(1, userId);
+                            pstmt3.setInt(2, resultSet2.getInt("seller_id"));
+                            pstmt3.setString(3, resultSet2.getString("name"));
+                            pstmt3.setString(4, resultSet2.getString("information"));
+                            pstmt3.setDouble(5, resultSet2.getDouble("price"));
+                            pstmt3.setString(6, date);
+                            pstmt3.setString(7, address);
+                            pstmt3.addBatch();
                         }
 
                         if (!hasItems) {
@@ -84,8 +92,7 @@ public class PurchasesDAO {
             return true;
 
         } catch (SQLException e) {
-            e.getMessage();
-            // rollback handled by try-with-resources closing connection if exception
+            e.printStackTrace();
             return false;
         }
     }
@@ -104,7 +111,7 @@ public class PurchasesDAO {
                     if (resultSet.next()) {
                         userId = resultSet.getInt("id");
                     } else {
-                        System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
+                        System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
                         return;
                     }
                 }
@@ -113,28 +120,42 @@ public class PurchasesDAO {
             try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
                 stmt.setInt(1, userId);
                 try (ResultSet resultSet = stmt.executeQuery()) {
+
                     while (resultSet.next()) {
+
                         int purchaseId = resultSet.getInt("id");
                         String name = resultSet.getString("name");
                         int sellerId = resultSet.getInt("seller_id");
-                        Date date = resultSet.getDate("date");
+                        String date = resultSet.getString("date");
                         double price = resultSet.getDouble("price");
                         String storeName = "Unknown";
                         try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
+
                             storeStmt.setInt(1, sellerId);
                             try (ResultSet storeRs = storeStmt.executeQuery()) {
+
                                 if (storeRs.next()) {
                                     storeName = storeRs.getString("store_name");
                                 }
                             }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        System.out.printf("ID: %d | Purchase: %s | Store: %s | Date: %s | Price: %.2f%n",
-                                purchaseId, name, storeName, date.toString(), price);
+                        System.out.println("ID: " + purchaseId +
+                                " | Purchase: " + name +
+                                " | Store: " + storeName +
+                                " | Date: " + date +
+                                " | Price: " + String.format("%.2f", price));
+
                     }
                 }
             }
+
         } catch (SQLException e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 
@@ -152,7 +173,7 @@ public class PurchasesDAO {
                 String name = resultSet.getString("name");
                 int sellerId = resultSet.getInt("seller_id");
                 int userId = resultSet.getInt("user_id");
-                Date date = resultSet.getDate("date");
+                String date = resultSet.getString("date");
                 double price = resultSet.getDouble("price");
 
                 String storeName = "Unknown";
@@ -176,7 +197,7 @@ public class PurchasesDAO {
                 }
 
                 System.out.printf("Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
-                        purchaseId, name, storeName, date.toString(), price, email);
+                        purchaseId, name, storeName, date, price, email);
             }
 
         } catch (SQLException e) {
@@ -199,7 +220,7 @@ public class PurchasesDAO {
                         sellerId = resultSet.getInt("id");
                         storeName = resultSet.getString("store_name");
                     } else {
-                        System.out.println(ConsoleColors.RED +"Seller not found." + ConsoleColors.RESET);
+                        System.out.println(ConsoleColors.RED + "Seller not found." + ConsoleColors.RESET);
                         return;
                     }
                 }
@@ -212,7 +233,7 @@ public class PurchasesDAO {
                         int purchaseId = resultSet.getInt("id");
                         String name = resultSet.getString("name");
                         int userId = resultSet.getInt("user_id");
-                        Date date = resultSet.getDate("date");
+                        String date = resultSet.getString("date");
                         double price = resultSet.getDouble("price");
                         String email = "Unknown";
                         try (PreparedStatement userStmt = conn.prepareStatement(queryUserEmail)) {
@@ -225,7 +246,7 @@ public class PurchasesDAO {
                         }
                         System.out.printf(
                                 "Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
-                                purchaseId, name, storeName, date.toString(), price, email);
+                                purchaseId, name, storeName, date, price, email);
                     }
                 }
             }
@@ -276,7 +297,7 @@ public class PurchasesDAO {
                             "Name: %s, Price: %.2f, Date: %s, User email: %s, Store name: %s, More information: %s\n",
                             name, price, date, email, storeName, info);
                 } else {
-                    System.out.println(ConsoleColors.RED +"Purchase not found." + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Purchase not found." + ConsoleColors.RESET);
                 }
             }
         } catch (SQLException e) {
@@ -284,7 +305,8 @@ public class PurchasesDAO {
         }
     }
 
-    private static void setValues(ResultSet resultSet2, PreparedStatement pstmt3, int userId, String date, String address) throws SQLException {
+    private static void setValues(ResultSet resultSet2, PreparedStatement pstmt3, int userId, String date,
+            String address) throws SQLException {
         int sellerId = resultSet2.getInt("seller_id");
         String name = resultSet2.getString("name");
         String info = resultSet2.getString("information");

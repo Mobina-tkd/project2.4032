@@ -5,6 +5,7 @@ import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.LaptopDAO;
 import ir.ac.kntu.dao.MobileDAO;
 import ir.ac.kntu.dao.PurchasesDAO;
+import ir.ac.kntu.dao.RequestDAO;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.dao.TransactionDAO;
@@ -119,6 +120,7 @@ public class Vendilo {
         ShoppingCartDAO.createTable();
         PurchasesDAO.createTable();
         TransactionDAO.createTable();
+        RequestDAO.createTable();
 
         while (true) {
             Menu.choosingRoleMenu();

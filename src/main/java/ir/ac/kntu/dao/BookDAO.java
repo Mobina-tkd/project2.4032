@@ -15,7 +15,7 @@ public class BookDAO {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
     public static void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS Books ("
+        String sql = "CREATE TABLE IF NOT EXISTS Book ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "seller_id INTEGER NOT NULL,"
                 + "name TEXT NOT NULL,"
@@ -43,7 +43,7 @@ public class BookDAO {
 
     public static boolean insertBook(Book book, String agencyCode) {
         String query = "SELECT id FROM sellers WHERE agency_code = ?";
-        String sql = "INSERT INTO Books(seller_id, name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN) "
+        String sql = "INSERT INTO Book(seller_id, name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         try (

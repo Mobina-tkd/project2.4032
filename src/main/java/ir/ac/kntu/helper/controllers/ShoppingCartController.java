@@ -23,7 +23,6 @@ import ir.ac.kntu.model.Address;
 import ir.ac.kntu.model.ShoppingCart;
 import ir.ac.kntu.model.Transaction;
 import ir.ac.kntu.model.User;
-import main.java.ir.ac.kntu.helper.controllers.WalletController;
 
 public class ShoppingCartController {
     private static final String DB_URL = "jdbc:sqlite:data.db";
@@ -46,7 +45,7 @@ public class ShoppingCartController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -68,13 +67,13 @@ public class ShoppingCartController {
             } else if ("n".equalsIgnoreCase(delete)) {
                 return;
             } else {
-                System.out.println(ConsoleColors.RED +"Invalid Choice; Try again...\n" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "Invalid Choice; Try again...\n" + ConsoleColors.RESET);
             }
         }
     }
 
     private static void handleBuying(User user) {
-        while (true) { 
+        while (true) {
             AddressDAO.printAllAddresses(user);
             Menu.chooseAddressMenu();
             Vendilo.ChooseAddress option = Menu.getChooseOrAddAddress();
@@ -87,9 +86,9 @@ public class ShoppingCartController {
                     if (address == null) {
                         continue;
                     }
-                    System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN  + totalCost + ConsoleColors.RESET);
+                    System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN + totalCost
+                            + ConsoleColors.RESET);
                     handlePaying(user, totalCost, address);
-
 
                 }
 
@@ -98,7 +97,8 @@ public class ShoppingCartController {
                     AddressDAO.insertAddress(address, user);
                     String state = address.getState();
                     double totalCost = countTotalCost(user, state);
-                    System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN  + totalCost + ConsoleColors.RESET);
+                    System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN + totalCost
+                            + ConsoleColors.RESET);
                     handlePaying(user, totalCost, address);
                     return;
                 }
@@ -106,7 +106,7 @@ public class ShoppingCartController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
@@ -122,6 +122,7 @@ public class ShoppingCartController {
                 case PAY -> {
                     boolean bought = user.getWallet().purchase(balance);
                     if (bought) {
+                        System.out.println("");
                         System.out.println("Thanks for buying " + ConsoleColors.RED + "<3" + ConsoleColors.RESET);
                         String date = ir.ac.kntu.helper.Calendar.now().toString();
                         Transaction transaction = new Transaction(balance, date, "withdraw");
@@ -132,7 +133,8 @@ public class ShoppingCartController {
                         SellerDAO.chargeWallet(user, address.getState());
                         return;
                     } else {
-                        System.out.println(ConsoleColors.RED +"There is not enough money in your wallet " + ConsoleColors.RESET+ ":(");
+                        System.out.println(ConsoleColors.RED + "There is not enough money in your wallet "
+                                + ConsoleColors.RESET + ":(");
                         WalletController.handelChargeWallet(user);
                     }
                 }
@@ -140,7 +142,7 @@ public class ShoppingCartController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -172,7 +174,7 @@ public class ShoppingCartController {
             ResultSet rs1 = ps1.executeQuery();
 
             if (!rs1.next()) {
-                return 0; 
+                return 0;
             }
             int userId = rs1.getInt("id");
 

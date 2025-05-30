@@ -10,7 +10,7 @@ public class ProductFactory {
     public static Book readBookData() {
         String name = "Book";
 
-        System.out.print("Enter title: ");
+        System.out.print("\nEnter title: ");
         String title = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter price: ");
@@ -41,7 +41,7 @@ public class ProductFactory {
 
         String name = "Mobile";
 
-        System.out.print("Enter price: ");
+        System.out.print("\nEnter price: ");
         double price = ScannerWrapper.getInstance().nextDouble();
 
         System.out.print("Enter inventory: ");
@@ -73,7 +73,7 @@ public class ProductFactory {
 
     public static Laptop readLaptopData() {
         String name = "Laptop";
-        System.out.print("Enter price: ");
+        System.out.print("\nEnter price: ");
         double price = ScannerWrapper.getInstance().nextDouble();
 
         System.out.print("Enter inventory: ");

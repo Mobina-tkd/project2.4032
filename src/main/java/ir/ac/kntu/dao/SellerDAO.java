@@ -160,6 +160,7 @@ public class SellerDAO {
                 boolean found = false;
                 while (resultSet.next()) {
                     found = true;
+                    System.out.println("");
                     for (int i = 2; i <= columnCount; i++) {
                         System.out.print(meta.getColumnName(i) + ": " + resultSet.getString(i) + "\n");
                     }

@@ -14,13 +14,13 @@ public class loginPageController {
 
     public static String sellerLoginPage() {
         while (true) {
-            System.out.println("--------Login Page-------");
+            System.out.println(ConsoleColors.RED +"---------"+ ConsoleColors.RESET+"Login Page"+ConsoleColors.RED +"--------"+ ConsoleColors.RESET);
             System.out.print("Do you want to login? Y/N: ");
             String login = ScannerWrapper.getInstance().nextLine();
             if ("n".equalsIgnoreCase(login)) {
                 return "Back";
             }
-            System.out.print("Enter your agency code : ");
+            System.out.print("\nEnter your agency code : ");
             String username = ScannerWrapper.getInstance().nextLine();
             System.out.print("Enter your password : ");
             String userPassword = ScannerWrapper.getInstance().nextLine();
@@ -41,17 +41,17 @@ public class loginPageController {
                         return username;
                     } else if (identityVarified == 2) {
                         System.out.println(message);
-                        return username;
+                        return null;
 
                     } else if (identityVarified == 0) {
-                        System.out.println("your identity is not varified yet");
+                        System.out.println(ConsoleColors.RED +"your identity is not varified yet"+ ConsoleColors.RESET);
                         return null;
 
                     } else {
-                        System.out.println("Incorrect password. Try again.");
+                        System.out.println(ConsoleColors.RED +"Incorrect password." + ConsoleColors.RESET);
                     }
                 } else {
-                    System.out.println("We could not find this agency code.");
+                    System.out.println(ConsoleColors.RED +"We could not find this agency code."+ ConsoleColors.RESET);
                     return null;
                 }
 
@@ -71,7 +71,7 @@ public class loginPageController {
             if ("n".equalsIgnoreCase(login)) {
                 return "Back";
             }
-            System.out.print("Enter your username(Phone Number or Email Address) :  ");
+            System.out.print("\nEnter your username(Phone Number or Email Address) :  ");
             String username = ScannerWrapper.getInstance().nextLine();
             System.out.print("Enter you password : ");
             String password = ScannerWrapper.getInstance().nextLine();
@@ -108,16 +108,16 @@ public class loginPageController {
     }
 
     public static boolean supporterLoginPage() {
-        System.out.print("Enter your username: ");
+        System.out.print("\nEnter your username: ");
         String username = ScannerWrapper.getInstance().nextLine();
         System.out.print("Enter your password: ");
         String password = ScannerWrapper.getInstance().nextLine();
 
         if ("Sara_H82".equals(username) && "S1382ara_".equals(password)) {
-            System.out.println("Welcome dear sara");
+            System.out.println("\nWelcome dear sara");
             return true;
         } else if ("mmd_L80".equals(username) && "M1380md_".equals(password)) {
-            System.out.println("Welcome dear mohammad");
+            System.out.println("\nWelcome dear mohammad");
             return true;
         } else {
             System.out.println("Wrong username or password :( please try again...");
