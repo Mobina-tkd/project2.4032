@@ -20,7 +20,8 @@ public class UserDAO {
                 + "last_name TEXT,"
                 + "email TEXT UNIQUE NOT NULL,"
                 + "phone_number TEXT UNIQUE,"
-                + "password TEXT NOT NULL"
+                + "password TEXT NOT NULL,"
+                + "balance REAL"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -33,7 +34,7 @@ public class UserDAO {
     }
 
     public static Boolean insertUser(User user) {
-        String sql = "INSERT INTO users(first_name, last_name, email, phone_number, password) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users(first_name, last_name, email, phone_number, password, balance) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -43,6 +44,7 @@ public class UserDAO {
             pstmt.setString(3, user.getEmail());
             pstmt.setString(4, user.getPhoneNumber());
             pstmt.setString(5, user.getPassword());
+            pstmt.setDouble(6, 0);
 
             pstmt.executeUpdate();
             System.out.println(ConsoleColors.GREEN +"User inserted successfully." + ConsoleColors.RESET);
@@ -114,4 +116,53 @@ public class UserDAO {
             default -> throw new AssertionError("Unknown field: " + field);
         }
     }
+
+    public static double getBalance(User user) {
+        String query = "SELECT balance FROM users WHERE email = ?";
+        String email = user.getEmail();
+    
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("balance");
+                } else {
+                    System.out.println("User not found.");
+                }
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return 0.0; // Default balance if user not found or error occurs
+    }
+
+    public static void updateBalance(double balance, User user, String operation) {
+        String sqlUpdateWallet = "UPDATE users SET balance = balance " + operation+ " ? WHERE email = ?";
+        String email = user.getEmail();
+    
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sqlUpdateWallet)) {
+    
+            stmt.setDouble(1, balance);
+            stmt.setString(2, email);
+    
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("No user found with that email.");
+            } else {
+                System.out.println("Balance updated successfully.");
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    
+    
+    
 }

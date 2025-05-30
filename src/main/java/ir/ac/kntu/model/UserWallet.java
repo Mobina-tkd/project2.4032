@@ -15,12 +15,6 @@ public class UserWallet {
         this.balance += balance;
     }
 
-    public boolean purchase(double balance) {
-        if (this.balance < balance) {
-            return false;
-        }
-        this.balance -= balance;
-        return true;
-    }
+    
 
 }

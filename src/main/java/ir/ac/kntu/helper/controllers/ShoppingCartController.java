@@ -16,6 +16,7 @@ import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.dao.TransactionDAO;
+import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.readData.ReadAddress;
@@ -120,12 +121,13 @@ public class ShoppingCartController {
             Vendilo.PayMenu choise = Menu.getPayOption();
             switch (choise) {
                 case PAY -> {
-                    boolean bought = user.getWallet().purchase(balance);
+                    boolean bought = UserDAO.getBalance(user) > balance;
                     if (bought) {
                         System.out.println("");
                         System.out.println("Thanks for buying " + ConsoleColors.RED + "<3" + ConsoleColors.RESET);
                         String date = ir.ac.kntu.helper.Calendar.now().toString();
                         Transaction transaction = new Transaction(balance, date, "withdraw");
+                        UserDAO.updateBalance(balance, user, "-");
                         TransactionDAO.insertTransaction(user.getEmail(), transaction);
                         PurchasesDAO.insertToPurchases(user, date, address.toString());
                         SearchProductController.reduceInventory(user);

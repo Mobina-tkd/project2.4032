@@ -5,6 +5,7 @@ import java.time.Instant;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.TransactionDAO;
+import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.Transaction;
@@ -81,6 +82,7 @@ public class WalletController {
                     System.out.println("Enter the amount: ");
                     double balance = ScannerWrapper.getInstance().nextDouble();
                     user.getWallet().charge(balance);
+                    UserDAO.updateBalance(balance, user, "+");
                     String date = ir.ac.kntu.helper.Calendar.now().toString();
                     Transaction transaction = new Transaction(balance, date, "Charge wallet");
                     TransactionDAO.insertTransaction(user.getEmail(), transaction);
