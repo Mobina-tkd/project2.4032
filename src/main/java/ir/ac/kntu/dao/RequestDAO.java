@@ -133,13 +133,15 @@ public class RequestDAO {
     }
 
     public static void setMessageAndUpdateStatus(String message, int requestId) {
-        String query = "UPDATE requests SET respond = ? WHERE id = ?";
+        String query = "UPDATE requests SET respond = ?, status = ? WHERE id = ?";
+        
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, message);
-            pstmt.setInt(2, requestId);
+            pstmt.setString(2, "Responded");
+            pstmt.setInt(3, requestId);
             int updated = pstmt.executeUpdate();
 
             if (updated > 0) {

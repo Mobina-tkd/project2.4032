@@ -126,7 +126,7 @@ public class TransactionDAO {
 
                             Instant dateInstant = Instant.parse(dateString.trim()); 
 
-                            if (dateInstant.isBefore(start) || dateInstant.isAfter(end)) {
+                            if (!dateInstant.isBefore(start) && !dateInstant.isAfter(end)) {
                                 found = true;
                                 System.out.println("Transaction: " + type + ", Date: " + dateString + ", Amount: " + amount);
                             }

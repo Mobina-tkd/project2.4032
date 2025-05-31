@@ -94,6 +94,7 @@ public class RequestController {
                     int requestId = ScannerWrapper.getInstance().nextInt();
                     System.out.println("");
                     RequestDAO.printRespondOfRequest(requestId);
+                    System.out.println("");
                     break;
                 }
                 case BACK -> {
