@@ -131,8 +131,8 @@ public class ShoppingCartController {
                         TransactionDAO.insertTransaction(user.getEmail(), transaction);
                         PurchasesDAO.insertToPurchases(user, date, address.toString());
                         SearchProductController.reduceInventory(user);
+                        SellerDAO.chargeWallet(user, balance);
                         ShoppingCartDAO.clearShoppingCart(user);
-                        SellerDAO.chargeWallet(user, address.getState());
                         return;
                     } else {
                         System.out.println(ConsoleColors.RED + "There is not enough money in your wallet "

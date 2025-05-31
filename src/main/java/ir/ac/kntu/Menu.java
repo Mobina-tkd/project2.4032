@@ -16,6 +16,7 @@ public class Menu {
         System.out.println("2) View my addresses");
         System.out.println("3) Edit address");
         System.out.println("4) Delete address");
+        System.out.println("5) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
@@ -140,6 +141,16 @@ public class Menu {
     }
 
     public static void printSupportOptions() {
+        System.out.println("\n1)Recent reuqests");
+        System.out.println("2) Report");
+        System.out.println("3) Wrong product sent");
+        System.out.println("4) Setting");
+        System.out.println("5) Order not received");
+        System.out.println("6) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void printSupportOptionsS() {
         System.out.println("\n1) Report");
         System.out.println("2) Wrong product sent");
         System.out.println("3) Setting");
@@ -167,6 +178,14 @@ public class Menu {
         System.out.println("4) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
+
+    public static void printSellerMenu() {
+        System.out.println("\n1) See your current balance");
+        System.out.println("2) whitdraw wallet");
+        System.out.println("3) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+    
 
     public static void transactionsMenu() {
         System.out.println("\n1) Show all");
@@ -258,8 +277,8 @@ public class Menu {
         return getEnumOption(Vendilo.PurchaseMenu.class, Vendilo.PurchaseMenu.UNDEFINED);
     }
 
-    public static Vendilo.UserSupporterOptions getUserSupportOption() {
-        return getEnumOption(Vendilo.UserSupporterOptions.class, Vendilo.UserSupporterOptions.UNDEFINED);
+    public static Vendilo.UserSupportOptions getUserSupportOption() {
+        return getEnumOption(Vendilo.UserSupportOptions.class, Vendilo.UserSupportOptions.UNDEFINED);
     }
 
     public static Vendilo.SetMessage getSetMessageOption() {
@@ -276,5 +295,13 @@ public class Menu {
 
     public static Vendilo.ShowTransaction getTransactionOption() {
         return getEnumOption(Vendilo.ShowTransaction.class, Vendilo.ShowTransaction.UNDEFINED);
+    }
+
+    public static Vendilo.SellerWalletOption getSellerWalletOption() {
+        return getEnumOption(Vendilo.SellerWalletOption.class, Vendilo.SellerWalletOption.UNDEFINED);
+    }
+
+    public static Vendilo.SupporterSupporterOptions getSupporterSupportOption() {
+        return getEnumOption(Vendilo.SupporterSupporterOptions.class, Vendilo.SupporterSupporterOptions.UNDEFINED);
     }
 }

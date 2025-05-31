@@ -45,7 +45,7 @@ public class PersonFactory {
         return seller;
     }
 
-    private static String readPassword() {
+    public static String readPassword() {
         while (true) {
             System.out.print("Enter password: ");
             String password = ScannerWrapper.getInstance().nextLine();
@@ -59,7 +59,7 @@ public class PersonFactory {
         }
     }
 
-    private static String readEmail() {
+    public static String readEmail() {
         while (true) {
             System.out.print("Enter email: ");
             String email = ScannerWrapper.getInstance().nextLine();
@@ -72,7 +72,7 @@ public class PersonFactory {
 
     }
 
-    private static String readPhoneNUmber() {
+    public static String readPhoneNUmber() {
         while (true) {
             System.out.print("Enter phone number: ");
             String phoneNumber = ScannerWrapper.getInstance().nextLine();

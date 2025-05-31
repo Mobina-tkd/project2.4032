@@ -90,8 +90,12 @@ public class Vendilo {
         INFO, BACK, UNDEFINED
     }
 
-    public enum UserSupporterOptions {
+    public enum UserSupportOptions {
         PRREVIOUS_REQUESTS, REPORT, WRONG_PRODUCT_SENT, SETTING, ORDER_NOT_RECEIVED, BACK, UNDEFINED
+    }
+
+    public enum SupporterSupporterOptions {
+        REPORT, WRONG_PRODUCT_SENT, SETTING, ORDER_NOT_RECEIVED, BACK, UNDEFINED
     }
 
     public enum SetMessage {
@@ -108,6 +112,10 @@ public class Vendilo {
 
     public enum ShowTransaction {
          SHOW_ALL, FILTER_BY_TIME, BACK, UNDEFINED
+    }
+
+    public enum SellerWalletOption {
+        CURRETN_BALANCE, WITHDRAW, BACK, UNDEFINED
     }
     
     public static void main(String[] args) {

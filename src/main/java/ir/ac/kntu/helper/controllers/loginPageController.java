@@ -120,7 +120,7 @@ public class loginPageController {
             System.out.println("\nWelcome dear mohammad");
             return true;
         } else {
-            System.out.println("Wrong username or password :( please try again...");
+            System.out.println(ConsoleColors.RED +"Wrong username or password :( please try again..." + ConsoleColors.RESET);
             return false;
         }
 

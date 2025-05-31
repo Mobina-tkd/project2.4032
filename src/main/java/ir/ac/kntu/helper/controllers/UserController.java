@@ -54,7 +54,7 @@ public class UserController {
     private static void handleCostumerSupport(User user) {
         while (true) {
             Menu.printSupportOptions();
-            Vendilo.UserSupporterOptions option = Menu.getUserSupportOption();
+            Vendilo.UserSupportOptions option = Menu.getUserSupportOption();
             switch (option) {
                 case PRREVIOUS_REQUESTS -> {
                     RequestController.handlePreviousRequests(user.getEmail());

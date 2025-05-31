@@ -10,8 +10,8 @@ public class RequestController {
 
     public static void handleRequest() {
         while (true) {
-            Menu.printSupportOptions();
-            Vendilo.UserSupporterOptions option = Menu.getUserSupportOption();
+            Menu.printSupportOptionsS();
+            Vendilo.SupporterSupporterOptions option = Menu.getSupporterSupportOption();
             switch (option) {
                 case REPORT -> {
                     disPlayRequest("Report");
@@ -48,11 +48,13 @@ public class RequestController {
 
     private static void disPlayRequest(String field) {
         RequestDAO.printRequestsByFieldName(field);
-        System.out.print("Enter the id of request: ");
+        System.out.print("Enter the id of request(press 0 to back): ");
         int requestId = ScannerWrapper.getInstance().nextInt();
+        if (requestId == 0) {
+            return ;
+        }
         RequestDAO.printAllRequestInfoById(requestId);
         handleSettingMessage(requestId);
-
     }
 
     private static void handleSettingMessage(int userId) {
@@ -76,7 +78,7 @@ public class RequestController {
     }
 
     private static void setMessage(int userId) {
-        System.out.println("Your message for user: ");
+        System.out.print("Your message for user: ");
         String message = ScannerWrapper.getInstance().nextLine();
         RequestDAO.setMessageAndUpdateStatus(message, userId);
     }
@@ -88,8 +90,9 @@ public class RequestController {
             Vendilo.WatchRespond option = Menu.getWatchRespondOPtion();
             switch (option) {
                 case SHOW_RESOPND -> {
-                    System.out.println("Enter the id of you request: ");
+                    System.out.print("Enter the id of you request: ");
                     int requestId = ScannerWrapper.getInstance().nextInt();
+                    System.out.println("");
                     RequestDAO.printRespondOfRequest(requestId);
                     break;
                 }

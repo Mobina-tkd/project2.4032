@@ -5,6 +5,7 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.DealerCodeGenerator;
+import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.Seller;
 
@@ -19,6 +20,7 @@ public class SellerController {
                     ProductController.handleProduct(agencyCode);
                 }
                 case WALLET -> {
+                    handleWallet(agencyCode);
                     break;
                 }
                 case RECENT_PURCHASES -> {
@@ -94,6 +96,34 @@ public class SellerController {
                 default -> throw new AssertionError();
             }
         }
+    }
+
+
+    private static void handleWallet(String agencyCode) {
+        while (true) { 
+            Menu.printSellerMenu();
+            Vendilo.SellerWalletOption option = Menu.getSellerWalletOption();
+            switch (option) {
+                case CURRETN_BALANCE-> {
+                    double currentBalance = SellerDAO.getBalance(agencyCode);
+                    System.out.println("You hava " +ConsoleColors.GREEN + currentBalance + ConsoleColors.RESET+ " dollars in your wallet");
+                }
+                case WITHDRAW-> {
+                    System.err.print("Enter the amount you want to withdraw: ");
+                    double amount = ScannerWrapper.getInstance().nextDouble();
+                    SellerDAO.withdrawMoney(amount, agencyCode);
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    break;
+                }
+                default -> throw new AssertionError();
+            }
+        }
+
     }
 
 }

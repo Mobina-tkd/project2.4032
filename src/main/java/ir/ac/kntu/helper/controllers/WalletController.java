@@ -20,7 +20,7 @@ public class WalletController {
 
             switch (option) {
                 case CURRETN_BALANCE -> {
-                    double balance = user.getWallet().getBalance();
+                    double balance = UserDAO.getBalance(user);
                     System.out.println("Your current balance: " + ConsoleColors.GREEN + balance + ConsoleColors.RESET);
                 }
                 case CHARGE -> {

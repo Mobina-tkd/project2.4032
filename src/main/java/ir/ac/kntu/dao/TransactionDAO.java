@@ -124,9 +124,9 @@ public class TransactionDAO {
                             String dateString = rsRequests.getString("date");
                             double amount = rsRequests.getDouble("amount");
 
-                            Instant dateInstant = Instant.parse(dateString); 
+                            Instant dateInstant = Instant.parse(dateString.trim()); 
 
-                            if (!dateInstant.isBefore(start) && !dateInstant.isAfter(end)) {
+                            if (dateInstant.isBefore(start) || dateInstant.isAfter(end)) {
                                 found = true;
                                 System.out.println("Transaction: " + type + ", Date: " + dateString + ", Amount: " + amount);
                             }

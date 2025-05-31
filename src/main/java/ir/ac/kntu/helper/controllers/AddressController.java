@@ -40,8 +40,11 @@ public class AddressController {
                     String location = ScannerWrapper.getInstance().nextLine();
                     AddressDAO.deleteAddress(user, location);
                 }
+                case BACK -> {
+                    return;
+                }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\\n" + ConsoleColors.RESET);
 
                 }
                 default -> throw new AssertionError();
