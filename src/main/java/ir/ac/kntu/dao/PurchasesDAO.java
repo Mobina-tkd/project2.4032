@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import ir.ac.kntu.helper.ConsoleColors;
+import ir.ac.kntu.helper.controllers.SearchProductController;
 import ir.ac.kntu.model.User;
 
 public class PurchasesDAO {
@@ -38,126 +39,104 @@ public class PurchasesDAO {
     }
 
     public static boolean insertToPurchases(User user, String date, String address) {
-        String sql1 = "SELECT id FROM users WHERE email = ?";
-        String sql2 = "SELECT * FROM shoppingCart WHERE user_id = ?";
-        String sql3 = "INSERT INTO purchases(user_id, seller_id, name, information, price, date, address) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+        String getCartSQL = "SELECT * FROM shoppingCart WHERE user_id = ?";
+        String insertPurchaseSQL = "INSERT INTO purchases(user_id, seller_id, name, information, price, date, address) "
+                                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
             conn.setAutoCommit(false);
-
-            int userId;
-            try (PreparedStatement pstmt1 = conn.prepareStatement(sql1)) {
-                pstmt1.setString(1, user.getEmail());
-                try (ResultSet resultSet1 = pstmt1.executeQuery()) {
-                    if (!resultSet1.next()) {
-                        return false;
-                    }
-                    userId = resultSet1.getInt("id");
-                }
-            }
-
-            try (PreparedStatement pstmt2 = conn.prepareStatement(sql2)) {
-                pstmt2.setInt(1, userId);
-                try (ResultSet resultSet2 = pstmt2.executeQuery()) {
-
+    
+            int userId = SearchProductController.getUserId(conn, user);
+    
+            // Retrieve shopping cart items
+            try (PreparedStatement cartStmt = conn.prepareStatement(getCartSQL)) {
+                cartStmt.setInt(1, userId);
+                try (ResultSet cartItems = cartStmt.executeQuery()) {
                     boolean hasItems = false;
-
-                    try (PreparedStatement pstmt3 = conn.prepareStatement(sql3)) {
-                        while (resultSet2.next()) {
+    
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insertPurchaseSQL)) {
+                        while (cartItems.next()) {
                             hasItems = true;
-
-                            // Set parameters for insert statement here:
-                            pstmt3.setInt(1, userId);
-                            pstmt3.setInt(2, resultSet2.getInt("seller_id"));
-                            pstmt3.setString(3, resultSet2.getString("name"));
-                            pstmt3.setString(4, resultSet2.getString("information"));
-                            pstmt3.setDouble(5, resultSet2.getDouble("price"));
-                            pstmt3.setString(6, date);
-                            pstmt3.setString(7, address);
-                            pstmt3.addBatch();
+    
+                            insertStmt.setInt(1, userId);
+                            insertStmt.setInt(2, cartItems.getInt("seller_id"));
+                            insertStmt.setString(3, cartItems.getString("name"));
+                            insertStmt.setString(4, cartItems.getString("information"));
+                            insertStmt.setDouble(5, cartItems.getDouble("price"));
+                            insertStmt.setString(6, date);
+                            insertStmt.setString(7, address);
+                            insertStmt.addBatch();
                         }
-
+    
                         if (!hasItems) {
                             conn.rollback();
                             return false;
                         }
-
-                        pstmt3.executeBatch();
+    
+                        insertStmt.executeBatch();
                     }
                 }
             }
-
+    
             conn.commit();
             return true;
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
+    
     public static void printUserPurchases(User user) {
-        String queryUserId = "SELECT id FROM users WHERE email = ?";
         String queryPurchases = "SELECT id, name, seller_id, date, price FROM purchases WHERE user_id = ?";
         String queryStoreName = "SELECT store_name FROM sellers WHERE id = ?";
-
+    
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
-
-            int userId = -1;
-            try (PreparedStatement stmt = conn.prepareStatement(queryUserId)) {
-                stmt.setString(1, user.getEmail());
-                try (ResultSet resultSet = stmt.executeQuery()) {
-                    if (resultSet.next()) {
-                        userId = resultSet.getInt("id");
-                    } else {
-                        System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
-                        return;
-                    }
-                }
+    
+            int userId = SearchProductController.getUserId(conn, user);
+            if (userId == -1) {
+                System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
+                return;
             }
-
+    
             try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
                 stmt.setInt(1, userId);
                 try (ResultSet resultSet = stmt.executeQuery()) {
-
+    
                     while (resultSet.next()) {
-
+    
                         int purchaseId = resultSet.getInt("id");
                         String name = resultSet.getString("name");
                         int sellerId = resultSet.getInt("seller_id");
                         String date = resultSet.getString("date");
                         double price = resultSet.getDouble("price");
                         String storeName = "Unknown";
+    
                         try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
-
                             storeStmt.setInt(1, sellerId);
                             try (ResultSet storeRs = storeStmt.executeQuery()) {
-
                                 if (storeRs.next()) {
                                     storeName = storeRs.getString("store_name");
                                 }
                             }
-                            catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
+    
                         System.out.println("ID: " + purchaseId +
                                 " | Purchase: " + name +
                                 " | Store: " + storeName +
                                 " | Date: " + date +
                                 " | Price: " + String.format("%.2f", price));
-
                     }
                 }
             }
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    
 
     public static void printAllPurchases() {
         String queryPurchases = "SELECT id, name, seller_id, user_id, date, price FROM purchases";
@@ -305,19 +284,4 @@ public class PurchasesDAO {
         }
     }
 
-    private static void setValues(ResultSet resultSet2, PreparedStatement pstmt3, int userId, String date,
-            String address) throws SQLException {
-        int sellerId = resultSet2.getInt("seller_id");
-        String name = resultSet2.getString("name");
-        String info = resultSet2.getString("information");
-        double price = resultSet2.getDouble("price");
-
-        pstmt3.setInt(1, userId);
-        pstmt3.setInt(2, sellerId);
-        pstmt3.setString(3, name);
-        pstmt3.setString(4, info);
-        pstmt3.setDouble(5, price);
-        pstmt3.setString(6, date);
-        pstmt3.setString(7, address);
-    }
 }

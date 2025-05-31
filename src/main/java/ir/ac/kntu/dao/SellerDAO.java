@@ -189,7 +189,6 @@ public class SellerDAO {
             PreparedStatement stmtGetCart = conn.prepareStatement(sqlGetCart);
             PreparedStatement stmtUpdateWallet = conn.prepareStatement(sqlUpdateWallet)
         ) {
-            // 1. Get user ID
             stmtGetUserId.setString(1, user.getEmail());
             ResultSet rsUser = stmtGetUserId.executeQuery();
     
@@ -200,7 +199,6 @@ public class SellerDAO {
     
             int userId = rsUser.getInt("id");
     
-            // 2. Get distinct sellers from cart
             stmtGetCart.setInt(1, userId);
             ResultSet rsCart = stmtGetCart.executeQuery();
     
@@ -208,7 +206,6 @@ public class SellerDAO {
             while (rsCart.next()) {
                 int sellerId = rsCart.getInt("seller_id");
     
-                // 3. Update seller wallet balance
                 stmtUpdateWallet.setDouble(1, balance);
                 stmtUpdateWallet.setInt(2, sellerId);
                 int rowsAffected = stmtUpdateWallet.executeUpdate();

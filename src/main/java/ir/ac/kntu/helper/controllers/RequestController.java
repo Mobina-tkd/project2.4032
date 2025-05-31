@@ -51,7 +51,7 @@ public class RequestController {
         System.out.print("Enter the id of request(press 0 to back): ");
         int requestId = ScannerWrapper.getInstance().nextInt();
         if (requestId == 0) {
-            return ;
+            return;
         }
         RequestDAO.printAllRequestInfoById(requestId);
         handleSettingMessage(requestId);
