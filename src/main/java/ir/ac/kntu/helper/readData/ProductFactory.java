@@ -32,9 +32,9 @@ public class ProductFactory {
 
         System.out.print("Enter age group (ADULT, TEENAGER, CHILDREN): ");
         String ageGroup = ScannerWrapper.getInstance().nextLine();
-        String ISBN = readIsbn();
+        String isbn = readIsbn();
 
-        return new Book(name, title, price, inventory, writerName, pageNumber, genre, ageGroup, ISBN);
+        return new Book(name, title, price, inventory, writerName, pageNumber, genre, ageGroup, isbn);
     }
 
     public static Mobile readMobileData() {
@@ -55,7 +55,7 @@ public class ProductFactory {
         int memory = ScannerWrapper.getInstance().nextInt();
 
         System.out.print("Enter RAM (GB): ");
-        int RAM = ScannerWrapper.getInstance().nextInt();
+        int ram = ScannerWrapper.getInstance().nextInt();
         ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter rare camera resolution: ");
@@ -67,7 +67,7 @@ public class ProductFactory {
         System.out.print("Enter network/internet (e.g., 5G, 4G): ");
         String networkInternet = ScannerWrapper.getInstance().nextLine();
 
-        return new Mobile(name, price, inventory, brand, memory, RAM,
+        return new Mobile(name, price, inventory, brand, memory, ram,
                 rareCameraResolution, frontCameraResolution, networkInternet);
     }
 

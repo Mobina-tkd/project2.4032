@@ -11,10 +11,10 @@ import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.dao.TransactionDAO;
 import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.ConsoleColors;
+import ir.ac.kntu.helper.controllers.LoginPageController;
 import ir.ac.kntu.helper.controllers.SellerController;
 import ir.ac.kntu.helper.controllers.SupporterController;
 import ir.ac.kntu.helper.controllers.UserController;
-import ir.ac.kntu.helper.controllers.loginPageController;
 
 public class Vendilo {
     public enum MenuOption {
@@ -87,7 +87,7 @@ public class Vendilo {
     }
 
     public enum PurchaseMenu {
-        INFO, BACK, UNDEFINED
+        INFO,CHART, BACK, UNDEFINED
     }
 
     public enum UserSupportOptions {
@@ -144,7 +144,7 @@ public class Vendilo {
 
                 case SUPPORTER -> {
                     while (true) {
-                        boolean canEnter = loginPageController.supporterLoginPage();
+                        boolean canEnter = LoginPageController.supporterLoginPage();
                         if (!canEnter) {
                             continue;
                         }

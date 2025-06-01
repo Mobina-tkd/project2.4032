@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import ir.ac.kntu.helper.ConsoleColors;
+import ir.ac.kntu.helper.controllers.SearchProductController;
 import ir.ac.kntu.model.Seller;
 import ir.ac.kntu.model.User;
 
@@ -26,13 +27,13 @@ public class SellerDAO {
                 + "state TEXT,"
                 + "phone_number TEXT UNIQUE,"
                 + "password TEXT NOT NULL,"
-                + "identity_verified INTEGER,"  // fixed typo here
+                + "identity_verified INTEGER," // fixed typo here
                 + "wallet_balance REAL DEFAULT 0,"
                 + "message TEXT"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Table created or already exists.");
         } catch (SQLException e) {
@@ -45,7 +46,7 @@ public class SellerDAO {
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, seller.getAgencyCode());
             pstmt.setString(2, seller.getFirstName());
@@ -72,7 +73,7 @@ public class SellerDAO {
         String sql = "UPDATE sellers SET message = ? WHERE agency_code = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, message);
             stmt.setString(2, agencyCode);
@@ -94,7 +95,7 @@ public class SellerDAO {
         String sql = "UPDATE sellers SET identity_verified = ? WHERE agency_code = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, value);
             stmt.setString(2, agencyCode);
@@ -102,9 +103,9 @@ public class SellerDAO {
             int rowsUpdated = stmt.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println(ConsoleColors.GREEN +"Seller data updated successfully." + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.GREEN + "Seller data updated successfully." + ConsoleColors.RESET);
             } else {
-                System.out.println(ConsoleColors.RED +"No update was made."+ ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "No update was made." + ConsoleColors.RESET);
             }
 
         } catch (SQLException e) {
@@ -116,8 +117,8 @@ public class SellerDAO {
         String query = "SELECT first_name, last_name, store_name, agency_code FROM sellers WHERE identity_verified = 0";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet resultSet = pstmt.executeQuery()) {
+                PreparedStatement pstmt = conn.prepareStatement(query);
+                ResultSet resultSet = pstmt.executeQuery()) {
 
             boolean found = false;
             while (resultSet.next()) {
@@ -127,11 +128,13 @@ public class SellerDAO {
                 String agencyCode = resultSet.getString("agency_code");
                 String storeName = resultSet.getString("store_name");
 
-                System.out.printf("name: %s %s, store name: %s, agency code: %s\n", firstName, lastName, storeName, agencyCode);
+                System.out.printf("name: %s %s, store name: %s, agency code: %s\n", firstName, lastName, storeName,
+                        agencyCode);
             }
 
             if (!found) {
-                System.out.println(ConsoleColors.RED +"No sellers found with identity_verified = 0" + ConsoleColors.RESET);
+                System.out.println(
+                        ConsoleColors.RED + "No sellers found with identity_verified = 0" + ConsoleColors.RESET);
                 return false;
             }
 
@@ -142,11 +145,11 @@ public class SellerDAO {
         return true;
     }
 
-    public static boolean printByAgencyCode(String agencyCode) { 
+    public static boolean printByAgencyCode(String agencyCode) {
         String query = "SELECT * FROM sellers WHERE agency_code = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, agencyCode);
 
@@ -165,7 +168,8 @@ public class SellerDAO {
                 }
 
                 if (!found) {
-                    System.out.println(ConsoleColors.RED +"No sellers found with agency_code "+ ConsoleColors.RESET + agencyCode);
+                    System.out.println(ConsoleColors.RED + "No sellers found with agency_code " + ConsoleColors.RESET
+                            + agencyCode);
                     return false;
                 }
             }
@@ -179,74 +183,63 @@ public class SellerDAO {
     }
 
     public static void chargeWallet(User user, double balance) {
-        String sqlGetUserId = "SELECT id FROM users WHERE email = ?";
         String sqlGetCart = "SELECT DISTINCT seller_id FROM shoppingCart WHERE user_id = ?";
         String sqlUpdateWallet = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
-    
+
         try (
-            Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement stmtGetUserId = conn.prepareStatement(sqlGetUserId);
-            PreparedStatement stmtGetCart = conn.prepareStatement(sqlGetCart);
-            PreparedStatement stmtUpdateWallet = conn.prepareStatement(sqlUpdateWallet)
-        ) {
-            stmtGetUserId.setString(1, user.getEmail());
-            ResultSet rsUser = stmtGetUserId.executeQuery();
-    
-            if (!rsUser.next()) {
-                System.out.println("User not found.");
-                return;
-            }
-    
-            int userId = rsUser.getInt("id");
-    
+                Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmtGetCart = conn.prepareStatement(sqlGetCart);
+                PreparedStatement stmtUpdateWallet = conn.prepareStatement(sqlUpdateWallet)) {
+            int userId = SearchProductController.getUserId(conn, user);
+
             stmtGetCart.setInt(1, userId);
-            ResultSet rsCart = stmtGetCart.executeQuery();
-    
+
             boolean updated = false;
-            while (rsCart.next()) {
-                int sellerId = rsCart.getInt("seller_id");
-    
-                stmtUpdateWallet.setDouble(1, balance);
-                stmtUpdateWallet.setInt(2, sellerId);
-                int rowsAffected = stmtUpdateWallet.executeUpdate();
-    
-                if (rowsAffected > 0) {
-                    updated = true;
+            try (ResultSet rsCart = stmtGetCart.executeQuery()) {
+                while (rsCart.next()) {
+                    int sellerId = rsCart.getInt("seller_id");
+
+                    stmtUpdateWallet.setDouble(1, balance);
+                    stmtUpdateWallet.setInt(2, sellerId);
+                    int rowsAffected = stmtUpdateWallet.executeUpdate();
+
+                    if (rowsAffected > 0) {
+                        updated = true;
+                    }
                 }
             }
-    
+
             if (updated) {
                 System.out.println("Wallets charged successfully.");
             } else {
                 System.out.println("No sellers found to update.");
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Database error occurred.");
         }
     }
-    
 
     public static void withdrawMoney(double balance, String agencyCode) {
         String sqlUpdateWallet = "UPDATE sellers SET wallet_balance = wallet_balance - ? WHERE agency_code = ?";
-        if(balance > getBalance(agencyCode)) {
-            System.out.println(ConsoleColors.RED +"There is not enough money in your wallet"+ ConsoleColors.RESET);
+        if (balance > getBalance(agencyCode)) {
+            System.out.println(ConsoleColors.RED + "There is not enough money in your wallet" + ConsoleColors.RESET);
             return;
         }
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sqlUpdateWallet)) {
-    
+                PreparedStatement stmt = conn.prepareStatement(sqlUpdateWallet)) {
+
             stmt.setDouble(1, balance);
             stmt.setString(2, agencyCode);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
                 System.out.println("No seller found with that agency code.");
             } else {
                 System.out.println("Balance updated successfully.");
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -256,8 +249,8 @@ public class SellerDAO {
         String query = "SELECT wallet_balance FROM sellers WHERE agency_code = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-    
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, agencyCode);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -266,12 +259,12 @@ public class SellerDAO {
                     System.out.println("Seller not found.");
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return 0.0; 
+
+        return 0.0;
 
     }
 }

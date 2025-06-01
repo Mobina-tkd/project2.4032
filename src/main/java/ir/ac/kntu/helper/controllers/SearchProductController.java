@@ -17,7 +17,7 @@ import ir.ac.kntu.model.User;
 public class SearchProductController {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
-    public static void HandleSearchProduct(User user) {
+    public static void handleSearchProduct(User user) {
         while (true) {
             Menu.productCategoryMenu();
             Vendilo.Product insertProduct = Menu.getProductCategory();
@@ -241,8 +241,8 @@ public class SearchProductController {
                 int inventory = invRs.getInt("inventory");
 
                 if (inventory > 0) {
-                    String updateInventoryQuery = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
-                    updateStmt = conn.prepareStatement(updateInventoryQuery);
+                    String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
+                    updateStmt = conn.prepareStatement(query);
                     updateStmt.setInt(1, inventory - 1);
                     updateStmt.setInt(2, productId);
                     updateStmt.executeUpdate();

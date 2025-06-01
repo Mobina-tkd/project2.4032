@@ -15,8 +15,7 @@ public class ReadAddress {
         System.out.print("Enter the houseNumber: ");
         String houseNumber = ScannerWrapper.getInstance().nextLine();
 
-        Address address = new Address(location, state, street, houseNumber);
-        return address;
+        return new Address(location, state, street, houseNumber);
     }
 
 }

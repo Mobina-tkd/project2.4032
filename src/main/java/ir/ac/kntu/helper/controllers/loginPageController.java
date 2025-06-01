@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 
-public class loginPageController {
+public class LoginPageController {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
     public static String sellerLoginPage() {
@@ -37,7 +37,7 @@ public class loginPageController {
                     int identityVarified = resultSet.getInt("identity_verified");
                     String message = resultSet.getString("message");
                     if (userPassword.equals(password) && identityVarified == 1) {
-                        System.out.println("Welcome dear seller");
+                        System.out.println(ConsoleColors.BLUE + "Welcome dear seller" + ConsoleColors.RESET);
                         return username;
                     } else if (identityVarified == 2) {
                         System.out.println(message);
@@ -89,7 +89,7 @@ public class loginPageController {
                 if (resultSet.next()) {
                     String storedPassword = resultSet.getString("password");
                     if (storedPassword.equals(password)) {
-                        System.out.println(ConsoleColors.GREEN +"Login successful! Welcome."+ ConsoleColors.RESET);
+                        System.out.println(ConsoleColors.BLUE +"Login successful! Welcome."+ ConsoleColors.RESET);
                         return username;
                     } else {
                         System.out.println(ConsoleColors.RED +"Incorrect password." + ConsoleColors.RESET);
@@ -114,10 +114,10 @@ public class loginPageController {
         String password = ScannerWrapper.getInstance().nextLine();
 
         if ("Sara_H82".equals(username) && "S1382ara_".equals(password)) {
-            System.out.println("\nWelcome dear sara");
+            System.out.println(ConsoleColors.BLUE +"\nWelcome dear sara"+ ConsoleColors.RESET);
             return true;
         } else if ("mmd_L80".equals(username) && "M1380md_".equals(password)) {
-            System.out.println("\nWelcome dear mohammad");
+            System.out.println(ConsoleColors.BLUE +"\nWelcome dear mohammad"+ ConsoleColors.RESET);
             return true;
         } else {
             System.out.println(ConsoleColors.RED +"Wrong username or password :( please try again..." + ConsoleColors.RESET);

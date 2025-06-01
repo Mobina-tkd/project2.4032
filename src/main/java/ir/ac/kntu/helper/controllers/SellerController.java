@@ -52,7 +52,7 @@ public class SellerController {
             }
         }
         while (true) {
-            agencyCode = loginPageController.sellerLoginPage();
+            agencyCode = LoginPageController.sellerLoginPage();
             if (agencyCode == null) {
                 continue;
             }
@@ -76,7 +76,7 @@ public class SellerController {
                 case ALREADY_HAS_ACCOUNT -> {
                     String agencyCode;
                     while (true) {
-                        agencyCode = loginPageController.sellerLoginPage();
+                        agencyCode = LoginPageController.sellerLoginPage();
                         if (agencyCode == null) {
                             continue;
                         } else if (agencyCode.equals("Back")) {

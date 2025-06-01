@@ -136,7 +136,8 @@ public class Menu {
 
     public static void purchaseMenu() {
         System.out.println("\n1) See more information of a product");
-        System.out.println("2) Back");
+        System.out.println("2) See information with charts");
+        System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
@@ -165,7 +166,7 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
-    public static void WatchRespondMenu() {
+    public static void watchRespondMenu() {
         System.out.println("\n1) Show supporter resopnd");
         System.out.println("2) Back");
         System.out.print("Please Enter Your Choice:  ");

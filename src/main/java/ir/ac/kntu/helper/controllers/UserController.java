@@ -16,7 +16,7 @@ public class UserController {
             Vendilo.UserOption option = Menu.getUserOption();
             switch (option) {
                 case SEARCH_FOR_PRODUCTS -> {
-                    SearchProductController.HandleSearchProduct(user);
+                    SearchProductController.handleSearchProduct(user);
                 }
                 case SHOPPING_CART -> {
                     ShoppingCartController.handleShoppingCart(user);
@@ -99,7 +99,7 @@ public class UserController {
             break;
         }
         while (true) {
-            String username = loginPageController.userLoginPage();
+            String username = LoginPageController.userLoginPage();
             if(username.equals("Back")) {
                 return null;
             }
@@ -128,7 +128,7 @@ public class UserController {
                 case ALREADY_HAS_ACCOUNT -> {
                     String username = "";
                     while (true) {
-                        username = loginPageController.userLoginPage();
+                        username = LoginPageController.userLoginPage();
                         if (username == null) {
                             continue;
                         } else if (username.equals("Back")) {

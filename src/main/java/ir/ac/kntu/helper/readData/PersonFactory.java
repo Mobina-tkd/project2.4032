@@ -18,8 +18,7 @@ public class PersonFactory {
         String password = readPassword();
         String phoneNumber = readPhoneNUmber();
 
-        User user = new User(firstName, lastName, email, phoneNumber, password);
-        return user;
+        return new User(firstName, lastName, email, phoneNumber, password);
     }
 
     public static Seller readSellerData() {
@@ -41,8 +40,7 @@ public class PersonFactory {
         String phoneNumber = readPhoneNUmber();
         String password = readPassword();
 
-        Seller seller = new Seller(firstName, lastName, idNumber, storName, state, phoneNumber, password);
-        return seller;
+        return new Seller(firstName, lastName, idNumber, storName, state, phoneNumber, password);
     }
 
     public static String readPassword() {

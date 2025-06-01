@@ -159,53 +159,52 @@ public class ShoppingCartController {
     }
 
     private static double countTotalCost(User user, String state) {
-        String sql1 = "SELECT id FROM users WHERE email = ?";
         String sql2 = "SELECT price, seller_id FROM shoppingCart WHERE user_id = ?";
         String sql3 = "SELECT state FROM sellers WHERE id = ?";
-
+    
         double totalPrice = 0;
         double shippingCost = 0;
         Set<Integer> countedSellers = new HashSet<>();
-
+    
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement ps1 = conn.prepareStatement(sql1);
-                PreparedStatement ps2 = conn.prepareStatement(sql2);
-                PreparedStatement ps3 = conn.prepareStatement(sql3)) {
-
-            ps1.setString(1, user.getEmail());
-            ResultSet rs1 = ps1.executeQuery();
-
-            if (!rs1.next()) {
-                return 0;
-            }
-            int userId = rs1.getInt("id");
-
+             PreparedStatement ps2 = conn.prepareStatement(sql2);
+             PreparedStatement ps3 = conn.prepareStatement(sql3)) {
+    
+            int userId = SearchProductController.getUserId(conn, user);
             ps2.setInt(1, userId);
-            ResultSet rs2 = ps2.executeQuery();
-
-            while (rs2.next()) {
-                double price = rs2.getDouble("price");
-                int sellerId = rs2.getInt("seller_id");
-                totalPrice += price;
-
-                if (!countedSellers.contains(sellerId)) {
-                    ps3.setInt(1, sellerId);
-                    ResultSet rs3 = ps3.executeQuery();
-                    if (rs3.next()) {
-                        String sellerState = rs3.getString("state");
-                        if (state.equalsIgnoreCase(sellerState)) {
-                            shippingCost += 10;
-                        } else {
-                            shippingCost += 30;
+    
+            try (ResultSet rs2 = ps2.executeQuery()) {
+                while (rs2.next()) {
+                    double price = rs2.getDouble("price");
+                    int sellerId = rs2.getInt("seller_id");
+                    totalPrice += price;
+    
+                    if (!countedSellers.contains(sellerId)) {
+                        ps3.setInt(1, sellerId);
+    
+                        try (ResultSet rs3 = ps3.executeQuery()) {
+                            if (rs3.next()) {
+                                String sellerState = rs3.getString("state");
+                                if (state.equalsIgnoreCase(sellerState)) {
+                                    shippingCost += 10;
+                                } else {
+                                    shippingCost += 30;
+                                }
+                            }
                         }
+    
+                        countedSellers.add(sellerId);
                     }
-                    countedSellers.add(sellerId);
                 }
             }
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    
         return totalPrice + shippingCost;
     }
+    
+    
 
 }

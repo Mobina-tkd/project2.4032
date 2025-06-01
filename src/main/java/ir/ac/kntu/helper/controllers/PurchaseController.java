@@ -5,6 +5,7 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
+import ir.ac.kntu.helper.SellerChartExporter;
 import ir.ac.kntu.model.User;
 
 public class PurchaseController {
@@ -66,6 +67,9 @@ public class PurchaseController {
                     System.out.println("Enter the id of your purchase to see more information");
                     int purchaseId = ScannerWrapper.getInstance().nextInt();
                     PurchasesDAO.printAlldetailsOfPurchase(purchaseId);
+                }
+                case CHART -> { 
+                    SellerChartExporter.exportSellerChart(agencyCode);
                 }
                 case BACK -> {
                     return;

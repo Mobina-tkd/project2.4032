@@ -86,7 +86,7 @@ public class RequestController {
     public static void handlePreviousRequests(String email) {
         while (true) {
             RequestDAO.printRequestsByEmail(email);
-            Menu.WatchRespondMenu();
+            Menu.watchRespondMenu();
             Vendilo.WatchRespond option = Menu.getWatchRespondOPtion();
             switch (option) {
                 case SHOW_RESOPND -> {

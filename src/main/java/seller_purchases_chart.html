@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>Seller Purchase Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        table { border-collapse: collapse; width: 80%; margin-top: 40px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Seller Purchase Summary</h2>
+    <canvas id="pieChart" width="400" height="400"></canvas>
+    <script>
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Mobile","Book","Laptop"],
+datasets: [{
+    data: [1824.00,180.00,0.00                        ],
+                        backgroundColor: ['#ff6384', '#36a2eb', '#4bc0c0']
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Total Purchases by Product Type'
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            formatter: (value) => '$' + value.toFixed(2),
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        </script>
+        <h3>Purchase Details</h3>
+        <table>
+            <tr><th>Name</th><th>Price</th><th>Date</th></tr>
+<tr><td>Book</td><td>45.00</td><td>2025-05-29T02:34:03.351Z</td></tr>
+<tr><td>Book</td><td>45.00</td><td>2025-05-27T13:04:00.433Z</td></tr>
+<tr><td>Mobile</td><td>456.00</td><td>2025-05-27T13:21:02.005Z</td></tr>
+<tr><td>Book</td><td>45.00</td><td>2025-05-28T10:33:49.885Z</td></tr>
+<tr><td>Mobile</td><td>456.00</td><td>2025-05-31T06:40:27.331Z</td></tr>
+<tr><td>Book</td><td>45.00</td><td>2025-05-31T08:18:18.130Z</td></tr>
+<tr><td>Mobile</td><td>456.00</td><td>2025-05-31T10:22:04.252Z</td></tr>
+<tr><td>Mobile</td><td>456.00</td><td>2025-05-31T15:31:06.751Z</td></tr>
+        </table>
+    </body>
+    </html>
