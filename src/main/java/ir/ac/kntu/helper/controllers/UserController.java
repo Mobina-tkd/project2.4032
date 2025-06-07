@@ -2,11 +2,13 @@ package ir.ac.kntu.helper.controllers;
 
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
+import ir.ac.kntu.dao.DiscountDAO;
 import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.ConsoleColors;
+import ir.ac.kntu.helper.ScannerWrapper;
+import ir.ac.kntu.helper.ValidationUtil;
 import ir.ac.kntu.helper.readData.PersonFactory;
 import ir.ac.kntu.model.User;
-
 
 public class UserController {
 
@@ -39,11 +41,21 @@ public class UserController {
                     handleCostumerSupport(user);
                     break;
                 }
+                case DISCOUNTS -> {
+                    handleDiscount(user);
+                    break;
+                }
+                case VENDILO_PLUS -> {
+
+                }
+                case NOTIFICATION -> {
+
+                }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
 
@@ -79,7 +91,7 @@ public class UserController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
 
@@ -100,7 +112,7 @@ public class UserController {
         }
         while (true) {
             String username = LoginPageController.userLoginPage();
-            if(username.equals("Back")) {
+            if (username.equals("Back")) {
                 return null;
             }
             if (username == null) {
@@ -119,7 +131,7 @@ public class UserController {
             switch (statement) {
                 case NEW_USER -> {
                     user = handleNewUser();
-                    if(user == null) {
+                    if (user == null) {
                         continue;
                     }
                     UserController.chooseUserOption(user);
@@ -143,12 +155,31 @@ public class UserController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
             }
         }
+    }
+
+    private static void handleDiscount(User user) {
+        while (true) {
+            DiscountDAO.printDiscountPreview(user);
+            System.out.println("Enter discount id to see more information\n press 0 to return : ");
+            String option = ScannerWrapper.getInstance().nextLine();
+            boolean isInt = ValidationUtil.isInteger(option);
+            if(!isInt) {
+                System.err.println("Invalid id");
+                continue;
+            }
+            int intOption = Integer.parseInt(option);
+            if(intOption == 0) {
+                return;
+            }
+            DiscountDAO.printDiscountInformation(intOption);
+        }
+
     }
 
 }

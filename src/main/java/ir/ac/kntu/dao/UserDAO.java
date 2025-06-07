@@ -162,6 +162,26 @@ public class UserDAO {
         }
     }
 
+    public static int findUserId(String email) {
+        String query = "SELECT id FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                return rs.getInt("id");
+            } else {
+                return -1; 
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    
+
     
     
     

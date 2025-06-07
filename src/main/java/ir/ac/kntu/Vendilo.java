@@ -23,7 +23,7 @@ public class Vendilo {
 
     public enum UserOption {
         SEARCH_FOR_PRODUCTS, SHOPPING_CART, SETTING, RECENT_PURCHASES,
-        ADRESSES, WALLET, CUSTOMER_SUPPORT, BACK, UNDEFINED
+        ADRESSES, WALLET, CUSTOMER_SUPPORT, DISCOUNTS, VENDILO_PLUS, NOTIFICATION, BACK, UNDEFINED
     }
 
     public enum SellerOption {
@@ -117,6 +117,7 @@ public class Vendilo {
     public enum SellerWalletOption {
         CURRETN_BALANCE, WITHDRAW, BACK, UNDEFINED
     }
+
     
     public static void main(String[] args) {
         UserDAO.createTable();

@@ -90,6 +90,7 @@ public class PersonFactory {
                 System.out.println("Invalid phone id number");
                 continue;
             }
+            return idNumber;
         }
 
 

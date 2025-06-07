@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import ir.ac.kntu.helper.ConsoleColors;
-import ir.ac.kntu.helper.controllers.SearchProductController;
 import ir.ac.kntu.model.User;
 
 public class PurchasesDAO {
@@ -46,7 +45,7 @@ public class PurchasesDAO {
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
             conn.setAutoCommit(false);
     
-            int userId = SearchProductController.getUserId(conn, user);
+            int userId = UserDAO.findUserId(user.getEmail());
     
             // Retrieve shopping cart items
             try (PreparedStatement cartStmt = conn.prepareStatement(getCartSQL)) {
@@ -93,7 +92,7 @@ public class PurchasesDAO {
     
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
     
-            int userId = SearchProductController.getUserId(conn, user);
+            int userId = UserDAO.findUserId(user.getEmail());
             if (userId == -1) {
                 System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
                 return;

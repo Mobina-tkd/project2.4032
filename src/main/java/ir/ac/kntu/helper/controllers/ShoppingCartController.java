@@ -170,7 +170,7 @@ public class ShoppingCartController {
              PreparedStatement ps2 = conn.prepareStatement(sql2);
              PreparedStatement ps3 = conn.prepareStatement(sql3)) {
     
-            int userId = SearchProductController.getUserId(conn, user);
+            int userId = UserDAO.findUserId(user.getEmail());
             ps2.setInt(1, userId);
     
             try (ResultSet rs2 = ps2.executeQuery()) {
@@ -201,6 +201,7 @@ public class ShoppingCartController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     
         return totalPrice + shippingCost;
     }

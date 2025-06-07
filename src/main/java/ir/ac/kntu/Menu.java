@@ -28,7 +28,10 @@ public class Menu {
         System.out.println("5) Addresses");
         System.out.println("6) Wallet");
         System.out.println("7) Customer Support");
-        System.out.println("8) Back");
+        System.out.println("8) My discounts");
+        System.out.println("9) Vendilo+");
+        System.out.println("10) Notification");
+        System.out.println("11) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 

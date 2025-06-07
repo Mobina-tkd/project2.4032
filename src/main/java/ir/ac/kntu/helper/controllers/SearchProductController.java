@@ -10,6 +10,7 @@ import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.ProductDAO;
+import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.model.User;
@@ -147,7 +148,7 @@ public class SearchProductController {
             conn = DriverManager.getConnection(DB_URL);
             conn.setAutoCommit(false);
 
-            int userId = getUserId(conn, user);
+            int userId = UserDAO.findUserId(user.getEmail());
             if (userId == -1) {
                 System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
                 return;
@@ -176,29 +177,6 @@ public class SearchProductController {
         }
     }
 
-    public static int getUserId(Connection conn, User user) throws SQLException {
-        PreparedStatement getUserIdStmt = null;
-        ResultSet userRs = null;
-        try {
-            String getUserIdQuery = "SELECT id FROM users WHERE email = ?";
-            getUserIdStmt = conn.prepareStatement(getUserIdQuery);
-            getUserIdStmt.setString(1, user.getEmail());
-            userRs = getUserIdStmt.executeQuery();
-
-            if (userRs.next()) {
-                return userRs.getInt("id");
-            } else {
-                return -1;
-            }
-        } finally {
-            if (userRs != null) {
-                userRs.close();
-            }
-            if (getUserIdStmt != null) {
-                getUserIdStmt.close();
-            }
-        }
-    }
 
     private static void processCartAndReduceInventory(Connection conn, int userId) throws SQLException {
         PreparedStatement getCartStmt = null;

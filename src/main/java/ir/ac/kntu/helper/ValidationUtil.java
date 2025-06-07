@@ -38,6 +38,16 @@ public class ValidationUtil {
         return matcher.find();
     }
 
+    public static boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+
 
 
 }
