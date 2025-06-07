@@ -7,9 +7,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 import ir.ac.kntu.helper.ConsoleColors;
-import ir.ac.kntu.helper.controllers.SearchProductController;
 import ir.ac.kntu.model.Seller;
 import ir.ac.kntu.model.User;
 
@@ -182,44 +183,48 @@ public class SellerDAO {
 
     }
 
-    public static void chargeWallet(User user, double balance) {
-        String sqlGetCart = "SELECT DISTINCT seller_id FROM shoppingCart WHERE user_id = ?";
-        String sqlUpdateWallet = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
+    public static void chargeWallet(User user) {
+    String sql = "SELECT seller_id, price FROM shoppingCart WHERE user_id = ?";
+    String sqlUpdate = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
 
-        try (
-                Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement stmtGetCart = conn.prepareStatement(sqlGetCart);
-                PreparedStatement stmtUpdateWallet = conn.prepareStatement(sqlUpdateWallet)) {
-            int userId = SearchProductController.getUserId(conn, user);
+    try (
+        Connection conn = DriverManager.getConnection(DB_URL);
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate)
+    ) {
+        int userId = UserDAO.findUserId(user.getEmail());
+        stmt.setInt(1, userId);
 
-            stmtGetCart.setInt(1, userId);
+        // Map to track total price per seller
+        Map<Integer, Double> sellerEarnings = new HashMap<>();
 
-            boolean updated = false;
-            try (ResultSet rsCart = stmtGetCart.executeQuery()) {
-                while (rsCart.next()) {
-                    int sellerId = rsCart.getInt("seller_id");
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int sellerId = rs.getInt("seller_id");
+                double price = rs.getDouble("price");
 
-                    stmtUpdateWallet.setDouble(1, balance);
-                    stmtUpdateWallet.setInt(2, sellerId);
-                    int rowsAffected = stmtUpdateWallet.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        updated = true;
-                    }
-                }
+                sellerEarnings.put(sellerId, sellerEarnings.getOrDefault(sellerId, 0.0) + price);
             }
-
-            if (updated) {
-                System.out.println("Wallets charged successfully.");
-            } else {
-                System.out.println("No sellers found to update.");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Database error occurred.");
         }
+
+        // Update each seller's wallet with their total earnings
+        for (Map.Entry<Integer, Double> entry : sellerEarnings.entrySet()) {
+            int sellerId = entry.getKey();
+            double amountToAdd = entry.getValue();
+
+            stmtUpdate.setDouble(1, amountToAdd);
+            stmtUpdate.setInt(2, sellerId);
+            stmtUpdate.executeUpdate();
+        }
+
+        System.out.println("Wallets charged based on cart prices.");
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        System.out.println("Database error occurred.");
     }
+}
+
 
     public static void withdrawMoney(double balance, String agencyCode) {
         String sqlUpdateWallet = "UPDATE sellers SET wallet_balance = wallet_balance - ? WHERE agency_code = ?";

@@ -11,6 +11,7 @@ import java.util.Set;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.AddressDAO;
+import ir.ac.kntu.dao.DiscountDAO;
 import ir.ac.kntu.dao.ProductDAO;
 import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.dao.SellerDAO;
@@ -83,13 +84,14 @@ public class ShoppingCartController {
                     System.out.print("Enter the number of the address: ");
                     int addressId = ScannerWrapper.getInstance().nextInt();
                     Address address = AddressDAO.findAddress(addressId);
-                    double totalCost = countTotalCost(user, address.getState());
+                    double totalCost = countTotalPrice(user);
+                    double shippingCost = countShippingCost(user, address.getState());
                     if (address == null) {
                         continue;
                     }
                     System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN + totalCost
                             + ConsoleColors.RESET);
-                    handlePaying(user, totalCost, address);
+                    handlePaying(user, totalCost, shippingCost, address);
 
                 }
 
@@ -97,10 +99,11 @@ public class ShoppingCartController {
                     Address address = ReadAddress.readAddress();
                     AddressDAO.insertAddress(address, user);
                     String state = address.getState();
-                    double totalCost = countTotalCost(user, state);
+                    double totalCost = countTotalPrice(user);
+                    double shippingCost = countShippingCost(user, address.getState());
                     System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN + totalCost
                             + ConsoleColors.RESET);
-                    handlePaying(user, totalCost, address);
+                    handlePaying(user, totalCost, shippingCost, address);
                     return;
                 }
                 case BACK -> {
@@ -115,23 +118,24 @@ public class ShoppingCartController {
         }
     }
 
-    private static void handlePaying(User user, double balance, Address address) {
+    private static void handlePaying(User user, double totalCost, double shippingCost, Address address) {
+        totalCost = applyDiscount(totalCost, user);
         while (true) {
             Menu.payMenu();
             Vendilo.PayMenu choise = Menu.getPayOption();
             switch (choise) {
                 case PAY -> {
-                    boolean bought = UserDAO.getBalance(user) > balance;
+                    boolean bought = UserDAO.getBalance(user) > totalCost;
                     if (bought) {
                         System.out.println("");
                         System.out.println("Thanks for buying " + ConsoleColors.RED + "<3" + ConsoleColors.RESET);
                         String date = ir.ac.kntu.helper.Calendar.now().toString();
-                        Transaction transaction = new Transaction(balance, date, "withdraw");
-                        UserDAO.updateBalance(balance, user, "-");
+                        Transaction transaction = new Transaction(totalCost, date, "withdraw");
+                        UserDAO.updateBalance(totalCost + shippingCost, user, "-");
                         TransactionDAO.insertTransaction(user.getEmail(), transaction);
                         PurchasesDAO.insertToPurchases(user, date, address.toString());
                         SearchProductController.reduceInventory(user);
-                        SellerDAO.chargeWallet(user, balance);
+                        SellerDAO.chargeWallet(user);
                         ShoppingCartDAO.clearShoppingCart(user);
                         return;
                     } else {
@@ -158,33 +162,51 @@ public class ShoppingCartController {
         return inserted;
     }
 
-    private static double countTotalCost(User user, String state) {
-        String sql2 = "SELECT price, seller_id FROM shoppingCart WHERE user_id = ?";
-        String sql3 = "SELECT state FROM sellers WHERE id = ?";
-    
+    private static double countTotalPrice(User user) {
+        String sql = "SELECT price FROM shoppingCart WHERE user_id = ?";
         double totalPrice = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int userId = UserDAO.findUserId(user.getEmail());
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    totalPrice += rs.getDouble("price");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalPrice;
+    }
+
+    private static double countShippingCost(User user, String state) {
+        String sql = "SELECT seller_id FROM shoppingCart WHERE user_id = ?";
+        String sql2 = "SELECT state FROM sellers WHERE id = ?";
         double shippingCost = 0;
         Set<Integer> countedSellers = new HashSet<>();
-    
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement ps2 = conn.prepareStatement(sql2);
-             PreparedStatement ps3 = conn.prepareStatement(sql3)) {
-    
+                PreparedStatement ps = conn.prepareStatement(sql);
+                PreparedStatement ps2 = conn.prepareStatement(sql2)) {
+
             int userId = UserDAO.findUserId(user.getEmail());
-            ps2.setInt(1, userId);
-    
-            try (ResultSet rs2 = ps2.executeQuery()) {
-                while (rs2.next()) {
-                    double price = rs2.getDouble("price");
-                    int sellerId = rs2.getInt("seller_id");
-                    totalPrice += price;
-    
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int sellerId = rs.getInt("seller_id");
+
                     if (!countedSellers.contains(sellerId)) {
-                        ps3.setInt(1, sellerId);
-    
-                        try (ResultSet rs3 = ps3.executeQuery()) {
-                            if (rs3.next()) {
-                                String sellerState = rs3.getString("state");
+                        ps2.setInt(1, sellerId);
+                        try (ResultSet rs2 = ps2.executeQuery()) {
+                            if (rs2.next()) {
+                                String sellerState = rs2.getString("state");
                                 if (state.equalsIgnoreCase(sellerState)) {
                                     shippingCost += 10;
                                 } else {
@@ -192,20 +214,70 @@ public class ShoppingCartController {
                                 }
                             }
                         }
-    
                         countedSellers.add(sellerId);
                     }
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-    
-        return totalPrice + shippingCost;
+        return shippingCost;
     }
-    
-    
+
+    private static double applyDiscount(double totalCost, User user) {
+        String code = DiscountDAO.getDiscountCode(user);
+        if (code == null || code.trim().isEmpty()) {
+            return totalCost;
+        }
+
+        int userId = UserDAO.findUserId(user.getEmail());
+        String query = "SELECT type, amount FROM discount WHERE code = ? AND user_id = ?";
+
+        String type = "";
+        double amount = 0;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, code);
+            stmt.setInt(2, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    type = rs.getString("type");
+                    amount = rs.getDouble("amount");
+                } else {
+                    System.out.println("Discount code not found for this user.");
+                    return totalCost;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return totalCost;
+        }
+
+        // If no condition applies, return original cost
+        return checkType(type, amount, code, totalCost);
+    }
+
+    private static double checkType(String type, double amount, String code, double totalCost) {
+        
+        // Apply discount logic
+        if (type.equalsIgnoreCase("percent")) {
+            reduceTimeUsed(code);
+            return totalCost * (1 - (amount / 100)); // e.g., 20% → total * 0.8
+        }
+
+        if (type.equalsIgnoreCase("amount") && totalCost > (10 * amount)) {
+            reduceTimeUsed(code);
+            return totalCost - amount;
+        }
+
+        System.out.println("Sorry. This code cant be applied.");
+        return totalCost;
+    }
 
 }
