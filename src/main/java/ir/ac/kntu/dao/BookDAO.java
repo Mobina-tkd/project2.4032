@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.Book;
+import ir.ac.kntu.model.User;
 
 public class BookDAO {
     private static final String DB_URL = "jdbc:sqlite:data.db";
@@ -81,27 +81,39 @@ public class BookDAO {
     }
     
 
-    public static void searchBookByTitle(String tableName, String title) {
-        String query = "SELECT * FROM " + tableName + " WHERE title = ?";
-
+    public static void searchBookByTitle(String tableName, String title, User user) {
+        String query = "SELECT id, title, name, price, inventory FROM " + tableName + " WHERE title = ?";
+    
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
+    
             stmt.setString(1, title);
+    
             try (ResultSet resultSet = stmt.executeQuery()) {
-                ResultSetMetaData meta = resultSet.getMetaData();
-                int columnCount = meta.getColumnCount();
-
+                boolean found = false;
+    
                 while (resultSet.next()) {
-                    for (int i = 1; i <= columnCount; i++) {
-                        System.out.print(meta.getColumnName(i) + ": " + resultSet.getString(i) + "\t");
+                    int id = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    double price = resultSet.getDouble("price");
+                    int inventory = resultSet.getInt("inventory");
+                    if(VendiloPlusDAO.vendiloPlusUser(user)) {
+                        price = 0.95 * price;
                     }
-                    System.out.println();
+                    System.out.printf("Product name: %s, ID: %d, Price: %.2f, Inventory: %d%n", 
+                                      name, id, price, inventory);
+                    found = true;
                 }
+    
+                if (!found) {
+                    System.out.println(ConsoleColors.RED + "No book found with that title." + ConsoleColors.RESET);
+                }
+    
             }
-
+    
         } catch (SQLException e) {
-            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage() + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
+    
 }

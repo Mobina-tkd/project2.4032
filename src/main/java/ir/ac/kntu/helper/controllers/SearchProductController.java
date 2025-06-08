@@ -53,7 +53,7 @@ public class SearchProductController {
             Vendilo.SearchBookOption option = Menu.getSearchBookOption();
             switch (option) {
                 case SHOW_ALL -> {
-                    ProductDAO.showAllProducts("Book");
+                    ProductDAO.showAllProducts("Book", user);
                     ProductController.handleAddProductToList("Book", user);
                 }
 
@@ -62,14 +62,14 @@ public class SearchProductController {
                     double min = ScannerWrapper.getInstance().nextDouble();
                     System.out.print("Enter the max price: ");
                     double max = ScannerWrapper.getInstance().nextDouble();
-                    ProductDAO.searchByPrice("Book", min, max);
+                    ProductDAO.searchByPrice("Book", min, max, user);
                     ProductController.handleAddProductToList("Book", user);
                 }
 
                 case SEARCH_BY_TITLE -> {
                     System.out.println("Enter book title: ");
                     String title = ScannerWrapper.getInstance().nextLine();
-                    BookDAO.searchBookByTitle("Book", title);
+                    BookDAO.searchBookByTitle("Book", title, user);
                     ProductController.handleAddProductToList("Book", user);
                 }
 
@@ -92,7 +92,7 @@ public class SearchProductController {
 
         switch (option) {
             case SHOW_ALL -> {
-                ProductDAO.showAllProducts("Laptop");
+                ProductDAO.showAllProducts("Laptop", user);
                 ProductController.handleAddProductToList("Laptop", user);
             }
             case SEARCH_BY_PRICE -> {
@@ -100,7 +100,7 @@ public class SearchProductController {
                 double min = ScannerWrapper.getInstance().nextDouble();
                 System.out.print("Enter the max price: ");
                 double max = ScannerWrapper.getInstance().nextDouble();
-                ProductDAO.searchByPrice("Laptop", min, max);
+                ProductDAO.searchByPrice("Laptop", min, max, user);
                 ProductController.handleAddProductToList("Laptop", user);
             }
             case BACK -> {
@@ -120,7 +120,7 @@ public class SearchProductController {
 
         switch (option) {
             case SHOW_ALL -> {
-                ProductDAO.showAllProducts("Mobile");
+                ProductDAO.showAllProducts("Mobile", user);
                 ProductController.handleAddProductToList("Mobile", user);
             }
             case SEARCH_BY_PRICE -> {
@@ -128,7 +128,7 @@ public class SearchProductController {
                 double min = ScannerWrapper.getInstance().nextDouble();
                 System.out.print("Enter the max price: ");
                 double max = ScannerWrapper.getInstance().nextDouble();
-                ProductDAO.searchByPrice("Mobile", min, max);
+                ProductDAO.searchByPrice("Mobile", min, max, user);
                 ProductController.handleAddProductToList("Mobile", user);
             }
             case BACK -> {

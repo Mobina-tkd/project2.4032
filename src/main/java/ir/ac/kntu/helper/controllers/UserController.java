@@ -46,7 +46,7 @@ public class UserController {
                     break;
                 }
                 case VENDILO_PLUS -> {
-
+                    VendiloPlusController.handleVendiloPlus(user);
                 }
                 case NOTIFICATION -> {
 
@@ -181,5 +181,7 @@ public class UserController {
         }
 
     }
+
+    
 
 }

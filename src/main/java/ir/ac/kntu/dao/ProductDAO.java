@@ -10,11 +10,12 @@ import java.sql.Statement;
 
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.ShoppingCart;
+import ir.ac.kntu.model.User;
 
 public class ProductDAO {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
-    public static void showAllProducts(String tableName) {
+    public static void showAllProducts(String tableName, User user) {
         String query = "SELECT id, name, price, inventory FROM " + tableName;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -27,6 +28,9 @@ public class ProductDAO {
                 double price = resultSet.getDouble("price");
                 int inventory = resultSet.getInt("inventory");
                 System.out.println("");
+                if(VendiloPlusDAO.vendiloPlusUser(user)) {
+                    price = 0.95 * price;
+                }
                 System.out.printf("Product name: %s, ID: %d, Price: %.2f, Inventory: %d%n",
                         name, productId, price, inventory);
             }
@@ -36,14 +40,17 @@ public class ProductDAO {
         }
     }
 
-    public static void searchByPrice(String tableName, double min, double max) {
+    public static void searchByPrice(String tableName, double min, double max, User user) {
         String query = "SELECT id, name, price, inventory FROM " + tableName + " WHERE price BETWEEN ? AND ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setDouble(1, min);
-            stmt.setDouble(2, max);
+                if(VendiloPlusDAO.vendiloPlusUser(user)) {
+                    min = (100/95) * min;
+                    max = (100/95) * max;
+                }
+            stmt.setDouble(1, min );
+            stmt.setDouble(2, max );
             try (ResultSet resultSet = stmt.executeQuery()) {
                 boolean found = false;
                 while (resultSet.next()) {
@@ -53,6 +60,9 @@ public class ProductDAO {
                     double price = resultSet.getDouble("price");
                     int inventory = resultSet.getInt("inventory");
                     System.out.println("");
+                    if(VendiloPlusDAO.vendiloPlusUser(user)) {
+                        price = 0.95 * price;
+                    }
                     System.out.printf("Product name: %s, ID: %d, Price: %.2f, Inventory: %d%n",
                             name, productId, price, inventory);
                 }

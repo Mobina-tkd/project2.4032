@@ -4,6 +4,13 @@ import ir.ac.kntu.helper.ScannerWrapper;
 
 public class Menu {
 
+    public static void vendiloPlusMenu() {
+        System.out.println("\n1) Buy subscription");
+        System.out.println("2) My current subscription ");
+        System.out.println("3) Back");
+        System.out.print("Please choose Your Role: ");
+    }
+
     public static void choosingRoleMenu() {
         System.out.println("\n1) User");
         System.out.println("2) Seller");
@@ -84,6 +91,14 @@ public class Menu {
         System.out.println("\n1) Show all");
         System.out.println("2) Search by price");
         System.out.println("3) Search by title");
+        System.out.println("4) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void subscriptionMenu() {
+        System.out.println("\n1) One month(40$)");
+        System.out.println("2) Three months(100$)");
+        System.out.println("3) One year(350$)");
         System.out.println("4) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
@@ -211,6 +226,14 @@ public class Menu {
 
     public static Vendilo.MenuOption getMenuOption() {
         return getEnumOption(Vendilo.MenuOption.class, Vendilo.MenuOption.UNDEFINED);
+    }
+
+    public static Vendilo.Subscription getSubscription() {
+        return getEnumOption(Vendilo.Subscription.class, Vendilo.Subscription.UNDEFINED);
+    }
+
+    public static Vendilo.VendiloPlus getVendiloPlus() {
+        return getEnumOption(Vendilo.VendiloPlus.class, Vendilo.VendiloPlus.UNDEFINED);
     }
 
     public static Vendilo.AddressOption getAddressOption() {

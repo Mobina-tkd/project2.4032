@@ -18,6 +18,7 @@ import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.dao.TransactionDAO;
 import ir.ac.kntu.dao.UserDAO;
+import ir.ac.kntu.dao.VendiloPlusDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.readData.ReadAddress;
@@ -98,11 +99,11 @@ public class ShoppingCartController {
                 case NEW -> {
                     Address address = ReadAddress.readAddress();
                     AddressDAO.insertAddress(address, user);
-                    String state = address.getState();
                     double totalCost = countTotalPrice(user);
                     double shippingCost = countShippingCost(user, address.getState());
-                    System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN + totalCost
-                            + ConsoleColors.RESET);
+                    System.out.println(
+                            "Total cost (including shipping cost):  " + ConsoleColors.GREEN + (totalCost + shippingCost)
+                                    + ConsoleColors.RESET);
                     handlePaying(user, totalCost, shippingCost, address);
                     return;
                 }
@@ -120,17 +121,19 @@ public class ShoppingCartController {
 
     private static void handlePaying(User user, double totalCost, double shippingCost, Address address) {
         totalCost = applyDiscount(totalCost, user);
+        System.out.println("Total cost after applying discount (including shipping cost):  " + ConsoleColors.GREEN
+                + (totalCost + shippingCost) + ConsoleColors.RESET);
         while (true) {
             Menu.payMenu();
             Vendilo.PayMenu choise = Menu.getPayOption();
             switch (choise) {
                 case PAY -> {
-                    boolean bought = UserDAO.getBalance(user) > totalCost;
+                    boolean bought = UserDAO.getBalance(user) > totalCost + shippingCost;
                     if (bought) {
                         System.out.println("");
                         System.out.println("Thanks for buying " + ConsoleColors.RED + "<3" + ConsoleColors.RESET);
                         String date = ir.ac.kntu.helper.Calendar.now().toString();
-                        Transaction transaction = new Transaction(totalCost, date, "withdraw");
+                        Transaction transaction = new Transaction(totalCost + shippingCost, date, "withdraw");
                         UserDAO.updateBalance(totalCost + shippingCost, user, "-");
                         TransactionDAO.insertTransaction(user.getEmail(), transaction);
                         PurchasesDAO.insertToPurchases(user, date, address.toString());
@@ -181,7 +184,9 @@ public class ShoppingCartController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        if (VendiloPlusDAO.vendiloPlusUser(user)) {
+            totalPrice = 0.95 * totalPrice;
+        }
         return totalPrice;
     }
 
@@ -209,8 +214,14 @@ public class ShoppingCartController {
                                 String sellerState = rs2.getString("state");
                                 if (state.equalsIgnoreCase(sellerState)) {
                                     shippingCost += 10;
+                                    if (VendiloPlusDAO.vendiloPlusUser(user)) {
+                                        shippingCost += 0;
+                                    }
                                 } else {
                                     shippingCost += 30;
+                                    if (VendiloPlusDAO.vendiloPlusUser(user)) {
+                                        shippingCost += 10;
+                                    }
                                 }
                             }
                         }
@@ -264,15 +275,15 @@ public class ShoppingCartController {
     }
 
     private static double checkType(String type, double amount, String code, double totalCost) {
-        
+
         // Apply discount logic
         if (type.equalsIgnoreCase("percent")) {
-            reduceTimeUsed(code);
-            return totalCost * (1 - (amount / 100)); // e.g., 20% → total * 0.8
+            DiscountDAO.reduceTimeUsed(code);
+            return totalCost * (1 - (amount / 100));
         }
 
         if (type.equalsIgnoreCase("amount") && totalCost > (10 * amount)) {
-            reduceTimeUsed(code);
+            DiscountDAO.reduceTimeUsed(code);
             return totalCost - amount;
         }
 

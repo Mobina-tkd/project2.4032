@@ -14,6 +14,7 @@ import ir.ac.kntu.model.User;
 public class ShoppingCartDAO {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
+    
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS shoppingCart ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"

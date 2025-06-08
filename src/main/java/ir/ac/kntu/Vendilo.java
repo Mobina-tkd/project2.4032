@@ -10,6 +10,7 @@ import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
 import ir.ac.kntu.dao.TransactionDAO;
 import ir.ac.kntu.dao.UserDAO;
+import ir.ac.kntu.dao.VendiloPlusDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.controllers.LoginPageController;
 import ir.ac.kntu.helper.controllers.SellerController;
@@ -17,6 +18,15 @@ import ir.ac.kntu.helper.controllers.SupporterController;
 import ir.ac.kntu.helper.controllers.UserController;
 
 public class Vendilo {
+
+    public enum VendiloPlus {
+        BUY_SUBSCRIPTION, MY_SUBSCRIPTION, BACK, UNDEFINED
+    }
+
+    public enum Subscription {
+        ONE_MONTH, THREE_MONTH, ONE_YEAR, BACK, UNDEFINED
+    }
+
     public enum MenuOption {
         USER, SELLER, SUPPORTER, UNDEFINED
     }
@@ -87,7 +97,7 @@ public class Vendilo {
     }
 
     public enum PurchaseMenu {
-        INFO,CHART, BACK, UNDEFINED
+        INFO, CHART, BACK, UNDEFINED
     }
 
     public enum UserSupportOptions {
@@ -111,14 +121,13 @@ public class Vendilo {
     }
 
     public enum ShowTransaction {
-         SHOW_ALL, FILTER_BY_TIME, BACK, UNDEFINED
+        SHOW_ALL, FILTER_BY_TIME, BACK, UNDEFINED
     }
 
     public enum SellerWalletOption {
         CURRETN_BALANCE, WITHDRAW, BACK, UNDEFINED
     }
 
-    
     public static void main(String[] args) {
         UserDAO.createTable();
         AddressDAO.createTable();
@@ -130,6 +139,7 @@ public class Vendilo {
         PurchasesDAO.createTable();
         TransactionDAO.createTable();
         RequestDAO.createTable();
+        VendiloPlusDAO.createTable();
 
         while (true) {
             Menu.choosingRoleMenu();
@@ -155,7 +165,7 @@ public class Vendilo {
                 }
 
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
 
                 }
                 default -> throw new AssertionError();
