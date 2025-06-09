@@ -58,11 +58,7 @@ public class DiscountDAO {
     }
 
     public static void printDiscountPreview(User user) {
-        if (user == null || user.getEmail() == null) {
-            System.out.println(ConsoleColors.RED + "User or user email is null." + ConsoleColors.RESET);
-            return;
-        }
-
+    
         int userId = UserDAO.findUserId(user.getEmail());
         if (userId == -1) {
             System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
@@ -119,7 +115,7 @@ public class DiscountDAO {
     }
 
     public static String getDiscountCode(User user) {
-        System.out.println("Enter your discount code (if you dont have one press 0): ");
+        System.out.println("Enter your discount code (press 0 to return): ");
         String input = ScannerWrapper.getInstance().nextLine();
         if(input.equals("0")) {
             return "";

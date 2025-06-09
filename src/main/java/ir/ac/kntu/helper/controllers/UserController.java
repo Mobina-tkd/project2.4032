@@ -49,6 +49,7 @@ public class UserController {
                     VendiloPlusController.handleVendiloPlus(user);
                 }
                 case NOTIFICATION -> {
+                    NotificationController.handleNotification(user);
 
                 }
                 case BACK -> {

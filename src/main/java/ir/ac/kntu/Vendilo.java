@@ -19,6 +19,10 @@ import ir.ac.kntu.helper.controllers.UserController;
 
 public class Vendilo {
 
+    public enum NotificationType {
+        CHECK_REQUEST, GENERAL_TEXT, DISCOUNT_CODE, INVENTORY 
+    }
+
     public enum VendiloPlus {
         BUY_SUBSCRIPTION, MY_SUBSCRIPTION, BACK, UNDEFINED
     }

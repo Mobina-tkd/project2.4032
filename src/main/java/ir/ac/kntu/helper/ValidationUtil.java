@@ -43,6 +43,7 @@ public class ValidationUtil {
             Integer.parseInt(str);
             return true;
         } catch (NumberFormatException e) {
+            System.out.println("Invalid input");
             return false;
         }
     }
