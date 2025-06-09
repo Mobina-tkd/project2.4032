@@ -153,4 +153,56 @@ public class ProductDAO {
 
         return -1;
     }
+
+    public static void printSellerProducts(String agencyCode) {
+        String query = 
+            "SELECT id, name, inventory FROM Book WHERE agency_code = ? " +
+            "UNION ALL " +
+            "SELECT id, name, inventory FROM Mobile WHERE agency_code = ? " +
+            "UNION ALL " +
+            "SELECT id, name, inventory FROM Laptop WHERE agency_code = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, agencyCode);
+            stmt.setString(2, agencyCode);
+            stmt.setString(3, agencyCode);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                int inventory = rs.getInt("inventory");
+
+                System.out.println("ID: " + id + ", Name: " + name + ", Inventory: " + inventory);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setInventory(String tableName, int productId, int inventory) {
+        String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
+    
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:your_database.db");
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, inventory);    
+            stmt.setInt(2, productId);    
+    
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Inventory updated successfully.");
+            } else {
+                System.out.println("No product found with the given ID.");
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

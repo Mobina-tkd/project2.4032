@@ -8,6 +8,7 @@ import ir.ac.kntu.dao.MobileDAO;
 import ir.ac.kntu.dao.ProductDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
+import ir.ac.kntu.helper.ValidationUtil;
 import ir.ac.kntu.helper.readData.ProductFactory;
 import ir.ac.kntu.model.Book;
 import ir.ac.kntu.model.Laptop;
@@ -26,6 +27,7 @@ public class ProductController {
                     handleInsertProduct(agencyCode);
                 }
                 case SET_INVENTORY -> {
+                    handleSettingInventory(agencycode);
                 }
                 case BACK -> {
                     return;
@@ -107,6 +109,56 @@ public class ProductController {
 
             }
 
+        }
+    }
+
+    public static void handleSettingInventory(String agencyCode) {
+        ProductDAO.printSellerProducts(agencyCode);
+        String productType = getProductType();
+        int productId = getProductId();
+        int inventory = getInventory();
+        if(productType == null || productId == 0 || inventory == -1) {
+            return;
+        }
+        ProductDAO.setInventory(productType, productId, inventory);
+    }
+
+    private static int getProductId() {
+        String productId = "";
+        while(true) {
+            System.out.println("Enter the id of the product(press 0 to return)");
+            productId = ScannerWrapper.getInstance().nextLine();
+            if(ValidationUtil.isInteger(productId)) {
+                return Integer.parseInt(productId);
+            }
+            System.out.println("Invalid input, please try again");
+        }
+    }
+
+    private static int getInventory() {
+        String inventory = "";
+        while(true) {
+            System.out.println("Enter the inventory(press -1 to return)");
+            inventory = ScannerWrapper.getInstance().nextLine();
+            if(ValidationUtil.isInteger(inventory)) {
+                return Integer.parseInt(inventory);
+            }
+            System.out.println("Invalid input, please try again");
+        }
+    }
+
+    private static String getProductType() {
+        String productType = "";
+        while (true) { 
+            System.out.println("Enter the name of product you want to add(press 0 to return)");
+            productType = ScannerWrapper.getInstance().nextLine();
+            if( productType.equals("Book") || productType.equals("Mobile") || productType.equals("Laptop")) {
+                return productType;
+            }
+            if(productType.equals("0")) {
+                return "";
+            }
+            System.out.println("Invalid type, please try again");
         }
     }
 
