@@ -109,7 +109,7 @@ public class SellerController {
                     System.out.println("You hava " +ConsoleColors.GREEN + currentBalance + ConsoleColors.RESET+ " dollars in your wallet");
                 }
                 case WITHDRAW-> {
-                    System.err.print("Enter the amount you want to withdraw: ");
+                    System.out.print("Enter the amount you want to withdraw: ");
                     double amount = ScannerWrapper.getInstance().nextDouble();
                     SellerDAO.withdrawMoney(amount, agencyCode);
                 }

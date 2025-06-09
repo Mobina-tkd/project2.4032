@@ -141,9 +141,9 @@ public class TransactionDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println(ConsoleColors.RED +"Database error: " + e.getMessage()+ ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED +"Database error: " + e.getMessage()+ ConsoleColors.RESET);
         } catch (Exception e) {
-            System.err.println(ConsoleColors.RED +"Error: " + e.getMessage()+ ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED +"Error: " + e.getMessage()+ ConsoleColors.RESET);
         }
     }
 }

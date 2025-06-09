@@ -75,7 +75,7 @@ public class ProductController {
             int productId = ScannerWrapper.getInstance().nextInt();
             if(productId == 0) {
                 return;
-            }  //use this for notification
+            } 
             int sellerId = ProductDAO.findSellerId(productId, productType);
             ShoppingCart shoppingCart = ProductDAO.makeShoppingCartObject(productId, sellerId, productType);
             System.out.println(shoppingCart.getInformation());

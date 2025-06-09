@@ -171,7 +171,7 @@ public class UserController {
             String option = ScannerWrapper.getInstance().nextLine();
             boolean isInt = ValidationUtil.isInteger(option);
             if(!isInt) {
-                System.err.println("Invalid id");
+                System.out.println("Invalid id");
                 continue;
             }
             int intOption = Integer.parseInt(option);

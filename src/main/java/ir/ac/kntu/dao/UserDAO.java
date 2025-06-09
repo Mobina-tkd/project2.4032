@@ -80,7 +80,7 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println(ConsoleColors.RED +"Error finding user: " + e.getMessage() + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED +"Error finding user: " + e.getMessage() + ConsoleColors.RESET);
             return null;
         }
     }

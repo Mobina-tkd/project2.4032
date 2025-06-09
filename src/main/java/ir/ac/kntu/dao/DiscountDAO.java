@@ -58,7 +58,7 @@ public class DiscountDAO {
     }
 
     public static void printDiscountPreview(User user) {
-    
+
         int userId = UserDAO.findUserId(user.getEmail());
         if (userId == -1) {
             System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
@@ -117,56 +117,75 @@ public class DiscountDAO {
     public static String getDiscountCode(User user) {
         System.out.println("Enter your discount code (press 0 to return): ");
         String input = ScannerWrapper.getInstance().nextLine();
-        if(input.equals("0")) {
+        if (input.equals("0")) {
             return "";
         }
-        if(codeExist(input)) {
+        if (codeExist(input)) {
             return input;
         }
         return "";
     }
 
-
     private static boolean codeExist(String input) {
         String sql = "SELECT 1 FROM discount WHERE code = ? LIMIT 1";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, input);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.err.println("Sorry. this code is invalid");
+        return false;
+    }
+
+    public static void reduceTimeUsed(String code) {
+        String query = "UPDATE discount SET time_used = time_used - 1 WHERE code = ? AND time_used > 0";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, code);
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Discount usage reduced.");
+            } else {
+                System.out.println("No discount usage reduced (maybe already zero or invalid code).");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error while reducing time_used.");
+        }
+    }
+
+    public static int findIdByCode(String code) {
+        String query = "SELECT id FROM discounts WHERE code = ?";
+        int id = -1;
     
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
     
-            stmt.setString(1, input);
-    
+            stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); 
+                if (rs.next()) {
+                    id = rs.getInt("id");
+                }
             }
     
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.err.println("Sorry. this code is invalid");
-        return false;  
+    
+        return id;
     }
-
-    public static void reduceTimeUsed(String code) {
-    String query = "UPDATE discount SET time_used = time_used - 1 WHERE code = ? AND time_used > 0";
-
-    try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement stmt = conn.prepareStatement(query)) {
-
-        stmt.setString(1, code);
-        int rowsAffected = stmt.executeUpdate();
-
-        if (rowsAffected > 0) {
-            System.out.println("Discount usage reduced.");
-        } else {
-            System.out.println("No discount usage reduced (maybe already zero or invalid code).");
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        System.out.println("Error while reducing time_used.");
-    }
-}
-
     
 
 }
