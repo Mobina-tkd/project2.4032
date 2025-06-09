@@ -187,7 +187,7 @@ public class ProductDAO {
     public static void setInventory(String tableName, int productId, int inventory) {
         String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
     
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:your_database.db");
+        try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(query)) {
     
             stmt.setInt(1, inventory);    

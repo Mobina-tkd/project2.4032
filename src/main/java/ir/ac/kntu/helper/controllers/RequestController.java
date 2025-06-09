@@ -2,6 +2,7 @@ package ir.ac.kntu.helper.controllers;
 
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
+import ir.ac.kntu.dao.NotificationDAO;
 import ir.ac.kntu.dao.RequestDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
@@ -57,14 +58,14 @@ public class RequestController {
         handleSettingMessage(requestId);
     }
 
-    private static void handleSettingMessage(int userId) {
+    private static void handleSettingMessage(int requestId) {
         while (true) {
             Menu.setMessageMenu();
             Vendilo.SetMessage option = Menu.getSetMessageOption();
 
             switch (option) {
                 case SET_MESSAGE -> {
-                    setMessage(userId);
+                    setMessage(requestId);
                 }
                 case BACK -> {
                     return;
@@ -77,10 +78,12 @@ public class RequestController {
         }
     }
 
-    private static void setMessage(int userId) {
+    private static void setMessage(int requestId) {
         System.out.print("Your message for user: ");
         String message = ScannerWrapper.getInstance().nextLine();
-        RequestDAO.setMessageAndUpdateStatus(message, userId);
+        RequestDAO.setMessageAndUpdateStatus(message, requestId);
+        String email = RequestDAO.findUserEmailByRequestId(requestId);
+        NotificationDAO.insertNotification(email, "Request checked", String.valueOf(requestId));
     }
 
     public static void handlePreviousRequests(String email) {

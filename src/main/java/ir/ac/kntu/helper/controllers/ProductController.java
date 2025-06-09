@@ -27,7 +27,7 @@ public class ProductController {
                     handleInsertProduct(agencyCode);
                 }
                 case SET_INVENTORY -> {
-                    handleSettingInventory(agencycode);
+                    handleSettingInventory(agencyCode);
                 }
                 case BACK -> {
                     return;

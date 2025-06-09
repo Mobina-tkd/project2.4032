@@ -34,10 +34,10 @@ public class NotificationDAO {
         }
     }
 
-    public static void insertNotification(User user, String type, String message) {
+    public static void insertNotification(String email, String type, String message) {
         String query1 = "INSERT INTO discounts(user_id, type, message) "
                 + "VALUES (?, ?, ?)";
-        int userId = UserDAO.findUserId(user.getEmail());
+        int userId = UserDAO.findUserId(email);
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement insertStmt = conn.prepareStatement(query1)) {

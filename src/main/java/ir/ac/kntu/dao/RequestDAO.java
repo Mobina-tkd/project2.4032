@@ -210,4 +210,40 @@ public class RequestDAO {
             e.getMessage();
         }
     }
+
+    public static String findUserEmailByRequestId(int requestId) {
+        String query1 = "SELECT user_id FROM requests WHERE id = ?";
+        String query2 = "SELECT email FROM users WHERE id = ?";
+    
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt1 = conn.prepareStatement(query1)) {
+    
+            // Step 1: Find user_id by request ID
+            stmt1.setInt(1, requestId);
+            ResultSet rs1 = stmt1.executeQuery();
+    
+            if (rs1.next()) {
+                int userId = rs1.getInt("user_id");
+    
+                // Step 2: Find email by user ID
+                try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+                    stmt2.setInt(1, userId);
+                    ResultSet rs2 = stmt2.executeQuery();
+    
+                    if (rs2.next()) {
+                        return rs2.getString("email");
+                    }
+                }
+            } else {
+                System.out.println("Request ID not found.");
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return null; // If not found or error occurs
+    }
+    
+
 }
