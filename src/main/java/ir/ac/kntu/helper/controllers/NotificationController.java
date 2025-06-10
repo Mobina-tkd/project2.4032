@@ -3,6 +3,7 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.DiscountDAO;
+import ir.ac.kntu.dao.InformProductDAO;
 import ir.ac.kntu.dao.NotificationDAO;
 import ir.ac.kntu.dao.ProductDAO;
 import ir.ac.kntu.dao.RequestDAO;
@@ -82,11 +83,13 @@ public class NotificationController {
         System.out.println(
                 ConsoleColors.BLUE + "-----Your request has been checked by supporter-----" + ConsoleColors.RESET);
         RequestDAO.printRespondOfRequest(requestId);
-        System.out.println(ConsoleColors.BLUE + "----------------------------------------------------\n" + ConsoleColors.RESET);
+        System.out.println(
+                ConsoleColors.BLUE + "----------------------------------------------------\n" + ConsoleColors.RESET);
     }
 
     private static void handleNewProduct(String productInfo, User user) {
-        System.out.println(ConsoleColors.BLUE + "-----We have got more of your favorite product in stock!-----\n" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.BLUE + "-----We have got more of your favorite product in stock!-----\n"
+                + ConsoleColors.RESET);
 
         String[] parts = productInfo.split(" ");
         String productType = parts[0];
@@ -109,5 +112,12 @@ public class NotificationController {
             default -> throw new AssertionError();
         }
 
+    }
+
+    public static void handleSendingNOtif(String productType, int productId, int inventory) {
+        int firstInventory = ProductDAO.findInventory(productId, productType);
+        if (firstInventory == 0 && inventory > 0) {
+            InformProductDAO.sendInventoryNotifToUsers(productType, productId);
+        }
     }
 }

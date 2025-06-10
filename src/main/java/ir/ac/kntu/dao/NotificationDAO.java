@@ -116,7 +116,7 @@ public class NotificationDAO {
                 String type = rs.getString("type");
                 String message = rs.getString("message");
                 NotificationController.handleNotifTypes(type, message, user);
-                
+
             }
         } catch (SQLException e) {
             System.out.println(ConsoleColors.RED + "Error fetching discounts: " + e.getMessage() + ConsoleColors.RESET);
