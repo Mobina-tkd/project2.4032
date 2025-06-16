@@ -35,13 +35,12 @@ public class NotificationDAO {
     }
 
     public static void insertNotification(String email, String type, String message) {
-        String query1 = "INSERT INTO discounts(user_id, type, message) "
+        String query1 = "INSERT INTO notifications(user_id, type, message) "
                 + "VALUES (?, ?, ?)";
-        int userId = UserDAO.findUserId(email);
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement insertStmt = conn.prepareStatement(query1)) {
-
+            int userId = UserDAO.findUserId(email);
             insertStmt.setInt(1, userId);
             insertStmt.setString(2, type);
             insertStmt.setString(3, message);
@@ -49,22 +48,23 @@ public class NotificationDAO {
             insertStmt.executeUpdate();
             System.out.println(ConsoleColors.GREEN + "Notification inserted successfully." + ConsoleColors.RESET);
         } catch (SQLException e) {
+            e.printStackTrace(); // This will show the exact line causing the issue
+
             System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
     public static void printNotifPreview(User user) {
 
-        int userId = UserDAO.findUserId(user.getEmail());
-        if (userId == -1) {
-            System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
-            return;
-        }
-
         String query = "SELECT id, type FROM notifications WHERE user_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
+            int userId = UserDAO.findUserId(user.getEmail());
+            if (userId == -1) {
+                System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
+                return;
+            }
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -119,7 +119,8 @@ public class NotificationDAO {
 
             }
         } catch (SQLException e) {
-            System.out.println(ConsoleColors.RED + "Error fetching discounts: " + e.getMessage() + ConsoleColors.RESET);
+            System.out.println(
+                    ConsoleColors.RED + "Error fetching notifications: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 

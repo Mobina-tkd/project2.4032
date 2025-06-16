@@ -170,12 +170,14 @@ public class ProductController {
         int inventory = ProductDAO.findInventory(productId, productName);
         if (inventory == 0) {
             while (true) {
+                ScannerWrapper.getInstance().nextLine();
                 System.out.print("Inform me when its available(press 1 or press 0 to return): ");
                 String input = ScannerWrapper.getInstance().nextLine();
                 if (input.equals("0")) {
                     return;
                 } else if (input.equals("1")) {
                     InformProductDAO.insertInformUser(productId, productName, email);
+                    return;
                 } else {
                     System.out.println("Invalid input, please try again");
                 }

@@ -156,18 +156,19 @@ public class ProductDAO {
     }
 
     public static void printSellerProducts(String agencyCode) {
-        String query = "SELECT id, name, inventory FROM Book WHERE agency_code = ? " +
+        int sellerId = SellerDAO.findSellerIdByCode(agencyCode);
+        String query = "SELECT id, name, inventory FROM Book WHERE seller_id = ? " +
                 "UNION ALL " +
-                "SELECT id, name, inventory FROM Mobile WHERE agency_code = ? " +
+                "SELECT id, name, inventory FROM Mobile WHERE seller_id = ? " +
                 "UNION ALL " +
-                "SELECT id, name, inventory FROM Laptop WHERE agency_code = ?";
+                "SELECT id, name, inventory FROM Laptop WHERE seller_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, agencyCode);
-            stmt.setString(2, agencyCode);
-            stmt.setString(3, agencyCode);
+            stmt.setInt(1, sellerId);
+            stmt.setInt(2, sellerId);
+            stmt.setInt(3, sellerId);
 
             ResultSet rs = stmt.executeQuery();
 
@@ -186,6 +187,8 @@ public class ProductDAO {
 
     public static void setInventory(String tableName, int productId, int inventory) {
         String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
+        int firstInventory = ProductDAO.findInventory(productId, tableName);
+
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -196,7 +199,7 @@ public class ProductDAO {
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Inventory updated successfully.");
-                NotificationController.handleSendingNOtif(tableName, productId, inventory);
+                NotificationController.handleSendingNOtif(tableName, productId, firstInventory);
             } else {
                 System.out.println("No product found with the given ID.");
             }

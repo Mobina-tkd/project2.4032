@@ -114,8 +114,8 @@ public class NotificationController {
 
     }
 
-    public static void handleSendingNOtif(String productType, int productId, int inventory) {
-        int firstInventory = ProductDAO.findInventory(productId, productType);
+    public static void handleSendingNOtif(String productType, int productId, int firstInventory) {
+        int inventory = ProductDAO.findInventory(productId, productType);
         if (firstInventory == 0 && inventory > 0) {
             InformProductDAO.sendInventoryNotifToUsers(productType, productId);
         }

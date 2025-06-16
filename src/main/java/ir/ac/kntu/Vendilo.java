@@ -2,8 +2,11 @@ package ir.ac.kntu;
 
 import ir.ac.kntu.dao.AddressDAO;
 import ir.ac.kntu.dao.BookDAO;
+import ir.ac.kntu.dao.DiscountDAO;
+import ir.ac.kntu.dao.InformProductDAO;
 import ir.ac.kntu.dao.LaptopDAO;
 import ir.ac.kntu.dao.MobileDAO;
+import ir.ac.kntu.dao.NotificationDAO;
 import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.dao.RequestDAO;
 import ir.ac.kntu.dao.SellerDAO;
@@ -144,6 +147,9 @@ public class Vendilo {
         TransactionDAO.createTable();
         RequestDAO.createTable();
         VendiloPlusDAO.createTable();
+        InformProductDAO.createTable();
+        NotificationDAO.createTable();
+        DiscountDAO.createTable();
 
         while (true) {
             Menu.choosingRoleMenu();

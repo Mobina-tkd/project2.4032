@@ -272,4 +272,24 @@ public class SellerDAO {
         return 0.0;
 
     }
+
+    public static int findSellerIdByCode(String agencyCode) {
+        String sql = "SELECT id FROM sellers WHERE agency_code = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, agencyCode);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                return rs.getInt("id");
+            } else {
+                return -1; 
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

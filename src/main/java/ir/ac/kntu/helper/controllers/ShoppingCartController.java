@@ -243,7 +243,6 @@ public class ShoppingCartController {
             return totalCost;
         }
 
-        int userId = UserDAO.findUserId(user.getEmail());
         String query = "SELECT type, amount FROM discount WHERE code = ? AND user_id = ?";
 
         String type = "";
@@ -251,6 +250,7 @@ public class ShoppingCartController {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
+            int userId = UserDAO.findUserId(user.getEmail());
 
             stmt.setString(1, code);
             stmt.setInt(2, userId);
@@ -290,7 +290,5 @@ public class ShoppingCartController {
         System.out.println("Sorry. This code cant be applied.");
         return totalCost;
     }
-
-    
 
 }

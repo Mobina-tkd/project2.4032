@@ -39,10 +39,10 @@ public class DiscountDAO {
     public static void insertDiscount(User user, String type, String code, double amount, int usedTime) {
         String query1 = "INSERT INTO discounts(user_id, type, code, amount, used_time) "
                 + "VALUES (?, ?, ?, ?, ?)";
-        int userId = UserDAO.findUserId(user.getEmail());
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement insertStmt = conn.prepareStatement(query1)) {
+            int userId = UserDAO.findUserId(user.getEmail());
 
             insertStmt.setInt(1, userId);
             insertStmt.setString(2, type);
@@ -59,16 +59,16 @@ public class DiscountDAO {
 
     public static void printDiscountPreview(User user) {
 
-        int userId = UserDAO.findUserId(user.getEmail());
-        if (userId == -1) {
-            System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
-            return;
-        }
-
         String query = "SELECT id, type, code FROM discounts WHERE user_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            int userId = UserDAO.findUserId(user.getEmail());
+            if (userId == -1) {
+                System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
+                return;
+            }
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -169,23 +169,22 @@ public class DiscountDAO {
     public static int findIdByCode(String code) {
         String query = "SELECT id FROM discounts WHERE code = ?";
         int id = -1;
-    
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-    
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     id = rs.getInt("id");
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         return id;
     }
-    
 
 }
