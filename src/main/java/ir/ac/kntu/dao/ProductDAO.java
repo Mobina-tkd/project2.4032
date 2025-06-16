@@ -187,8 +187,7 @@ public class ProductDAO {
 
     public static void setInventory(String tableName, int productId, int inventory) {
         String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
-        int firstInventory = ProductDAO.findInventory(productId, tableName);
-
+        int firstInventory = findInventory(productId, tableName);
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -217,12 +216,14 @@ public class ProductDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, productId);
-            ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                inventory = rs.getInt("inventory");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    inventory = rs.getInt("inventory");
+                }
             }
-        } catch (Exception e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

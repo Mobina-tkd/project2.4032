@@ -56,34 +56,54 @@ public class VendiloPlusDAO {
         }
     }
 
- 
     public static boolean vendiloPlusUser(User user) {
-    String query = "SELECT date FROM vendilo_plus WHERE email = ?";
+        String query = "SELECT date FROM vendilo_plus WHERE email = ?";
 
-    try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        stmt.setString(1, user.getEmail());
-        ResultSet rs = stmt.executeQuery();
+            stmt.setString(1, user.getEmail());
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            String dateString = rs.getString("date");
+            if (rs.next()) {
+                String dateString = rs.getString("date");
 
-            Instant now = ir.ac.kntu.helper.Calendar.now();
-            Instant dateInstant = Instant.parse(dateString.trim());
+                ZonedDateTime now = ZonedDateTime.now();
+                ZonedDateTime dateInstant = ZonedDateTime.parse(dateString.trim());
 
-            return now.isBefore(dateInstant); 
+                return now.isBefore(dateInstant);
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void showMyStatus(User user) {
+        if (!vendiloPlusUser(user)) {
+            System.out.println("You dont have a subscription");
+            return;
+        }
+        String query = "SELECT date FROM vendilo_plus WHERE email = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, user.getEmail());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String dateString = rs.getString("date");
+                System.out.println("Your subscription end in : " + dateString);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return false;
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
     }
-}
-
-
-    
 
 }

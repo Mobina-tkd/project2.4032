@@ -115,6 +115,7 @@ public class DiscountDAO {
     }
 
     public static String getDiscountCode(User user) {
+        ScannerWrapper.getInstance().nextLine();
         System.out.println("Enter your discount code (press 0 to return): ");
         String input = ScannerWrapper.getInstance().nextLine();
         if (input.equals("0")) {
@@ -127,26 +128,29 @@ public class DiscountDAO {
     }
 
     private static boolean codeExist(String input) {
-        String sql = "SELECT 1 FROM discount WHERE code = ? LIMIT 1";
+        String sql = "SELECT used_time FROM discounts WHERE code = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, input);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
-            }
+            ResultSet rs = stmt.executeQuery();
+            int usedTime = rs.getInt("used_time");
+
+            if(rs.next() && usedTime > 0) {
+                return true;
+            }    
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.err.println("Sorry. this code is invalid");
+        System.out.println("Sorry. this code is invalid");
         return false;
     }
 
     public static void reduceTimeUsed(String code) {
-        String query = "UPDATE discount SET time_used = time_used - 1 WHERE code = ? AND time_used > 0";
+        String query = "UPDATE discounts SET used_time = used_time - 1 WHERE code = ? AND used_time > 0";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -162,7 +166,7 @@ public class DiscountDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Error while reducing time_used.");
+            System.out.println("Error while reducing used_time.");
         }
     }
 

@@ -90,8 +90,9 @@ public class ShoppingCartController {
                     if (address == null) {
                         continue;
                     }
-                    System.out.println("Total cost including shipping cost:  " + ConsoleColors.GREEN + totalCost
-                            + ConsoleColors.RESET);
+                    System.out.println(
+                            "Total cost including shipping cost:  " + ConsoleColors.GREEN + (totalCost + shippingCost)
+                                    + ConsoleColors.RESET);
                     handlePaying(user, totalCost, shippingCost, address);
 
                 }
@@ -215,12 +216,12 @@ public class ShoppingCartController {
                                 if (state.equalsIgnoreCase(sellerState)) {
                                     shippingCost += 10;
                                     if (VendiloPlusDAO.vendiloPlusUser(user)) {
-                                        shippingCost += 0;
+                                        shippingCost = 0;
                                     }
                                 } else {
                                     shippingCost += 30;
                                     if (VendiloPlusDAO.vendiloPlusUser(user)) {
-                                        shippingCost += 10;
+                                        shippingCost = 10;
                                     }
                                 }
                             }
@@ -240,10 +241,11 @@ public class ShoppingCartController {
     private static double applyDiscount(double totalCost, User user) {
         String code = DiscountDAO.getDiscountCode(user);
         if (code == null || code.trim().isEmpty()) {
+            System.out.println("Cant apply this code");
             return totalCost;
         }
 
-        String query = "SELECT type, amount FROM discount WHERE code = ? AND user_id = ?";
+        String query = "SELECT type, amount FROM discounts WHERE code = ? AND user_id = ?";
 
         String type = "";
         double amount = 0;

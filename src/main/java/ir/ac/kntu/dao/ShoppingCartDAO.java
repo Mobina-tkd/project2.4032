@@ -124,6 +124,9 @@ public class ShoppingCartDAO {
                             String name = resultSet2.getString("name");
                             int cartId = resultSet2.getInt("id");
                             double price = resultSet2.getDouble("price");
+                            if (VendiloPlusDAO.vendiloPlusUser(user)) {
+                                price = 0.95 * price;
+                            }
 
                             System.out.printf("Name: %s | ID: %d | Price: $%.2f%n", name, cartId, price);
                             sum += price;
