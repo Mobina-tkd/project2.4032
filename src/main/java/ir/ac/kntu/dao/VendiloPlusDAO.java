@@ -97,7 +97,7 @@ public class VendiloPlusDAO {
 
             if (rs.next()) {
                 String dateString = rs.getString("date");
-                System.out.println("Your subscription end in : " + dateString);
+                System.out.println("Your subscription ends on : " + dateString.substring(0, 10));
             }
 
         } catch (Exception e) {
