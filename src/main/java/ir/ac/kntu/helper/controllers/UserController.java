@@ -170,19 +170,17 @@ public class UserController {
             System.out.println("Enter discount id to see more information\n press 0 to return : ");
             String option = ScannerWrapper.getInstance().nextLine();
             boolean isInt = ValidationUtil.isInteger(option);
-            if(!isInt) {
+            if (!isInt) {
                 System.out.println("Invalid id");
                 continue;
             }
             int intOption = Integer.parseInt(option);
-            if(intOption == 0) {
+            if (intOption == 0) {
                 return;
             }
             DiscountDAO.printDiscountInformation(intOption);
         }
 
     }
-
-    
 
 }

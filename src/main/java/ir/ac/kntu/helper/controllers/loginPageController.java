@@ -108,7 +108,7 @@ public class LoginPageController {
     }
 
 
-    public static String supporterLoginPage() {
+    public static String supporterAndManagerLoginPage(String usertype) {
         while (true) {
             System.out.println(ConsoleColors.RED +"---------"+ ConsoleColors.RESET+"Login Page"+ConsoleColors.RED +"--------"+ ConsoleColors.RESET);
             System.out.print("Do you want to login? Y/N: ");
@@ -121,7 +121,7 @@ public class LoginPageController {
             System.out.print("Enter you password: ");
             String password = ScannerWrapper.getInstance().nextLine();
 
-            String sql = "SELECT password FROM supporters WHERE username = ?";
+            String sql = "SELECT password FROM "+ usertype +" WHERE username = ?";
 
             try (Connection conn = DriverManager.getConnection(DB_URL);
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {

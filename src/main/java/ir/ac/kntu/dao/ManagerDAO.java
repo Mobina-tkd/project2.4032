@@ -3,6 +3,7 @@ package ir.ac.kntu.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -37,7 +38,6 @@ public class ManagerDAO {
             pstmt.setString(1, name);
             pstmt.setString(2, username);
             pstmt.setString(3, password);
-            
 
             pstmt.executeUpdate();
             System.out.println(ConsoleColors.GREEN + "Manager inserted successfully." + ConsoleColors.RESET);
@@ -47,5 +47,21 @@ public class ManagerDAO {
             return false;
         }
     }
-    
+
+    public static boolean userExist(String usertype, String username) {
+        String query = "SELECT 1 FROM " + usertype + " WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); 
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

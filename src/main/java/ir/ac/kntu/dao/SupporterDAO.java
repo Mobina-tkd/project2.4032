@@ -49,4 +49,28 @@ public class SupporterDAO {
         }
     }
 
+    public static void updateSupporterAndManagerData(String username, String usertype, String field, String newValue) {
+
+        String sql = "UPDATE "+ usertype +" SET " + field + " = ? WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, newValue);
+            stmt.setString(2, username);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println(ConsoleColors.GREEN + usertype +" data updated successfully." + ConsoleColors.RESET);
+            } else {
+                System.out.println(ConsoleColors.RED +"No update was made." + ConsoleColors.RESET);
+            }
+
+        } catch (SQLException e) {
+            e.getMessage();
+        }
+
+    }
+
 }

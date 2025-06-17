@@ -235,6 +235,14 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
+    public static void edditingMenu() {
+        System.out.println("\n1) Edit name");
+        System.out.println("2) Edit username");
+        System.out.println("3) Edit password");
+        System.out.println("4) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
     public static <T extends Enum<T>> T getEnumOption(Class<T> enumType, T undefinedOption) {
         T[] options = enumType.getEnumConstants();
         int userInput = ScannerWrapper.getInstance().nextInt();
@@ -358,7 +366,11 @@ public class Menu {
         return getEnumOption(Vendilo.ManagerOptions.class, Vendilo.ManagerOptions.UNDEFINED);
     }
 
-    public static Vendilo.SupporterSupporterOptions getManagingUserOption() {
-        return getEnumOption(Vendilo.SupporterSupporterOptions.class, Vendilo.SupporterSupporterOptions.UNDEFINED);
+    public static Vendilo.ManagingUserOption getManagingUserOption() {
+        return getEnumOption(Vendilo.ManagingUserOption.class, Vendilo.ManagingUserOption.UNDEFINED);
+    }
+
+    public static Vendilo.EdditingMenu getEdditingOption() {
+        return getEnumOption(Vendilo.EdditingMenu.class, Vendilo.EdditingMenu.UNDEFINED);
     }
 }

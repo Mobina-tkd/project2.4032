@@ -75,6 +75,7 @@ public class UserDAO {
                     return new User(firstName, lastName, email, phone, password);
                 } else {
                     System.out.println(ConsoleColors.RED +"No user found with email or phone: " + ConsoleColors.RESET + username);
+                    System.out.println("");
                     return null;
                 }
             }

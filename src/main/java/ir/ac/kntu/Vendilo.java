@@ -16,6 +16,7 @@ import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.dao.VendiloPlusDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.controllers.LoginPageController;
+import ir.ac.kntu.helper.controllers.ManagerController;
 import ir.ac.kntu.helper.controllers.SellerController;
 import ir.ac.kntu.helper.controllers.SupporterController;
 import ir.ac.kntu.helper.controllers.UserController;
@@ -35,7 +36,7 @@ public class Vendilo {
     }
 
     public enum MenuOption {
-        USER, SELLER, SUPPORTER, UNDEFINED
+        USER, SELLER, SUPPORTER, MANAGER, UNDEFINED
     }
 
     public enum UserOption {
@@ -143,6 +144,10 @@ public class Vendilo {
         CREATE_MANAGER, CREATE_SUPPORTER, EDIT_USER, EDIT_MANAGER, EDIT_SUPPORTER, BLOCK_USER, BLOCK_SUPPORTER, BLOCK_MANAGER, BACK, UNDEFINED
     }
 
+    public enum EdditingMenu {
+        NAME, USERNAME, PASSWORD, BACK, UNDEFINED
+    }
+
     public static void main(String[] args) {
         UserDAO.createTable();
         AddressDAO.createTable();
@@ -172,12 +177,19 @@ public class Vendilo {
                 }
 
                 case SUPPORTER -> {
-                    String canEnter = LoginPageController.supporterLoginPage();
+                    String canEnter = LoginPageController.supporterAndManagerLoginPage("supporters");
                     if (canEnter == null) {
                         continue;
                     }
                     // you have to consider which supporter is entering
                     SupporterController.chooseSupporterOption();
+                }
+                case MANAGER -> {
+                    String canEnter = LoginPageController.supporterAndManagerLoginPage("managers");
+                    if (canEnter == null) {
+                        continue;
+                    }
+                    ManagerController.handleManagerOption();
                 }
 
                 case UNDEFINED -> {
