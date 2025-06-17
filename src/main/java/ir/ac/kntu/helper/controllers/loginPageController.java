@@ -107,23 +107,50 @@ public class LoginPageController {
         }
     }
 
-    public static boolean supporterLoginPage() {
-        System.out.print("\nEnter your username: ");
-        String username = ScannerWrapper.getInstance().nextLine();
-        System.out.print("Enter your password: ");
-        String password = ScannerWrapper.getInstance().nextLine();
 
-        if ("Sara_H82".equals(username) && "S1382ara_".equals(password)) {
-            System.out.println(ConsoleColors.BLUE +"\nWelcome dear sara"+ ConsoleColors.RESET);
-            return true;
-        } else if ("mmd_L80".equals(username) && "M1380md_".equals(password)) {
-            System.out.println(ConsoleColors.BLUE +"\nWelcome dear mohammad"+ ConsoleColors.RESET);
-            return true;
-        } else {
-            System.out.println(ConsoleColors.RED +"Wrong username or password :( please try again..." + ConsoleColors.RESET);
-            return false;
+    public static String supporterLoginPage() {
+        while (true) {
+            System.out.println(ConsoleColors.RED +"---------"+ ConsoleColors.RESET+"Login Page"+ConsoleColors.RED +"--------"+ ConsoleColors.RESET);
+            System.out.print("Do you want to login? Y/N: ");
+            String login = ScannerWrapper.getInstance().nextLine();
+            if ("n".equalsIgnoreCase(login)) {
+                return "Back";
+            }
+            System.out.print("\nEnter your username:  ");
+            String username = ScannerWrapper.getInstance().nextLine();
+            System.out.print("Enter you password: ");
+            String password = ScannerWrapper.getInstance().nextLine();
+
+            String sql = "SELECT password FROM supporters WHERE username = ?";
+
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setString(1, username);
+
+                ResultSet resultSet = pstmt.executeQuery();
+
+                if (resultSet.next()) {
+                    String storedPassword = resultSet.getString("password");
+                    if (storedPassword.equals(password)) {
+                        System.out.println(ConsoleColors.BLUE +"Login successful! Welcome."+ ConsoleColors.RESET);
+                        return username;
+                    } else {
+                        System.out.println(ConsoleColors.RED +"Incorrect password." + ConsoleColors.RESET);
+                        return null;
+                    }
+                } else {
+                    System.out.println(ConsoleColors.RED +"No account found with that email or phone number." + ConsoleColors.RESET);
+                    return null;
+                }
+
+            } catch (SQLException e) {
+                System.out.println(ConsoleColors.RED + "Database error: " + e.getMessage() + ConsoleColors.RESET);
+            }
+
         }
-
     }
+
+    
 
 }

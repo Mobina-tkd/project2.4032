@@ -213,6 +213,28 @@ public class Menu {
         System.out.print("Please Enter Your Choice:  ");
     }
 
+    public static void managerMenu() {
+        System.out.println("\n1) Managing users");
+        System.out.println("2) Analysis seller function");
+        System.out.println("3) Creating discount code ");
+        System.out.println("4) General message");
+        System.out.println("5) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void managingUserMenu() {
+        System.out.println("\n1) Create manager");
+        System.out.println("2) Create supporter ");
+        System.out.println("3) Edit manager ");
+        System.out.println("4) Edit user ");
+        System.out.println("5) Edit supporter");
+        System.out.println("6) Block manager ");
+        System.out.println("7) Block user");
+        System.out.println("8) Block supporter");
+        System.out.println("9) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
     public static <T extends Enum<T>> T getEnumOption(Class<T> enumType, T undefinedOption) {
         T[] options = enumType.getEnumConstants();
         int userInput = ScannerWrapper.getInstance().nextInt();
@@ -329,6 +351,14 @@ public class Menu {
     }
 
     public static Vendilo.SupporterSupporterOptions getSupporterSupportOption() {
+        return getEnumOption(Vendilo.SupporterSupporterOptions.class, Vendilo.SupporterSupporterOptions.UNDEFINED);
+    }
+
+    public static Vendilo.ManagerOptions getManagerOption() {
+        return getEnumOption(Vendilo.ManagerOptions.class, Vendilo.ManagerOptions.UNDEFINED);
+    }
+
+    public static Vendilo.SupporterSupporterOptions getManagingUserOption() {
         return getEnumOption(Vendilo.SupporterSupporterOptions.class, Vendilo.SupporterSupporterOptions.UNDEFINED);
     }
 }

@@ -1,0 +1,51 @@
+package ir.ac.kntu.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import ir.ac.kntu.helper.ConsoleColors;
+
+public class ManagerDAO {
+    private static final String DB_URL = "jdbc:sqlite:data.db";
+
+    public static void createTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS managers ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "name TEXT,"
+                + "username TEXT UNIQUE,"
+                + "password TEXT NOT NULL,"
+                + ");";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table created or already exists.");
+        } catch (SQLException e) {
+            System.out.println("Table creation failed: " + e.getMessage());
+        }
+    }
+
+    public static Boolean insertManager(String name, String username, String password) {
+        String sql = "INSERT INTO managers(name, username, password) VALUES (?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, username);
+            pstmt.setString(3, password);
+            
+
+            pstmt.executeUpdate();
+            System.out.println(ConsoleColors.GREEN + "Manager inserted successfully." + ConsoleColors.RESET);
+            return true;
+        } catch (SQLException e) {
+            System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
+            return false;
+        }
+    }
+    
+}

@@ -23,7 +23,7 @@ import ir.ac.kntu.helper.controllers.UserController;
 public class Vendilo {
 
     public enum NotificationType {
-        CHECK_REQUEST, GENERAL_TEXT, DISCOUNT_CODE, INVENTORY 
+        CHECK_REQUEST, GENERAL_TEXT, DISCOUNT_CODE, INVENTORY
     }
 
     public enum VendiloPlus {
@@ -135,6 +135,14 @@ public class Vendilo {
         CURRETN_BALANCE, WITHDRAW, BACK, UNDEFINED
     }
 
+    public enum ManagerOptions {
+        MANAGING_USERS, ANALYSIS_SELLER_FUNCTION, ANALYSE_USER_FUNCTION, CREATING_DISCOUNT_CODE, GENERAL_MESSAGE, BACK, UNDEFINED
+    }
+
+    public enum ManagingUserOption {
+        CREATE_MANAGER, CREATE_SUPPORTER, EDIT_USER, EDIT_MANAGER, EDIT_SUPPORTER, BLOCK_USER, BLOCK_SUPPORTER, BLOCK_MANAGER, BACK, UNDEFINED
+    }
+
     public static void main(String[] args) {
         UserDAO.createTable();
         AddressDAO.createTable();
@@ -164,13 +172,11 @@ public class Vendilo {
                 }
 
                 case SUPPORTER -> {
-                    while (true) {
-                        boolean canEnter = LoginPageController.supporterLoginPage();
-                        if (!canEnter) {
-                            continue;
-                        }
-                        break;
+                    String canEnter = LoginPageController.supporterLoginPage();
+                    if (canEnter == null) {
+                        continue;
                     }
+                    // you have to consider which supporter is entering
                     SupporterController.chooseSupporterOption();
                 }
 

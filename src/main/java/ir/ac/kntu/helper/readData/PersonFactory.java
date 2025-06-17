@@ -1,5 +1,7 @@
 package ir.ac.kntu.helper.readData;
 
+import ir.ac.kntu.dao.ManagerDAO;
+import ir.ac.kntu.dao.SupporterDAO;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.ValidationUtil;
 import ir.ac.kntu.model.Seller;
@@ -41,6 +43,24 @@ public class PersonFactory {
         String password = readPassword();
 
         return new Seller(firstName, lastName, idNumber, storName, state, phoneNumber, password);
+    }
+
+    public static void readSupporterAndManagerData(String userType) {
+        System.out.print("\nEnter your name: ");
+        String name = ScannerWrapper.getInstance().nextLine();
+
+        System.out.print("Enter username: ");
+        String username = ScannerWrapper.getInstance().nextLine();
+
+        String password = readPassword();
+
+        if(userType.equals("supporter")) {
+            SupporterDAO.insertSopporter(name, username, password);
+        }
+        if(userType.equals("manager")) {
+            ManagerDAO.insertManager(name, username, password);
+        }
+
     }
 
     public static String readPassword() {
