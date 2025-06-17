@@ -45,6 +45,7 @@ public class ManagerController {
             Menu.managingUserMenu();
             Vendilo.ManagingUserOption option = Menu.getManagingUserOption();
             switch (option) {
+
                 case CREATE_MANAGER -> {
                     PersonFactory.readSupporterAndManagerData("managers");
                 }
@@ -61,10 +62,16 @@ public class ManagerController {
                     handleEditingSupporterAndManager("supporters");
                 }
                 case BLOCK_USER -> {
+                    handleBlockingUser();
                 }
                 case BLOCK_SUPPORTER -> {
+                    handleBlockingManagerAndSupporter("supporters");
                 }
                 case BLOCK_MANAGER -> {
+                    handleBlockingManagerAndSupporter("supporters");
+                }
+                case SHOW_USERS -> {
+                    // work this out
                 }
                 case BACK -> {
                     return;
@@ -76,6 +83,35 @@ public class ManagerController {
                 default -> throw new AssertionError();
             }
 
+        }
+    }
+
+    private static void handleBlockingUser() {
+        while (true) {
+            System.out.print("Enter email or phone number to block(press 0 to return): ");
+            String username = ScannerWrapper.getInstance().nextLine();
+            if (username.equals("0")) {
+                return;
+            }
+            User user = UserDAO.findUser(username);
+            if (user == null) {
+                continue;
+            }
+            UserDAO.blockUser(user.getEmail());
+        }
+    }
+
+    private static void handleBlockingManagerAndSupporter(String usertype) {
+        while (true) {
+            System.out.print("Enter username to block(press 0 to return): ");
+            String username = ScannerWrapper.getInstance().nextLine();
+            if (username.equals("0")) {
+                return;
+            }
+            if (!ManagerDAO.userExist(usertype, username)) {
+                continue;
+            }
+            ManagerDAO.blockManagerAndSupporter(username, usertype);
         }
     }
 

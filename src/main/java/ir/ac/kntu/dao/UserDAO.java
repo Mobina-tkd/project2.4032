@@ -21,7 +21,8 @@ public class UserDAO {
                 + "email TEXT UNIQUE NOT NULL,"
                 + "phone_number TEXT UNIQUE,"
                 + "password TEXT NOT NULL,"
-                + "balance REAL"
+                + "balance REAL,"
+                + "isBlock INTEGER"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -34,7 +35,7 @@ public class UserDAO {
     }
 
     public static Boolean insertUser(User user) {
-        String sql = "INSERT INTO users(first_name, last_name, email, phone_number, password, balance) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users(first_name, last_name, email, phone_number, password, balance, isBlock) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -45,6 +46,8 @@ public class UserDAO {
             pstmt.setString(4, user.getPhoneNumber());
             pstmt.setString(5, user.getPassword());
             pstmt.setDouble(6, 0);
+            pstmt.setInt(7, 0);
+
 
             pstmt.executeUpdate();
             System.out.println(ConsoleColors.GREEN +"User inserted successfully." + ConsoleColors.RESET);
@@ -179,6 +182,27 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public static void blockUser(String email) {
+        String query = "UPDATE users SET isBlock = ? WHERE email = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setDouble(1, 1);
+            stmt.setString(2, email);
+    
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("No user found.");
+            } else {
+                System.out.println("User has been blocked successfully.");
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     

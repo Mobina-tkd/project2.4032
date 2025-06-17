@@ -18,6 +18,7 @@ public class SupporterDAO {
                 + "name TEXT,"
                 + "username TEXT UNIQUE,"
                 + "password TEXT NOT NULL,"
+                + "isBlock INTEGER"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -30,7 +31,7 @@ public class SupporterDAO {
     }
 
     public static Boolean insertSopporter(String name, String username, String password) {
-        String sql = "INSERT INTO supporters(name, username, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO supporters(name, username, password, isBlock) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -38,6 +39,8 @@ public class SupporterDAO {
             pstmt.setString(1, name);
             pstmt.setString(2, username);
             pstmt.setString(3, password);
+            pstmt.setInt(4, 0);
+
             
 
             pstmt.executeUpdate();

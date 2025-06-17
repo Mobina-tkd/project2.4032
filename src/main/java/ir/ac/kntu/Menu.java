@@ -231,7 +231,8 @@ public class Menu {
         System.out.println("6) Block manager ");
         System.out.println("7) Block user");
         System.out.println("8) Block supporter");
-        System.out.println("9) Back");
+        System.out.println("9) Show users");
+        System.out.println("10) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
