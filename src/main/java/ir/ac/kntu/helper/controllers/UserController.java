@@ -157,7 +157,6 @@ public class UserController {
                 }
                 case UNDEFINED -> {
                     System.out.println(ConsoleColors.RED + "Undefined Choice" + ConsoleColors.RESET);
-                    break;
                 }
                 default -> throw new AssertionError();
             }
@@ -181,6 +180,44 @@ public class UserController {
             DiscountDAO.printDiscountInformation(intOption);
         }
 
+    }
+
+    public static void handleShowingUsers() {
+        while (true) {
+            Menu.displayUserOption();
+            Vendilo.displayingUserOption option = Menu.getDisplayingTypeOption();
+            switch (option) {
+                case SHOW_ALL -> {
+                    UserDAO.showAllUsers();
+                }
+                case SEARCH_BY_USERNAME -> {
+                    displayUserByUsername();
+                }
+                case BACK -> {
+                    return;
+                }
+                case UNDEFINED -> {
+                    System.out.println(ConsoleColors.RED + "Undefined Choice" + ConsoleColors.RESET);
+                }
+                default -> throw new AssertionError();
+            }
+        }
+    }
+
+    private static void displayUserByUsername() {
+        while (true) {
+            System.out.print("Enter username (press 0 to return): ");
+            String username = ScannerWrapper.getInstance().nextLine();
+            if (username.equals("0")) {
+                return;
+            }
+            User user = UserDAO.findUser(username);
+            if (user == null) {
+                continue;
+            }
+            System.out.println("First name :" + user.getFirstName() + "| Last name :" + user.getLastName() +
+                    "| email: " + user.getEmail() + "| Phone number: " + user.getPhoneNumber());
+        }
     }
 
 }

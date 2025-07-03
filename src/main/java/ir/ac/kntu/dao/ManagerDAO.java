@@ -41,7 +41,6 @@ public class ManagerDAO {
             pstmt.setString(3, password);
             pstmt.setInt(4, 0);
 
-
             pstmt.executeUpdate();
             System.out.println(ConsoleColors.GREEN + "Manager inserted successfully." + ConsoleColors.RESET);
             return true;
@@ -58,7 +57,7 @@ public class ManagerDAO {
 
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); 
+                return rs.next();
             }
 
         } catch (SQLException e) {
@@ -67,25 +66,48 @@ public class ManagerDAO {
         }
     }
 
-
-    public static void blockManagerAndSupporter(String username, String usertype)  {
-        String query = "UPDATE "+ usertype+" SET isBlock = ? WHERE username = ?";
+    public static void blockManagerAndSupporter(String username, String usertype) {
+        String query = "UPDATE " + usertype + " SET isBlock = ? WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-    
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setDouble(1, 1);
             stmt.setString(2, username);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
-                System.out.println("No user in "+ usertype +" found.");
+                System.out.println("No user in " + usertype + " found.");
             } else {
                 System.out.println("User in " + usertype + "has been blocked successfully.");
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void printByUsername(String userType, String username) {
+        String query = "SELECT name, username, password FROM " + userType + " WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query);) {
+
+            stmt.setString(1, username);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    String password = resultSet.getString("password");
+                    System.out.println("");
+
+                    System.out.printf("Name: %s | username: %s | password: %s%n%n",
+                            name, username, password);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println(ConsoleColors.RED + "Error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 

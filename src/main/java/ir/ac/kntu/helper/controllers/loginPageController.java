@@ -76,7 +76,7 @@ public class LoginPageController {
             System.out.print("Enter you password : ");
             String password = ScannerWrapper.getInstance().nextLine();
 
-            String sql = "SELECT password FROM users WHERE email = ? OR phone_number = ?";
+            String sql = "SELECT password, isBlock FROM users WHERE email = ? OR phone_number = ?";
 
             try (Connection conn = DriverManager.getConnection(url);
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -88,10 +88,16 @@ public class LoginPageController {
 
                 if (resultSet.next()) {
                     String storedPassword = resultSet.getString("password");
+                    int isBlock = resultSet.getInt("isBlock");
+                    if (isBlock == 1) {
+                        System.out.println("You have been blocked by manager");
+                        return null;
+                    }
                     if (storedPassword.equals(password)) {
                         System.out.println(ConsoleColors.BLUE +"Login successful! Welcome."+ ConsoleColors.RESET);
                         return username;
-                    } else {
+                    } 
+                    else {
                         System.out.println(ConsoleColors.RED +"Incorrect password." + ConsoleColors.RESET);
                         return null;
                     }
@@ -121,7 +127,7 @@ public class LoginPageController {
             System.out.print("Enter you password: ");
             String password = ScannerWrapper.getInstance().nextLine();
 
-            String sql = "SELECT password FROM "+ usertype +" WHERE username = ?";
+            String sql = "SELECT password, isBlock FROM "+ usertype +" WHERE username = ?";
 
             try (Connection conn = DriverManager.getConnection(DB_URL);
                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -132,6 +138,11 @@ public class LoginPageController {
 
                 if (resultSet.next()) {
                     String storedPassword = resultSet.getString("password");
+                    int isBlock = resultSet.getInt("isBlock");
+                    if (isBlock == 1) {
+                        System.out.println("You have been blocked by manager");
+                        return null;
+                    }
                     if (storedPassword.equals(password)) {
                         System.out.println(ConsoleColors.BLUE +"Login successful! Welcome."+ ConsoleColors.RESET);
                         return username;
@@ -140,7 +151,7 @@ public class LoginPageController {
                         return null;
                     }
                 } else {
-                    System.out.println(ConsoleColors.RED +"No account found with that email or phone number." + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED +"No account found." + ConsoleColors.RESET);
                     return null;
                 }
 

@@ -36,13 +36,13 @@ public class DiscountDAO {
         }
     }
 
-    public static void insertDiscount(User user, String type, String code, double amount, int usedTime) {
+    public static void insertDiscount(String email, String type, String code, double amount, int usedTime) {
         String query1 = "INSERT INTO discounts(user_id, type, code, amount, used_time) "
                 + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement insertStmt = conn.prepareStatement(query1)) {
-            int userId = UserDAO.findUserId(user.getEmail());
+            int userId = UserDAO.findUserId(email);
 
             insertStmt.setInt(1, userId);
             insertStmt.setString(2, type);
@@ -138,9 +138,9 @@ public class DiscountDAO {
             ResultSet rs = stmt.executeQuery();
             int usedTime = rs.getInt("used_time");
 
-            if(rs.next() && usedTime > 0) {
+            if (rs.next() && usedTime > 0) {
                 return true;
-            }    
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

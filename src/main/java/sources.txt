@@ -6,6 +6,7 @@ C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\BookD
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\DiscountDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\InformProductDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\LaptopDAO.java
+C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\ManagerDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\MobileDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\NotificationDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\ProductDAO.java
@@ -13,6 +14,7 @@ C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\Purch
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\RequestDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\SellerDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\ShoppingCartDAO.java
+C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\SupporterDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\TransactionDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\UserDAO.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\dao\VendiloPlusDAO.java
@@ -24,6 +26,7 @@ C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\Se
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\ValidationUtil.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\AddressController.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\LoginPageController.java
+C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\ManagerController.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\NotificationController.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\ProductController.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\PurchaseController.java
@@ -38,7 +41,7 @@ C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\co
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\controllers\WalletController.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\readData\PersonFactory.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\readData\ProductFactory.java
-C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\readData\ReadAddress.java
+C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\helper\readData\ReadDataUtil.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\model\Address.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\model\Book.java
 C:\Users\Lenovo_irG\Desktop\project3\project3\src\main\java\ir\ac\kntu\model\Digital.java

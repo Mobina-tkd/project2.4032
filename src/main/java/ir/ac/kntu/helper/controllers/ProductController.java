@@ -156,10 +156,10 @@ public class ProductController {
         while (true) {
             System.out.println("Enter the name of product you want to add(press 0 to return)");
             productType = ScannerWrapper.getInstance().nextLine();
-            if (productType.equals("Book") || productType.equals("Mobile") || productType.equals("Laptop")) {
+            if ("Book".equals(productType) || "Mobile".equals(productType) || productType.equals("Laptop")) {
                 return productType;
             }
-            if (productType.equals("0")) {
+            if ("0".equals(productType)) {
                 return "";
             }
             System.out.println("Invalid type, please try again");
@@ -173,9 +173,9 @@ public class ProductController {
                 ScannerWrapper.getInstance().nextLine();
                 System.out.print("Inform me when its available(press 1 or press 0 to return): ");
                 String input = ScannerWrapper.getInstance().nextLine();
-                if (input.equals("0")) {
+                if ("0".equals(input)) {
                     return;
-                } else if (input.equals("1")) {
+                } else if ("1".equals(input)) {
                     InformProductDAO.insertInformUser(productId, productName, email);
                     return;
                 } else {

@@ -5,12 +5,14 @@ import ir.ac.kntu.dao.BookDAO;
 import ir.ac.kntu.dao.DiscountDAO;
 import ir.ac.kntu.dao.InformProductDAO;
 import ir.ac.kntu.dao.LaptopDAO;
+import ir.ac.kntu.dao.ManagerDAO;
 import ir.ac.kntu.dao.MobileDAO;
 import ir.ac.kntu.dao.NotificationDAO;
 import ir.ac.kntu.dao.PurchasesDAO;
 import ir.ac.kntu.dao.RequestDAO;
 import ir.ac.kntu.dao.SellerDAO;
 import ir.ac.kntu.dao.ShoppingCartDAO;
+import ir.ac.kntu.dao.SupporterDAO;
 import ir.ac.kntu.dao.TransactionDAO;
 import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.dao.VendiloPlusDAO;
@@ -137,15 +139,37 @@ public class Vendilo {
     }
 
     public enum ManagerOptions {
-        MANAGING_USERS, ANALYSIS_SELLER_FUNCTION, ANALYSE_USER_FUNCTION, CREATING_DISCOUNT_CODE, GENERAL_MESSAGE, BACK, UNDEFINED
+        MANAGING_USERS, ANALYSIS_SELLER_FUNCTION, ANALYSE_USER_FUNCTION, CREATING_DISCOUNT_CODE, GENERAL_MESSAGE, BACK,
+        UNDEFINED
     }
 
     public enum ManagingUserOption {
-        CREATE_MANAGER, CREATE_SUPPORTER, EDIT_USER, EDIT_MANAGER, EDIT_SUPPORTER, BLOCK_USER, BLOCK_SUPPORTER, BLOCK_MANAGER, SHOW_USERS, BACK, UNDEFINED
+        CREATE_MANAGER, CREATE_SUPPORTER, EDIT_USER, EDIT_MANAGER, EDIT_SUPPORTER, BLOCK_USER, BLOCK_SUPPORTER,
+        BLOCK_MANAGER, SHOW_USERS, SUPPORTER_LIMITATION, BACK, UNDEFINED
     }
 
     public enum EdditingMenu {
         NAME, USERNAME, PASSWORD, BACK, UNDEFINED
+    }
+
+    public enum ShowUsersOption {
+        NORMAL_USER, SUPPORTER, MANAGER, BACK, UNDEFINED
+    }
+
+    public enum displayingUserOption {
+        SHOW_ALL, SEARCH_BY_USERNAME, BACK, UNDEFINED
+    }
+
+    public enum AccessOption {
+        GIVE_ACCESS, REVOKE, BACK, UNDEFINED
+    }
+
+    public enum SellerFunction {
+        SHOW_SELLERS_FUNCTION, REWARD_SELLER, BACK, UNDEFINED
+    }
+
+    public enum UserFunction {
+        SHOW_USERS_FUNCTION, GIVE_DISCOUNT_CODE, ADD_TO_VENDILO_PLUS, BACK, UNDEFINED
     }
 
     public static void main(String[] args) {
@@ -163,7 +187,8 @@ public class Vendilo {
         InformProductDAO.createTable();
         NotificationDAO.createTable();
         DiscountDAO.createTable();
-
+        ManagerDAO.createTable();
+        SupporterDAO.createTable();
         while (true) {
             Menu.choosingRoleMenu();
             MenuOption menuOption = Menu.getMenuOption();

@@ -26,7 +26,7 @@ public class SupporterController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
@@ -48,8 +48,7 @@ public class SupporterController {
             if (!canPrint) {
                 return;
             }
-            
-        
+
             Menu.verificationMenu();
             Vendilo.VarificationMenu option = Menu.getVarificationOption();
             switch (option) {
@@ -63,7 +62,7 @@ public class SupporterController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
                 }
                 default -> throw new AssertionError();
@@ -73,7 +72,7 @@ public class SupporterController {
 
     private static void handleConfirm(String agencyCode) {
         SellerDAO.setIdentityVerified(1, agencyCode);
-        System.out.println(ConsoleColors.GREEN +"The seller confirmed" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.GREEN + "The seller confirmed" + ConsoleColors.RESET);
     }
 
     private static void handleDeny(String agencyCode) {

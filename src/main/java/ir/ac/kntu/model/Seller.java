@@ -1,7 +1,6 @@
 package ir.ac.kntu.model;
 
 public class Seller {
-    private static final String DB_URL = "jdbc:sqlite:data.db";
 
     private String firstName;
     private String lastName;

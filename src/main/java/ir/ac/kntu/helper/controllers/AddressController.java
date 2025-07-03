@@ -5,7 +5,7 @@ import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.AddressDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
-import ir.ac.kntu.helper.readData.ReadAddress;
+import ir.ac.kntu.helper.readData.ReadDataUtil;
 import ir.ac.kntu.model.Address;
 import ir.ac.kntu.model.User;
 
@@ -18,7 +18,7 @@ public class AddressController {
             switch (addressOption) {
                 case INSERT_NEW_ADDRESS -> {
                     while (true) {
-                        Address address = ReadAddress.readAddress();
+                        Address address = ReadDataUtil.readAddress();
                         boolean inserted = AddressDAO.insertAddress(address, user);
                         if (!inserted) {
                             continue;

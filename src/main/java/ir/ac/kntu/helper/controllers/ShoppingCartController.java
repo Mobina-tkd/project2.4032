@@ -21,7 +21,7 @@ import ir.ac.kntu.dao.UserDAO;
 import ir.ac.kntu.dao.VendiloPlusDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
-import ir.ac.kntu.helper.readData.ReadAddress;
+import ir.ac.kntu.helper.readData.ReadDataUtil;
 import ir.ac.kntu.model.Address;
 import ir.ac.kntu.model.ShoppingCart;
 import ir.ac.kntu.model.Transaction;
@@ -98,7 +98,7 @@ public class ShoppingCartController {
                 }
 
                 case NEW -> {
-                    Address address = ReadAddress.readAddress();
+                    Address address = ReadDataUtil.readAddress();
                     AddressDAO.insertAddress(address, user);
                     double totalCost = countTotalPrice(user);
                     double shippingCost = countShippingCost(user, address.getState());

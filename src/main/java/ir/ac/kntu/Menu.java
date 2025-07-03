@@ -15,6 +15,7 @@ public class Menu {
         System.out.println("\n1) User");
         System.out.println("2) Seller");
         System.out.println("3) Supporter");
+        System.out.println("4) Manager");
         System.out.print("Please choose Your Role: ");
     }
 
@@ -51,7 +52,7 @@ public class Menu {
     }
 
     public static void supporterMenu() {
-        System.out.println("\n1) Follow-Up Request");
+        System.out.println("\n1) Follow Up Request");
         System.out.println("2) Identity Verification");
         System.out.println("3) Recent Purchases");
         System.out.println("4) Back");
@@ -204,7 +205,6 @@ public class Menu {
         System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
-    
 
     public static void transactionsMenu() {
         System.out.println("\n1) Show all");
@@ -216,23 +216,40 @@ public class Menu {
     public static void managerMenu() {
         System.out.println("\n1) Managing users");
         System.out.println("2) Analysis seller function");
-        System.out.println("3) Creating discount code ");
-        System.out.println("4) General message");
-        System.out.println("5) Back");
+        System.out.println("3) Analysis user function");
+        System.out.println("4) Creating discount code ");
+        System.out.println("5) General message");
+        System.out.println("6) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
     public static void managingUserMenu() {
         System.out.println("\n1) Create manager");
         System.out.println("2) Create supporter ");
-        System.out.println("3) Edit manager ");
-        System.out.println("4) Edit user ");
+        System.out.println("3) Edit user ");
+        System.out.println("4) Edit manager ");
         System.out.println("5) Edit supporter");
-        System.out.println("6) Block manager ");
-        System.out.println("7) Block user");
-        System.out.println("8) Block supporter");
+        System.out.println("6) Block user");
+        System.out.println("7) Block supporter");
+        System.out.println("8) Block manager ");
         System.out.println("9) Show users");
-        System.out.println("10) Back");
+        System.out.println("10) Supporter limitation");
+        System.out.println("11) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void showUserMenu() {
+        System.out.println("\n1) Show normal users");
+        System.out.println("2) Show supporters");
+        System.out.println("3) Show managers");
+        System.out.println("4) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void displayUserOption() {
+        System.out.println("\n1) Show all");
+        System.out.println("2) Search by username");
+        System.out.println("3) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
 
@@ -240,6 +257,28 @@ public class Menu {
         System.out.println("\n1) Edit name");
         System.out.println("2) Edit username");
         System.out.println("3) Edit password");
+        System.out.println("4) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void accessMenu() {
+        System.out.println("\n1) Give access");
+        System.out.println("2) Revoke");
+        System.out.println("3) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void sellerFunctionMenu() {
+        System.out.println("\n1) Show sellers function");
+        System.out.println("2) Reward seller");
+        System.out.println("3) Back");
+        System.out.print("Please Enter Your Choice:  ");
+    }
+
+    public static void userFunctionMenu() {
+        System.out.println("\n1) Show users function");
+        System.out.println("2) Give discount code");
+        System.out.println("3) Add user to vendilo plus");
         System.out.println("4) Back");
         System.out.print("Please Enter Your Choice:  ");
     }
@@ -373,5 +412,25 @@ public class Menu {
 
     public static Vendilo.EdditingMenu getEdditingOption() {
         return getEnumOption(Vendilo.EdditingMenu.class, Vendilo.EdditingMenu.UNDEFINED);
+    }
+
+    public static Vendilo.displayingUserOption getDisplayingTypeOption() {
+        return getEnumOption(Vendilo.displayingUserOption.class, Vendilo.displayingUserOption.UNDEFINED);
+    }
+
+    public static Vendilo.ShowUsersOption getUserType() {
+        return getEnumOption(Vendilo.ShowUsersOption.class, Vendilo.ShowUsersOption.UNDEFINED);
+    }
+
+    public static Vendilo.AccessOption getAccessOption() {
+        return getEnumOption(Vendilo.AccessOption.class, Vendilo.AccessOption.UNDEFINED);
+    }
+
+    public static Vendilo.SellerFunction getSellerFunction() {
+        return getEnumOption(Vendilo.SellerFunction.class, Vendilo.SellerFunction.UNDEFINED);
+    }
+
+    public static Vendilo.UserFunction getUserFunction() {
+        return getEnumOption(Vendilo.UserFunction.class, Vendilo.UserFunction.UNDEFINED);
     }
 }

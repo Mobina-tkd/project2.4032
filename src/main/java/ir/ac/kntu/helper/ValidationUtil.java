@@ -40,17 +40,23 @@ public class ValidationUtil {
 
     public static boolean isInteger(String str) {
         try {
-            Integer.parseInt(str);
+            Integer.valueOf(str);
+            return true;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input");
+            return false;
+        }
+
+    }
+
+    public static boolean isDouble(String str) {
+        try {
+            Double.valueOf(str);
             return true;
         } catch (NumberFormatException e) {
             System.out.println("Invalid input");
             return false;
         }
     }
-
-    
-    
-
-
 
 }

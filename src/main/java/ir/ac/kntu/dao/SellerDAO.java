@@ -184,47 +184,43 @@ public class SellerDAO {
     }
 
     public static void chargeWallet(User user) {
-    String sql = "SELECT seller_id, price FROM shoppingCart WHERE user_id = ?";
-    String sqlUpdate = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
+        String sql = "SELECT seller_id, price FROM shoppingCart WHERE user_id = ?";
+        String sqlUpdate = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
 
-    try (
-        Connection conn = DriverManager.getConnection(DB_URL);
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate)
-    ) {
-        int userId = UserDAO.findUserId(user.getEmail());
-        stmt.setInt(1, userId);
+        try (
+                Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate)) {
+            int userId = UserDAO.findUserId(user.getEmail());
+            stmt.setInt(1, userId);
 
-        // Map to track total price per seller
-        Map<Integer, Double> sellerEarnings = new HashMap<>();
+            Map<Integer, Double> sellerEarnings = new HashMap<>();
 
-        try (ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                int sellerId = rs.getInt("seller_id");
-                double price = rs.getDouble("price");
+            try (ResultSet resultSet= stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    int sellerId = resultSet.getInt("seller_id");
+                    double price = resultSet.getDouble("price");
 
-                sellerEarnings.put(sellerId, sellerEarnings.getOrDefault(sellerId, 0.0) + price);
+                    sellerEarnings.put(sellerId, sellerEarnings.getOrDefault(sellerId, 0.0) + price);
+                }
             }
+
+            for (Map.Entry<Integer, Double> entry : sellerEarnings.entrySet()) {
+                int sellerId = entry.getKey();
+                double amountToAdd = entry.getValue();
+
+                stmtUpdate.setDouble(1, amountToAdd);
+                stmtUpdate.setInt(2, sellerId);
+                stmtUpdate.executeUpdate();
+            }
+
+            System.out.println("Wallets charged based on cart prices.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Database error occurred.");
         }
-
-        // Update each seller's wallet with their total earnings
-        for (Map.Entry<Integer, Double> entry : sellerEarnings.entrySet()) {
-            int sellerId = entry.getKey();
-            double amountToAdd = entry.getValue();
-
-            stmtUpdate.setDouble(1, amountToAdd);
-            stmtUpdate.setInt(2, sellerId);
-            stmtUpdate.executeUpdate();
-        }
-
-        System.out.println("Wallets charged based on cart prices.");
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        System.out.println("Database error occurred.");
     }
-}
-
 
     public static void withdrawMoney(double balance, String agencyCode) {
         String sqlUpdateWallet = "UPDATE sellers SET wallet_balance = wallet_balance - ? WHERE agency_code = ?";
@@ -257,9 +253,9 @@ public class SellerDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, agencyCode);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getDouble("wallet_balance");
+            try (ResultSet resultSet= stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getDouble("wallet_balance");
                 } else {
                     System.out.println("Seller not found.");
                 }
@@ -277,19 +273,63 @@ public class SellerDAO {
         String sql = "SELECT id FROM sellers WHERE agency_code = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, agencyCode);
-            ResultSet rs = stmt.executeQuery();
-    
-            if (rs.next()) {
-                return rs.getInt("id");
+            ResultSet resultSet= stmt.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
             } else {
-                return -1; 
+                return -1;
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return -1;
         }
     }
+
+    public static void printSellerFunction() {
+        String query = "SELECT id FROM sellers";
+        int id ;
+        double lastMonthIncome = 0;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                Statement stmt = conn.createStatement();
+                ResultSet resultSet = stmt.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                id = resultSet.getInt("id");
+                lastMonthIncome = PurchasesDAO.findLastMonthTransaction(id, "seller");
+                
+                System.out.printf("Seller id: %d| Last month income: %f%n", id, lastMonthIncome);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(ConsoleColors.RED + "Error: " + e.getMessage() + ConsoleColors.RESET);
+        }
+
+    }
+
+    public static void rewardSeller(int id, double amount) {
+        String query = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setDouble(1, amount);
+            stmt.setInt(2, id);
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("No seller found.");
+            } else {
+                System.out.println("Seller has been rewarded.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    
 }

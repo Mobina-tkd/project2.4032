@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
+import java.time.Instant;
 
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.model.User;
@@ -40,23 +42,23 @@ public class PurchasesDAO {
     public static boolean insertToPurchases(User user, String date, String address) {
         String getCartSQL = "SELECT * FROM shoppingCart WHERE user_id = ?";
         String insertPurchaseSQL = "INSERT INTO purchases(user_id, seller_id, name, information, price, date, address) "
-                                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
             conn.setAutoCommit(false);
-    
+
             int userId = UserDAO.findUserId(user.getEmail());
-    
+
             // Retrieve shopping cart items
             try (PreparedStatement cartStmt = conn.prepareStatement(getCartSQL)) {
                 cartStmt.setInt(1, userId);
                 try (ResultSet cartItems = cartStmt.executeQuery()) {
                     boolean hasItems = false;
-    
+
                     try (PreparedStatement insertStmt = conn.prepareStatement(insertPurchaseSQL)) {
                         while (cartItems.next()) {
                             hasItems = true;
-    
+
                             insertStmt.setInt(1, userId);
                             insertStmt.setInt(2, cartItems.getInt("seller_id"));
                             insertStmt.setString(3, cartItems.getString("name"));
@@ -66,51 +68,51 @@ public class PurchasesDAO {
                             insertStmt.setString(7, address);
                             insertStmt.addBatch();
                         }
-    
+
                         if (!hasItems) {
                             conn.rollback();
                             return false;
                         }
-    
+
                         insertStmt.executeBatch();
                     }
                 }
             }
-    
+
             conn.commit();
             return true;
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     public static void printUserPurchases(User user) {
         String queryPurchases = "SELECT id, name, seller_id, date, price FROM purchases WHERE user_id = ?";
         String queryStoreName = "SELECT store_name FROM sellers WHERE id = ?";
-    
+
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
-    
+
             int userId = UserDAO.findUserId(user.getEmail());
             if (userId == -1) {
                 System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
                 return;
             }
-    
+
             try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
                 stmt.setInt(1, userId);
                 try (ResultSet resultSet = stmt.executeQuery()) {
-    
+
                     while (resultSet.next()) {
-    
+
                         int purchaseId = resultSet.getInt("id");
                         String name = resultSet.getString("name");
                         int sellerId = resultSet.getInt("seller_id");
                         String date = resultSet.getString("date");
                         double price = resultSet.getDouble("price");
                         String storeName = "Unknown";
-    
+
                         try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
                             storeStmt.setInt(1, sellerId);
                             try (ResultSet storeRs = storeStmt.executeQuery()) {
@@ -121,7 +123,7 @@ public class PurchasesDAO {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-    
+
                         System.out.println("ID: " + purchaseId +
                                 " | Purchase: " + name +
                                 " | Store: " + storeName +
@@ -130,12 +132,11 @@ public class PurchasesDAO {
                     }
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
 
     public static void printAllPurchases() {
         String queryPurchases = "SELECT id, name, seller_id, user_id, date, price FROM purchases";
@@ -283,4 +284,33 @@ public class PurchasesDAO {
         }
     }
 
+    public static double findLastMonthTransaction(int id, String userType) {
+        double totalTransaction = 0.0;
+        String query = "SELECT price, date FROM purchases WHERE " + userType + "_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            Instant oneMonthAgo = Instant.now().minus(Duration.ofDays(30));
+
+            while (rs.next()) {
+                double price = rs.getDouble("price");
+                String dateStr = rs.getString("date");
+
+                Instant transactionDate = Instant.parse(dateStr);
+
+                if (transactionDate.isAfter(oneMonthAgo)) {
+                    totalTransaction += price;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalTransaction;
+    }
 }
