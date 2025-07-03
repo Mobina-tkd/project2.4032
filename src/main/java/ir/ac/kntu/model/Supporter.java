@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Supporter {
-    private Map<String, Map<String, String>> admin;
 
     public Supporter() {
+        Map<String, Map<String, String>> admin;
+
         admin = new HashMap<>();
         admin.put("admin1", Map.of(
                 "firstName", "Sara",

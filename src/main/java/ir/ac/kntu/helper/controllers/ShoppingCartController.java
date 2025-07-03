@@ -79,91 +79,114 @@ public class ShoppingCartController {
         while (true) {
             AddressDAO.printAllAddresses(user);
             Menu.chooseAddressMenu();
+
             Vendilo.ChooseAddress option = Menu.getChooseOrAddAddress();
+
             switch (option) {
-                case CHOOSE -> {
-                    System.out.print("Enter the number of the address: ");
-                    int addressId = ScannerWrapper.getInstance().nextInt();
-                    Address address = AddressDAO.findAddress(addressId);
-                    double totalCost = countTotalPrice(user);
-                    double shippingCost = countShippingCost(user, address.getState());
-                    if (address == null) {
-                        continue;
-                    }
-                    System.out.println(
-                            "Total cost including shipping cost:  " + ConsoleColors.GREEN + (totalCost + shippingCost)
-                                    + ConsoleColors.RESET);
-                    handlePaying(user, totalCost, shippingCost, address);
-
-                }
-
-                case NEW -> {
-                    Address address = ReadDataUtil.readAddress();
-                    AddressDAO.insertAddress(address, user);
-                    double totalCost = countTotalPrice(user);
-                    double shippingCost = countShippingCost(user, address.getState());
-                    System.out.println(
-                            "Total cost (including shipping cost):  " + ConsoleColors.GREEN + (totalCost + shippingCost)
-                                    + ConsoleColors.RESET);
-                    handlePaying(user, totalCost, shippingCost, address);
-                    return;
-                }
+                case CHOOSE -> handleExistingAddressFlow(user);
+                case NEW -> handleNewAddressFlow(user);
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
                     System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
-                    break;
                 }
                 default -> throw new AssertionError();
             }
         }
     }
 
+    private static void handleExistingAddressFlow(User user) {
+        System.out.print("Enter the number of the address: ");
+        int addressId = ScannerWrapper.getInstance().nextInt();
+        Address address = AddressDAO.findAddress(addressId);
+
+        if (address == null) {
+            System.out.println(ConsoleColors.RED + "Invalid address ID.\n" + ConsoleColors.RESET);
+            return;
+        }
+
+        processPurchase(user, address);
+    }
+
+    private static void handleNewAddressFlow(User user) {
+        Address address = ReadDataUtil.readAddress();
+        AddressDAO.insertAddress(address, user);
+        processPurchase(user, address);
+    }
+
+    private static void processPurchase(User user, Address address) {
+        double totalCost = countTotalPrice(user);
+        double shippingCost = countShippingCost(user, address.getState());
+        double finalCost = totalCost + shippingCost;
+
+        System.out.println("Total cost (including shipping cost):  " +
+                ConsoleColors.GREEN + finalCost + ConsoleColors.RESET);
+
+        handlePaying(user, totalCost, shippingCost, address);
+    }
+
     private static void handlePaying(User user, double totalCost, double shippingCost, Address address) {
         totalCost = applyDiscount(totalCost, user);
-        System.out.println("Total cost after applying discount (including shipping cost):  " + ConsoleColors.GREEN
-                + (totalCost + shippingCost) + ConsoleColors.RESET);
+        showTotalCost(totalCost, shippingCost);
+
         while (true) {
             Menu.payMenu();
-            Vendilo.PayMenu choise = Menu.getPayOption();
-            switch (choise) {
-                case PAY -> {
-                    boolean bought = UserDAO.getBalance(user) > totalCost + shippingCost;
-                    if (bought) {
-                        System.out.println("");
-                        System.out.println("Thanks for buying " + ConsoleColors.RED + "<3" + ConsoleColors.RESET);
-                        String date = ir.ac.kntu.helper.Calendar.now().toString();
-                        Transaction transaction = new Transaction(totalCost + shippingCost, date, "withdraw");
-                        UserDAO.updateBalance(totalCost + shippingCost, user, "-");
-                        TransactionDAO.insertTransaction(user.getEmail(), transaction);
-                        PurchasesDAO.insertToPurchases(user, date, address.toString());
-                        SearchProductController.reduceInventory(user);
-                        SellerDAO.chargeWallet(user);
-                        ShoppingCartDAO.clearShoppingCart(user);
-                        return;
-                    } else {
-                        System.out.println(ConsoleColors.RED + "There is not enough money in your wallet "
-                                + ConsoleColors.RESET + ":(");
-                        WalletController.handelChargeWallet(user);
-                    }
-                }
+            Vendilo.PayMenu choice = Menu.getPayOption();
+
+            switch (choice) {
+                case PAY -> processPayment(user, totalCost, shippingCost, address);
                 case BACK -> {
                     return;
                 }
-                case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
-                }
+                case UNDEFINED -> showUndefinedChoiceMessage();
                 default -> throw new AssertionError();
             }
         }
+    }
+
+    private static void showTotalCost(double totalCost, double shippingCost) {
+        System.out.println("Total cost after applying discount (including shipping cost):  "
+                + ConsoleColors.GREEN + (totalCost + shippingCost) + ConsoleColors.RESET);
+    }
+
+    private static void processPayment(User user, double totalCost, double shippingCost, Address address) {
+        double finalCost = totalCost + shippingCost;
+        if (UserDAO.getBalance(user) > finalCost) {
+            completePurchase(user, finalCost, address);
+        } else {
+            showInsufficientBalanceMessage();
+            WalletController.handelChargeWallet(user);
+        }
+    }
+
+    private static void completePurchase(User user, double finalCost, Address address) {
+        System.out.println("\nThanks for buying " + ConsoleColors.RED + "<3" + ConsoleColors.RESET);
+
+        String date = ir.ac.kntu.helper.Calendar.now().toString();
+        Transaction transaction = new Transaction(finalCost, date, "withdraw");
+
+        UserDAO.updateBalance(finalCost, user, "-");
+        TransactionDAO.insertTransaction(user.getEmail(), transaction);
+        PurchasesDAO.insertToPurchases(user, date, address.toString());
+        SearchProductController.reduceInventory(user);
+        SellerDAO.chargeWallet(user);
+        ShoppingCartDAO.clearShoppingCart(user);
+    }
+
+    private static void showInsufficientBalanceMessage() {
+        System.out.println(ConsoleColors.RED + "There is not enough money in your wallet "
+                + ConsoleColors.RESET + ":(");
+    }
+
+    private static void showUndefinedChoiceMessage() {
+        System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
     }
 
     public static boolean addProductToShoppingCart(int productId, int sellerId, String productType, User user) {
 
         ShoppingCart shoppingCart = ProductDAO.makeShoppingCartObject(productId, sellerId, productType);
-        boolean inserted = ShoppingCartDAO.insertToShoppingCart(shoppingCart, user, productId);
-        return inserted;
+        return ShoppingCartDAO.insertToShoppingCart(shoppingCart, user, productId);
     }
 
     private static double countTotalPrice(User user) {
@@ -171,14 +194,14 @@ public class ShoppingCartController {
         double totalPrice = 0;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement pStatement = conn.prepareStatement(sql)) {
 
             int userId = UserDAO.findUserId(user.getEmail());
-            ps.setInt(1, userId);
+            pStatement.setInt(1, userId);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    totalPrice += rs.getDouble("price");
+            try (ResultSet resultSet = pStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    totalPrice += resultSet.getDouble("price");
                 }
             }
 
@@ -198,15 +221,15 @@ public class ShoppingCartController {
         Set<Integer> countedSellers = new HashSet<>();
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement ps = conn.prepareStatement(sql);
+                PreparedStatement ps1 = conn.prepareStatement(sql);
                 PreparedStatement ps2 = conn.prepareStatement(sql2)) {
 
             int userId = UserDAO.findUserId(user.getEmail());
-            ps.setInt(1, userId);
+            ps1.setInt(1, userId);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int sellerId = rs.getInt("seller_id");
+            try (ResultSet resultSet = ps1.executeQuery()) {
+                while (resultSet.next()) {
+                    int sellerId = resultSet.getInt("seller_id");
 
                     if (!countedSellers.contains(sellerId)) {
                         ps2.setInt(1, sellerId);
@@ -257,10 +280,10 @@ public class ShoppingCartController {
             stmt.setString(1, code);
             stmt.setInt(2, userId);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    type = rs.getString("type");
-                    amount = rs.getDouble("amount");
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    type = resultSet.getString("type");
+                    amount = resultSet.getDouble("amount");
                 } else {
                     System.out.println("Discount code not found for this user.");
                     return totalCost;
@@ -272,19 +295,17 @@ public class ShoppingCartController {
             return totalCost;
         }
 
-        // If no condition applies, return original cost
         return checkType(type, amount, code, totalCost);
     }
 
     private static double checkType(String type, double amount, String code, double totalCost) {
 
-        // Apply discount logic
-        if (type.equalsIgnoreCase("percent")) {
+        if ("percent".equalsIgnoreCase(type)) {
             DiscountDAO.reduceTimeUsed(code);
             return totalCost * (1 - (amount / 100));
         }
 
-        if (type.equalsIgnoreCase("amount") && totalCost > (10 * amount)) {
+        if ("amount".equalsIgnoreCase(type) && totalCost > (10 * amount)) {
             DiscountDAO.reduceTimeUsed(code);
             return totalCost - amount;
         }

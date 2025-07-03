@@ -149,7 +149,7 @@ public class ReadDataUtil {
             }
         }
 
-        String email = UserDAO.findEmailById(Integer.parseInt(id));
+        String email = UserDAO.findEmailById(Integer.parseInt(userId));
         User user = UserDAO.findUser(email);
         VendiloPlusDAO.insertToClub(user, Integer.parseInt(duration));
 
