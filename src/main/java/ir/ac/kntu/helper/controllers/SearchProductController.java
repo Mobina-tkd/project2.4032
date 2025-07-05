@@ -53,30 +53,17 @@ public class SearchProductController {
             Vendilo.SearchBookOption option = Menu.getSearchBookOption();
             switch (option) {
                 case SHOW_ALL -> {
-                    ProductDAO.showAllProducts("Book", user);
-                    ProductController.handleAddProductToList("Book", user);
+                    handleShowAll(user);
                 }
-
                 case SEARCH_BY_PRICE -> {
-                    System.out.print("Enter the min price: ");
-                    double min = ScannerWrapper.getInstance().nextDouble();
-                    System.out.print("Enter the max price: ");
-                    double max = ScannerWrapper.getInstance().nextDouble();
-                    ProductDAO.searchByPrice("Book", min, max, user);
-                    ProductController.handleAddProductToList("Book", user);
+                    handlePrice(user);
                 }
-
                 case SEARCH_BY_TITLE -> {
-                    System.out.println("Enter book title: ");
-                    String title = ScannerWrapper.getInstance().nextLine();
-                    BookDAO.searchBookByTitle("Book", title, user);
-                    ProductController.handleAddProductToList("Book", user);
+                    handleTitle(user);
                 }
-
                 case BACK -> {
                     return;
                 }
-
                 case UNDEFINED -> {
                     System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                     break;
@@ -84,6 +71,29 @@ public class SearchProductController {
                 default -> throw new AssertionError();
             }
         }
+    }
+
+    private static void handleShowAll(User user) {
+        ProductDAO.showAllProducts("Book", user);
+        ProductController.handleAddProductToList("Book", user);
+    }
+
+    private static void handlePrice(User user) {
+        System.out.print("Enter the min price: ");
+        double min = ScannerWrapper.getInstance().nextDouble();
+        System.out.print("Enter the max price: ");
+        double max = ScannerWrapper.getInstance().nextDouble();
+        ProductDAO.searchByPrice("Book", min, max, user);
+        ProductController.handleAddProductToList("Book", user);
+
+    }
+
+    private static void handleTitle(User user) {
+        System.out.println("Enter book title: ");
+        String title = ScannerWrapper.getInstance().nextLine();
+        BookDAO.searchBookByTitle("Book", title, user);
+        ProductController.handleAddProductToList("Book", user);
+
     }
 
     public static void searchLaptop(User user) {
@@ -177,7 +187,6 @@ public class SearchProductController {
         }
     }
 
-
     private static void processCartAndReduceInventory(Connection conn, int userId) throws SQLException {
         PreparedStatement getCartStmt = null;
         ResultSet cartRs = null;
@@ -210,33 +219,54 @@ public class SearchProductController {
         ResultSet invRs = null;
 
         try {
-            String getInventoryQuery = "SELECT inventory FROM " + tableName + " WHERE id = ?";
-            getInvStmt = conn.prepareStatement(getInventoryQuery);
-            getInvStmt.setInt(1, productId);
+            getInvStmt = prepareGetInventoryStatement(conn, tableName, productId);
             invRs = getInvStmt.executeQuery();
 
             if (invRs.next()) {
                 int inventory = invRs.getInt("inventory");
-
                 if (inventory > 0) {
-                    String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
-                    updateStmt = conn.prepareStatement(query);
-                    updateStmt.setInt(1, inventory - 1);
-                    updateStmt.setInt(2, productId);
+                    updateStmt = prepareUpdateInventoryStatement(conn, tableName, inventory, productId);
                     updateStmt.executeUpdate();
                 } else {
                     System.out.println("Product ID " + productId + " is out of stock.");
                 }
             }
         } finally {
-            if (invRs != null) {
-                invRs.close();
+            closeResources(invRs, getInvStmt, updateStmt); // closes only ResultSet and Statements
+        }
+    }
+
+    private static PreparedStatement prepareGetInventoryStatement(Connection conn, String tableName, int productId)
+            throws SQLException {
+        String getInventoryQuery = "SELECT inventory FROM " + tableName + " WHERE id = ?";
+        PreparedStatement stmt = conn.prepareStatement(getInventoryQuery);
+        stmt.setInt(1, productId);
+        return stmt;
+    }
+
+    private static PreparedStatement prepareUpdateInventoryStatement(Connection conn, String tableName, int inventory,
+            int productId)
+            throws SQLException {
+        String query = "UPDATE " + tableName + " SET inventory = ? WHERE id = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, inventory - 1);
+        stmt.setInt(2, productId);
+        return stmt;
+    }
+
+    private static void closeResources(ResultSet resultSet, PreparedStatement... stmts) {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
             }
-            if (getInvStmt != null) {
-                getInvStmt.close();
-            }
-            if (updateStmt != null) {
-                updateStmt.close();
+        } catch (SQLException ignored) {
+        }
+        for (PreparedStatement stmt : stmts) {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException ignored) {
             }
         }
     }

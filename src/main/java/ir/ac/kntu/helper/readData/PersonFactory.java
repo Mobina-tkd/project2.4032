@@ -54,10 +54,10 @@ public class PersonFactory {
 
         String password = readPassword();
 
-        if(userType.equals("supporters")) {
+        if("supporters".equals(userType)) {
             SupporterDAO.insertSopporter(name, username, password);
         }
-        if(userType.equals("managers")) {
+        if("managers".equals(userType)) {
             ManagerDAO.insertManager(name, username, password);
         }
 

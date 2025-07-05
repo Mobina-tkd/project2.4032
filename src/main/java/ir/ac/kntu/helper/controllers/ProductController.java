@@ -156,7 +156,7 @@ public class ProductController {
         while (true) {
             System.out.println("Enter the name of product you want to add(press 0 to return)");
             productType = ScannerWrapper.getInstance().nextLine();
-            if ("Book".equals(productType) || "Mobile".equals(productType) || productType.equals("Laptop")) {
+            if ("Book".equals(productType) || "Mobile".equals(productType) || "Laptop".equals(productType)) {
                 return productType;
             }
             if ("0".equals(productType)) {

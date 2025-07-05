@@ -42,11 +42,11 @@ public class RequestDAO {
             int userId;
             try (PreparedStatement pstmt = conn.prepareStatement(queryUserId)) {
                 pstmt.setString(1, email);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (!rs.next()) {
+                try (ResultSet resultSet = pstmt.executeQuery()) {
+                    if (!resultSet.next()) {
                         return false; // user not found
                     }
-                    userId = rs.getInt("id");
+                    userId = resultSet.getInt("id");
                 }
             }
 
@@ -58,12 +58,12 @@ public class RequestDAO {
                 insertStmt.setString(4, "Following up");
 
                 insertStmt.executeUpdate();
-                System.out.println(ConsoleColors.GREEN +"Your request registered successfully." + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.GREEN + "Your request registered successfully." + ConsoleColors.RESET);
                 return true;
             }
 
         } catch (SQLException e) {
-            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage()+ ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
     }
@@ -123,7 +123,7 @@ public class RequestDAO {
                         }
                     }
                 } else {
-                    System.out.println(ConsoleColors.RED +"Request not found."+ ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Request not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -134,7 +134,6 @@ public class RequestDAO {
 
     public static void setMessageAndUpdateStatus(String message, int requestId) {
         String query = "UPDATE requests SET respond = ?, status = ? WHERE id = ?";
-        
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -145,9 +144,9 @@ public class RequestDAO {
             int updated = pstmt.executeUpdate();
 
             if (updated > 0) {
-                System.out.println(ConsoleColors.GREEN +"Request updated successfully." + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.GREEN + "Request updated successfully." + ConsoleColors.RESET);
             } else {
-                System.out.println(ConsoleColors.RED +"Request not found." + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "Request not found." + ConsoleColors.RESET);
             }
 
         } catch (SQLException e) {
@@ -179,7 +178,7 @@ public class RequestDAO {
                         }
                     }
                 } else {
-                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -195,14 +194,14 @@ public class RequestDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, requestId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    String context = rs.getString("request_context");
-                    String respond = rs.getString("respond");
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    String context = resultSet.getString("request_context");
+                    String respond = resultSet.getString("respond");
                     System.out.println("Request context: " + context + ",\nSupporter respond: " + respond);
                 } else {
 
-                    System.out.println(ConsoleColors.RED +"Request not found." + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Request not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -214,36 +213,35 @@ public class RequestDAO {
     public static String findUserEmailByRequestId(int requestId) {
         String query1 = "SELECT user_id FROM requests WHERE id = ?";
         String query2 = "SELECT email FROM users WHERE id = ?";
-    
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt1 = conn.prepareStatement(query1)) {
-    
-            // Step 1: Find user_id by request ID
+                PreparedStatement stmt1 = conn.prepareStatement(query1)) {
+
             stmt1.setInt(1, requestId);
-            ResultSet rs1 = stmt1.executeQuery();
-    
-            if (rs1.next()) {
-                int userId = rs1.getInt("user_id");
-    
-                // Step 2: Find email by user ID
-                try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
-                    stmt2.setInt(1, userId);
-                    ResultSet rs2 = stmt2.executeQuery();
-    
-                    if (rs2.next()) {
-                        return rs2.getString("email");
+            try (ResultSet rs1 = stmt1.executeQuery()) {
+
+                if (rs1.next()) {
+                    int userId = rs1.getInt("user_id");
+
+                    try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
+                        stmt2.setInt(1, userId);
+                        try (ResultSet rs2 = stmt2.executeQuery()) {
+
+                            if (rs2.next()) {
+                                return rs2.getString("email");
+                            }
+                        }
                     }
+                } else {
+                    System.out.println("Request ID not found.");
                 }
-            } else {
-                System.out.println("Request ID not found.");
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return null; // If not found or error occurs
+
+        return null;
     }
-    
 
 }

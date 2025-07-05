@@ -106,40 +106,15 @@ public class SupporterDAO {
 
     public static void printSupporterLimitation() {
         String query = "SELECT id, username, Recent_purchases, Follow_up_request, Identity_verification FROM supporters";
-        int recentPurchases;
-        int followUpRequest;
-        int identityVerification;
-        int id ;
-        String username = "";
-        String hasFollowUpRequest = "False";
-        String hasIdentityVerification = "False";
-        String hasRecentPurchases = "False";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 Statement stmt = conn.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
 
             while (resultSet.next()) {
-                id = resultSet.getInt("id");
-                username = resultSet.getString("username");
-                recentPurchases = resultSet.getInt("Recent_purchases");
-                followUpRequest = resultSet.getInt("Follow_up_request");
-                identityVerification = resultSet.getInt("Identity_verification");
-                if (identityVerification == 1) {
-                    hasIdentityVerification = "True";
-                }
-                if (followUpRequest == 1) {
-                    hasFollowUpRequest = "True";
-                }
-                if (recentPurchases == 1) {
-                    hasRecentPurchases = "True";
-                }
-
-                System.out.printf(
-                        "User id: %d| Username: %s| Identity verification: %s| Follow up request: %s| Recent purchases: %s%n",
-                        id, username, hasIdentityVerification, hasFollowUpRequest, hasRecentPurchases);
-
+                processSupporterRow(resultSet);
             }
+
             System.out.println("");
 
         } catch (SQLException e) {
@@ -147,7 +122,24 @@ public class SupporterDAO {
         }
     }
 
-    public static void mofifyAccess(String accessType, int id, int value) {
+    private static void processSupporterRow(ResultSet resultSet) throws SQLException {
+        int supporterId = resultSet.getInt("id");
+        String username = resultSet.getString("username");
+
+        String hasRecent = flagToString(resultSet.getInt("Recent_purchases"));
+        String hasFollow = flagToString(resultSet.getInt("Follow_up_request"));
+        String hasIdVerify = flagToString(resultSet.getInt("Identity_verification"));
+
+        System.out.printf(
+                "User id: %d| Username: %s| Identity verification: %s| Follow up request: %s| Recent purchases: %s%n",
+                supporterId, username, hasIdVerify, hasFollow, hasRecent);
+    }
+
+    private static String flagToString(int flag) {
+        return flag == 1 ? "True" : "False";
+    }
+
+    public static void mofifyAccess(String accessType, int supporterId, int value) {
 
         String sql = "UPDATE supporters SET " + accessType + " = ? WHERE id = ?";
 
@@ -155,7 +147,7 @@ public class SupporterDAO {
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, value);
-            stmt.setInt(2, id);
+            stmt.setInt(2, supporterId);
 
             int rowsUpdated = stmt.executeUpdate();
 

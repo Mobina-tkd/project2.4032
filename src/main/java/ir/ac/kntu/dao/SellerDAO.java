@@ -196,7 +196,7 @@ public class SellerDAO {
 
             Map<Integer, Double> sellerEarnings = new HashMap<>();
 
-            try (ResultSet resultSet= stmt.executeQuery()) {
+            try (ResultSet resultSet = stmt.executeQuery()) {
                 while (resultSet.next()) {
                     int sellerId = resultSet.getInt("seller_id");
                     double price = resultSet.getDouble("price");
@@ -253,7 +253,7 @@ public class SellerDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, agencyCode);
-            try (ResultSet resultSet= stmt.executeQuery()) {
+            try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getDouble("wallet_balance");
                 } else {
@@ -276,12 +276,13 @@ public class SellerDAO {
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, agencyCode);
-            ResultSet resultSet= stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            if (resultSet.next()) {
-                return resultSet.getInt("id");
-            } else {
-                return -1;
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                } else {
+                    return -1;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -291,17 +292,17 @@ public class SellerDAO {
 
     public static void printSellerFunction() {
         String query = "SELECT id FROM sellers";
-        int id ;
+        int sellerId;
         double lastMonthIncome = 0;
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 Statement stmt = conn.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
 
             while (resultSet.next()) {
-                id = resultSet.getInt("id");
-                lastMonthIncome = PurchasesDAO.findLastMonthTransaction(id, "seller");
-                
-                System.out.printf("Seller id: %d| Last month income: %f%n", id, lastMonthIncome);
+                sellerId = resultSet.getInt("id");
+                lastMonthIncome = PurchasesDAO.findLastMonthTransaction(sellerId, "seller");
+
+                System.out.printf("Seller id: %d| Last month income: %f%n", sellerId, lastMonthIncome);
             }
 
         } catch (SQLException e) {
@@ -310,13 +311,13 @@ public class SellerDAO {
 
     }
 
-    public static void rewardSeller(int id, double amount) {
+    public static void rewardSeller(int sellerId, double amount) {
         String query = "UPDATE sellers SET wallet_balance = wallet_balance + ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setDouble(1, amount);
-            stmt.setInt(2, id);
+            stmt.setInt(2, sellerId);
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated == 0) {
@@ -331,5 +332,4 @@ public class SellerDAO {
 
     }
 
-    
 }

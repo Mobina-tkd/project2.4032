@@ -20,11 +20,11 @@ public class DealerCodeGenerator {
     }
 
     private static String generateRandomCode() {
-        StringBuilder sb = new StringBuilder(CODE_LENGTH);
+        StringBuilder stringBuilder = new StringBuilder(CODE_LENGTH);
         for (int count = 0; count < CODE_LENGTH; count++) {
             int index = random.nextInt(CHARACTERS.length());
-            sb.append(CHARACTERS.charAt(index));
+            stringBuilder.append(CHARACTERS.charAt(index));
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 }

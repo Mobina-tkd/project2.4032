@@ -232,23 +232,7 @@ public class ShoppingCartController {
                     int sellerId = resultSet.getInt("seller_id");
 
                     if (!countedSellers.contains(sellerId)) {
-                        ps2.setInt(1, sellerId);
-                        try (ResultSet rs2 = ps2.executeQuery()) {
-                            if (rs2.next()) {
-                                String sellerState = rs2.getString("state");
-                                if (state.equalsIgnoreCase(sellerState)) {
-                                    shippingCost += 10;
-                                    if (VendiloPlusDAO.vendiloPlusUser(user)) {
-                                        shippingCost = 0;
-                                    }
-                                } else {
-                                    shippingCost += 30;
-                                    if (VendiloPlusDAO.vendiloPlusUser(user)) {
-                                        shippingCost = 10;
-                                    }
-                                }
-                            }
-                        }
+                        shippingCost += calculateShippingCostForSeller(ps2, sellerId, state, user);
                         countedSellers.add(sellerId);
                     }
                 }
@@ -259,6 +243,25 @@ public class ShoppingCartController {
         }
 
         return shippingCost;
+    }
+
+    private static double calculateShippingCostForSeller(PreparedStatement ps2, int sellerId, String userState,
+            User user)
+            throws SQLException {
+        ps2.setInt(1, sellerId);
+
+        try (ResultSet rs2 = ps2.executeQuery()) {
+            if (rs2.next()) {
+                String sellerState = rs2.getString("state");
+                if (userState.equalsIgnoreCase(sellerState)) {
+                    return VendiloPlusDAO.vendiloPlusUser(user) ? 0 : 10;
+                } else {
+                    return VendiloPlusDAO.vendiloPlusUser(user) ? 10 : 30;
+                }
+            }
+        }
+
+        return 0;
     }
 
     private static double applyDiscount(double totalCost, User user) {

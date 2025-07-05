@@ -59,16 +59,16 @@ public class ProductFactory {
         ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter rare camera resolution: ");
-        String rareCameraResolution = ScannerWrapper.getInstance().nextLine();
+        String resolution = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter front camera resolution: ");
-        String frontCameraResolution = ScannerWrapper.getInstance().nextLine();
+        String frontResolution = ScannerWrapper.getInstance().nextLine();
 
         System.out.print("Enter network/internet (e.g., 5G, 4G): ");
         String networkInternet = ScannerWrapper.getInstance().nextLine();
 
         return new Mobile(name, price, inventory, brand, memory, ram,
-                rareCameraResolution, frontCameraResolution, networkInternet);
+        resolution, frontResolution, networkInternet);
     }
 
     public static Laptop readLaptopData() {

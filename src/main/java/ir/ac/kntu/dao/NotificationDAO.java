@@ -66,17 +66,20 @@ public class NotificationDAO {
             }
 
             stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            System.out.println(ConsoleColors.BLUE + "-------------NOTIFICATION-------------:" + ConsoleColors.RESET);
-            while (rs.next()) {
-                int notifId = rs.getInt("id");
-                String type = rs.getString("type");
+                System.out
+                        .println(ConsoleColors.BLUE + "-------------NOTIFICATION-------------:" + ConsoleColors.RESET);
+                while (resultSet.next()) {
+                    int notifId = resultSet.getInt("id");
+                    String type = resultSet.getString("type");
 
-                System.out.println("ID: " + notifId +
-                        " | Type: " + type);
+                    System.out.println("ID: " + notifId +
+                            " | Type: " + type);
+                }
+                System.out
+                        .println(ConsoleColors.BLUE + "--------------------------------------:" + ConsoleColors.RESET);
             }
-            System.out.println(ConsoleColors.BLUE + "--------------------------------------:" + ConsoleColors.RESET);
         } catch (SQLException e) {
             System.out.println(
                     ConsoleColors.RED + "Error fetching notification: " + e.getMessage() + ConsoleColors.RESET);
@@ -91,8 +94,8 @@ public class NotificationDAO {
 
             stmt.setInt(1, input);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                return resultSet.next();
             }
 
         } catch (SQLException e) {
@@ -102,20 +105,21 @@ public class NotificationDAO {
         return false;
     }
 
-    public static void printNotifInfo(int id, User user) {
+    public static void printNotifInfo(int notifId, User user) {
         String query = "SELECT type, message FROM notifications WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            stmt.setInt(1, notifId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                String type = rs.getString("type");
-                String message = rs.getString("message");
-                NotificationController.handleNotifTypes(type, message, user);
+                while (resultSet.next()) {
+                    String type = resultSet.getString("type");
+                    String message = resultSet.getString("message");
+                    NotificationController.handleNotifTypes(type, message, user);
 
+                }
             }
         } catch (SQLException e) {
             System.out.println(

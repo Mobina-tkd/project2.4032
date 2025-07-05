@@ -19,8 +19,7 @@ public class SellerChartExporter {
 
     public static void exportSellerChart(String agencyCode) {
         try (
-            Connection conn = DriverManager.getConnection(DB_URL)
-        ) {
+                Connection conn = DriverManager.getConnection(DB_URL)) {
             int sellerId = getSellerId(conn, agencyCode);
             if (sellerId == -1) {
                 System.out.println("Seller not found.");
@@ -42,12 +41,14 @@ public class SellerChartExporter {
         String sql = "SELECT id FROM sellers WHERE agency_code = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, agencyCode);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() ? rs.getInt("id") : -1;
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt("id") : -1;
+            }
         }
     }
 
-    private static Map<String, Double> getCategoryTotals(Connection conn, int sellerId, List<String[]> tableRows) throws SQLException {
+    private static Map<String, Double> getCategoryTotals(Connection conn, int sellerId, List<String[]> tableRows)
+            throws SQLException {
         String sql = "SELECT name, price, date FROM purchases WHERE seller_id = ?";
         Map<String, Double> totals = new LinkedHashMap<>();
         totals.put("Mobile", 0.0);
@@ -56,20 +57,22 @@ public class SellerChartExporter {
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, sellerId);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                String name = rs.getString("name");
-                double price = rs.getDouble("price");
-                String date = rs.getString("date");
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    double price = resultSet.getDouble("price");
+                    String date = resultSet.getString("date");
 
-                switch (name.toLowerCase()) {
-                    case "mobile" -> totals.merge("Mobile", price, Double::sum);
-                    case "book" -> totals.merge("Book", price, Double::sum);
-                    case "laptop" -> totals.merge("Laptop", price, Double::sum);
+                    switch (name.toLowerCase()) {
+                        case "mobile" -> totals.merge("Mobile", price, Double::sum);
+                        case "book" -> totals.merge("Book", price, Double::sum);
+                        case "laptop" -> totals.merge("Laptop", price, Double::sum);
+                        default -> throw new AssertionError();
+                    }
+
+                    tableRows.add(new String[] { name, String.format("%.2f", price), date });
                 }
-
-                tableRows.add(new String[]{name, String.format("%.2f", price), date});
             }
         }
         return totals;
@@ -81,72 +84,72 @@ public class SellerChartExporter {
 
         StringBuilder html = new StringBuilder();
         html.append("""
-            <html>
-            <head>
-                <title>Seller Purchase Chart</title>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-                <style>
-                    body { font-family: Arial; margin: 40px; }
-                    table { border-collapse: collapse; width: 80%; margin-top: 40px; }
-                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; }
-                </style>
-            </head>
-            <body>
-                <h2>Seller Purchase Summary</h2>
-                <canvas id="pieChart" width="400" height="400"></canvas>
-                <script>
-                    const ctx = document.getElementById('pieChart').getContext('2d');
-                    new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: [""").append(labels).append("""
-                            ],
-                            datasets: [{
-                                data: [""").append(data).append("""
-                                ],
-                                backgroundColor: ['#ff6384', '#36a2eb', '#4bc0c0']
-                            }]
-                        },
-                        options: {
-                            plugins: {
-                                legend: {
-                                    position: 'bottom'
+                <html>
+                <head>
+                    <title>Seller Purchase Chart</title>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+                    <style>
+                        body { font-family: Arial; margin: 40px; }
+                        table { border-collapse: collapse; width: 80%; margin-top: 40px; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Seller Purchase Summary</h2>
+                    <canvas id="pieChart" width="400" height="400"></canvas>
+                    <script>
+                        const ctx = document.getElementById('pieChart').getContext('2d');
+                        new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: [""").append(labels).append("""
+                ],
+                datasets: [{
+                    data: [""").append(data).append("""
+                                        ],
+                                        backgroundColor: ['#ff6384', '#36a2eb', '#4bc0c0']
+                                    }]
                                 },
-                                title: {
-                                    display: true,
-                                    text: 'Total Purchases by Product Type'
-                                },
-                                datalabels: {
-                                    color: '#fff',
-                                    formatter: (value) => '$' + value.toFixed(2),
-                                    font: {
-                                        weight: 'bold',
-                                        size: 14
+                                options: {
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom'
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Total Purchases by Product Type'
+                                        },
+                                        datalabels: {
+                                            color: '#fff',
+                                            formatter: (value) => '$' + value.toFixed(2),
+                                            font: {
+                                                weight: 'bold',
+                                                size: 14
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        },
-                        plugins: [ChartDataLabels]
-                    });
-                </script>
-                <h3>Purchase Details</h3>
-                <table>
-                    <tr><th>Name</th><th>Price</th><th>Date</th></tr>
-        """);
+                                },
+                                plugins: [ChartDataLabels]
+                            });
+                        </script>
+                        <h3>Purchase Details</h3>
+                        <table>
+                            <tr><th>Name</th><th>Price</th><th>Date</th></tr>
+                """);
 
         for (String[] row : tableRows) {
             html.append("<tr><td>").append(row[0]).append("</td><td>")
-                .append(row[1]).append("</td><td>")
-                .append(row[2]).append("</td></tr>\n");
+                    .append(row[1]).append("</td><td>")
+                    .append(row[2]).append("</td></tr>\n");
         }
 
         html.append("""
-                </table>
-            </body>
-            </html>
-        """);
+                        </table>
+                    </body>
+                    </html>
+                """);
 
         return html.toString();
     }

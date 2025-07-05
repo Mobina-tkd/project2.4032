@@ -16,23 +16,34 @@ public class PurchasesDAO {
 
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
-    public static void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS purchases ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "user_id INTEGER NOT NULL,"
-                + "seller_id INTEGER NOT NULL,"
-                + "information TEXT NOT NULL ,"
-                + "name TEXT NOT NULL ,"
-                + "price REAL NOT NULL,"
-                + "date TEXT NOT NULL, "
-                + "address TEXT NOT NULL,"
-                + "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,"
-                + "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE"
-                + ");";
+    // Query Constants
+    private static final String PURCHASES_TABLE = "CREATE TABLE IF NOT EXISTS purchases (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "user_id INTEGER NOT NULL," +
+            "seller_id INTEGER NOT NULL," +
+            "information TEXT NOT NULL ," +
+            "name TEXT NOT NULL ," +
+            "price REAL NOT NULL," +
+            "date TEXT NOT NULL, " +
+            "address TEXT NOT NULL," +
+            "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE," +
+            "FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE" +
+            ");";
 
+    private static final String SELECT_STORE = "SELECT store_name FROM sellers WHERE id = ?";
+    private static final String SELECT_PURCHASES = "SELECT id, name, seller_id, date, price FROM purchases WHERE user_id = ?";
+    private static final String ALL_PURCHASES = "SELECT id, name, seller_id, user_id, date, price FROM purchases";
+    private static final String PURCHASE_BY_ID = "SELECT * FROM purchases WHERE id = ?";
+    private static final String PURCHASES_SELLER = "SELECT id, name, user_id, date, price FROM purchases WHERE seller_id = ?";
+    private static final String SELECT_CART_ITEMS = "SELECT * FROM shoppingCart WHERE user_id = ?";
+    private static final String INSERT_PURCHASE = "INSERT INTO purchases(user_id, seller_id, name, information, price, date, address) "
+            +
+            "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    public static void createTable() {
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
+            stmt.execute(PURCHASES_TABLE);
             System.out.println("Table created or already exists.");
         } catch (SQLException e) {
             System.out.println("Table creation failed: " + e.getMessage());
@@ -40,45 +51,17 @@ public class PurchasesDAO {
     }
 
     public static boolean insertToPurchases(User user, String date, String address) {
-        String getCartSQL = "SELECT * FROM shoppingCart WHERE user_id = ?";
-        String insertPurchaseSQL = "INSERT INTO purchases(user_id, seller_id, name, information, price, date, address) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
             conn.setAutoCommit(false);
 
             int userId = UserDAO.findUserId(user.getEmail());
 
-            // Retrieve shopping cart items
-            try (PreparedStatement cartStmt = conn.prepareStatement(getCartSQL)) {
-                cartStmt.setInt(1, userId);
-                try (ResultSet cartItems = cartStmt.executeQuery()) {
-                    boolean hasItems = false;
-
-                    try (PreparedStatement insertStmt = conn.prepareStatement(insertPurchaseSQL)) {
-                        while (cartItems.next()) {
-                            hasItems = true;
-
-                            insertStmt.setInt(1, userId);
-                            insertStmt.setInt(2, cartItems.getInt("seller_id"));
-                            insertStmt.setString(3, cartItems.getString("name"));
-                            insertStmt.setString(4, cartItems.getString("information"));
-                            insertStmt.setDouble(5, cartItems.getDouble("price"));
-                            insertStmt.setString(6, date);
-                            insertStmt.setString(7, address);
-                            insertStmt.addBatch();
-                        }
-
-                        if (!hasItems) {
-                            conn.rollback();
-                            return false;
-                        }
-
-                        insertStmt.executeBatch();
-                    }
-                }
+            if (!hasItemsInCart(conn, userId)) {
+                conn.rollback();
+                return false;
             }
 
+            insertCartItemsToPurchases(conn, userId, date, address);
             conn.commit();
             return true;
 
@@ -88,11 +71,40 @@ public class PurchasesDAO {
         }
     }
 
-    public static void printUserPurchases(User user) {
-        String queryPurchases = "SELECT id, name, seller_id, date, price FROM purchases WHERE user_id = ?";
-        String queryStoreName = "SELECT store_name FROM sellers WHERE id = ?";
+    private static boolean hasItemsInCart(Connection conn, int userId) throws SQLException {
+        try (PreparedStatement cartStmt = conn.prepareStatement(SELECT_CART_ITEMS)) {
+            cartStmt.setInt(1, userId);
+            try (ResultSet cartItems = cartStmt.executeQuery()) {
+                return cartItems.isBeforeFirst(); // true if there's at least one row
+            }
+        }
+    }
 
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+    private static void insertCartItemsToPurchases(Connection conn, int userId, String date, String address)
+            throws SQLException {
+        try (PreparedStatement cartStmt = conn.prepareStatement(SELECT_CART_ITEMS);
+                PreparedStatement insertStmt = conn.prepareStatement(INSERT_PURCHASE)) {
+
+            cartStmt.setInt(1, userId);
+            try (ResultSet cartItems = cartStmt.executeQuery()) {
+                while (cartItems.next()) {
+                    insertStmt.setInt(1, userId);
+                    insertStmt.setInt(2, cartItems.getInt("seller_id"));
+                    insertStmt.setString(3, cartItems.getString("name"));
+                    insertStmt.setString(4, cartItems.getString("information"));
+                    insertStmt.setDouble(5, cartItems.getDouble("price"));
+                    insertStmt.setString(6, date);
+                    insertStmt.setString(7, address);
+                    insertStmt.addBatch();
+                }
+                insertStmt.executeBatch();
+            }
+        }
+    }
+
+    public static void printUserPurchases(User user) {
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement stmt = conn.prepareStatement(SELECT_PURCHASES)) {
 
             int userId = UserDAO.findUserId(user.getEmail());
             if (userId == -1) {
@@ -100,36 +112,21 @@ public class PurchasesDAO {
                 return;
             }
 
-            try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
-                stmt.setInt(1, userId);
-                try (ResultSet resultSet = stmt.executeQuery()) {
+            stmt.setInt(1, userId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    int purchaseId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    int sellerId = resultSet.getInt("seller_id");
+                    String date = resultSet.getString("date");
+                    double price = resultSet.getDouble("price");
+                    String storeName = getStoreName(conn, sellerId);
 
-                    while (resultSet.next()) {
-
-                        int purchaseId = resultSet.getInt("id");
-                        String name = resultSet.getString("name");
-                        int sellerId = resultSet.getInt("seller_id");
-                        String date = resultSet.getString("date");
-                        double price = resultSet.getDouble("price");
-                        String storeName = "Unknown";
-
-                        try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
-                            storeStmt.setInt(1, sellerId);
-                            try (ResultSet storeRs = storeStmt.executeQuery()) {
-                                if (storeRs.next()) {
-                                    storeName = storeRs.getString("store_name");
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        System.out.println("ID: " + purchaseId +
-                                " | Purchase: " + name +
-                                " | Store: " + storeName +
-                                " | Date: " + date +
-                                " | Price: " + String.format("%.2f", price));
-                    }
+                    System.out.println("ID: " + purchaseId +
+                            " | Purchase: " + name +
+                            " | Store: " + storeName +
+                            " | Date: " + date +
+                            " | Price: " + String.format("%.2f", price));
                 }
             }
 
@@ -139,13 +136,9 @@ public class PurchasesDAO {
     }
 
     public static void printAllPurchases() {
-        String queryPurchases = "SELECT id, name, seller_id, user_id, date, price FROM purchases";
-        String queryStoreName = "SELECT store_name FROM sellers WHERE id = ?";
-        String queryUserEmail = "SELECT email FROM users WHERE id = ?";
-
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement stmtPurchases = conn.prepareStatement(queryPurchases);
-                ResultSet resultSet = stmtPurchases.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(ALL_PURCHASES);
+                ResultSet resultSet = stmt.executeQuery()) {
 
             while (resultSet.next()) {
                 int purchaseId = resultSet.getInt("id");
@@ -155,92 +148,58 @@ public class PurchasesDAO {
                 String date = resultSet.getString("date");
                 double price = resultSet.getDouble("price");
 
-                String storeName = "Unknown";
-                try (PreparedStatement storeStmt = conn.prepareStatement(queryStoreName)) {
-                    storeStmt.setInt(1, sellerId);
-                    try (ResultSet storeRs = storeStmt.executeQuery()) {
-                        if (storeRs.next()) {
-                            storeName = storeRs.getString("store_name");
-                        }
-                    }
-                }
-
-                String email = "Unknown";
-                try (PreparedStatement userStmt = conn.prepareStatement(queryUserEmail)) {
-                    userStmt.setInt(1, userId);
-                    try (ResultSet userRs = userStmt.executeQuery()) {
-                        if (userRs.next()) {
-                            email = userRs.getString("email");
-                        }
-                    }
-                }
+                String storeName = getStoreName(conn, sellerId);
+                String email = UserDAO.findEmailById(userId);
 
                 System.out.printf("Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
                         purchaseId, name, storeName, date, price, email);
             }
 
         } catch (SQLException e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 
     public static void printAllSellerPurchases(String agencyCode) {
-        String querySellerId = "SELECT id, store_name FROM sellers WHERE agency_code = ?";
-        String queryPurchases = "SELECT id, name, user_id, date, price FROM purchases WHERE seller_id = ?";
-        String queryUserEmail = "SELECT email FROM users WHERE id = ?";
-
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
-            int sellerId = -1;
-            String storeName = "Unknown";
-            try (PreparedStatement stmt = conn.prepareStatement(querySellerId)) {
-                stmt.setString(1, agencyCode);
-                try (ResultSet resultSet = stmt.executeQuery()) {
-                    if (resultSet.next()) {
-                        sellerId = resultSet.getInt("id");
-                        storeName = resultSet.getString("store_name");
-                    } else {
-                        System.out.println(ConsoleColors.RED + "Seller not found." + ConsoleColors.RESET);
-                        return;
-                    }
-                }
+            int sellerId = SellerDAO.findSellerIdByCode(agencyCode);
+            if (sellerId == -1) {
+                System.out.println(ConsoleColors.RED + "Seller not found." + ConsoleColors.RESET);
+                return;
             }
 
-            try (PreparedStatement stmt = conn.prepareStatement(queryPurchases)) {
-                stmt.setInt(1, sellerId);
-                try (ResultSet resultSet = stmt.executeQuery()) {
-                    while (resultSet.next()) {
-                        int purchaseId = resultSet.getInt("id");
-                        String name = resultSet.getString("name");
-                        int userId = resultSet.getInt("user_id");
-                        String date = resultSet.getString("date");
-                        double price = resultSet.getDouble("price");
-                        String email = "Unknown";
-                        try (PreparedStatement userStmt = conn.prepareStatement(queryUserEmail)) {
-                            userStmt.setInt(1, userId);
-                            try (ResultSet userRs = userStmt.executeQuery()) {
-                                if (userRs.next()) {
-                                    email = userRs.getString("email");
-                                }
-                            }
-                        }
-                        System.out.printf(
-                                "Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
-                                purchaseId, name, storeName, date, price, email);
-                    }
+            String storeName = getStoreName(conn, sellerId);
+            printPurchases(conn, sellerId, storeName);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void printPurchases(Connection conn, int sellerId, String storeName) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(PURCHASES_SELLER)) {
+            stmt.setInt(1, sellerId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    int purchaseId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    int userId = resultSet.getInt("user_id");
+                    String date = resultSet.getString("date");
+                    double price = resultSet.getDouble("price");
+
+                    String email = UserDAO.findEmailById(userId);
+
+                    System.out.printf(
+                            "Purchase ID: %d | Name: %s | Store: %s | Date: %s | Price: %.2f | User Email: %s%n",
+                            purchaseId, name, storeName, date, price, email);
                 }
             }
-        } catch (SQLException e) {
-            e.getMessage();
         }
     }
 
     public static void printAlldetailsOfPurchase(int purchaseId) {
-        String query1 = "SELECT * FROM purchases WHERE id = ?";
-        String query2 = "SELECT email FROM users WHERE id = ?";
-        String query3 = "SELECT store_name FROM sellers WHERE id = ?";
-
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement stmt1 = conn.prepareStatement(query1)) {
+                PreparedStatement stmt1 = conn.prepareStatement(PURCHASE_BY_ID)) {
 
             stmt1.setInt(1, purchaseId);
             try (ResultSet resultSet1 = stmt1.executeQuery()) {
@@ -252,25 +211,8 @@ public class PurchasesDAO {
                     int sellerId = resultSet1.getInt("seller_id");
                     String info = resultSet1.getString("information");
 
-                    String email = "";
-                    try (PreparedStatement stmt2 = conn.prepareStatement(query2)) {
-                        stmt2.setInt(1, userId);
-                        try (ResultSet resultSet2 = stmt2.executeQuery()) {
-                            if (resultSet2.next()) {
-                                email = resultSet2.getString("email");
-                            }
-                        }
-                    }
-
-                    String storeName = "";
-                    try (PreparedStatement stmt3 = conn.prepareStatement(query3)) {
-                        stmt3.setInt(1, sellerId);
-                        try (ResultSet resultSet3 = stmt3.executeQuery()) {
-                            if (resultSet3.next()) {
-                                storeName = resultSet3.getString("store_name");
-                            }
-                        }
-                    }
+                    String email = UserDAO.findEmailById(userId);
+                    String storeName = getStoreName(conn, sellerId);
 
                     System.out.printf(
                             "Name: %s, Price: %.2f, Date: %s, User email: %s, Store name: %s, More information: %s\n",
@@ -280,30 +222,42 @@ public class PurchasesDAO {
                 }
             }
         } catch (SQLException e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 
-    public static double findLastMonthTransaction(int id, String userType) {
+    private static String getStoreName(Connection conn, int sellerId) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(SELECT_STORE)) {
+            stmt.setInt(1, sellerId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("store_name");
+                }
+            }
+        }
+        return "Unknown";
+    }
+
+    public static double findLastMonthTransaction(int userId, String userType) {
         double totalTransaction = 0.0;
         String query = "SELECT price, date FROM purchases WHERE " + userType + "_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            stmt.setInt(1, userId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            Instant oneMonthAgo = Instant.now().minus(Duration.ofDays(30));
+                Instant oneMonthAgo = Instant.now().minus(Duration.ofDays(30));
 
-            while (rs.next()) {
-                double price = rs.getDouble("price");
-                String dateStr = rs.getString("date");
+                while (resultSet.next()) {
+                    double price = resultSet.getDouble("price");
+                    String dateStr = resultSet.getString("date");
+                    Instant transactionDate = Instant.parse(dateStr);
 
-                Instant transactionDate = Instant.parse(dateStr);
-
-                if (transactionDate.isAfter(oneMonthAgo)) {
-                    totalTransaction += price;
+                    if (transactionDate.isAfter(oneMonthAgo)) {
+                        totalTransaction += price;
+                    }
                 }
             }
 

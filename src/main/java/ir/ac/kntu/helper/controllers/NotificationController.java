@@ -31,8 +31,9 @@ public class NotificationController {
         while (true) {
             System.out.println("Enter id of the notification to see more info (press 0 to return)");
             input = ScannerWrapper.getInstance().nextLine();
-            if (ValidationUtil.isInteger(input))
+            if (ValidationUtil.isInteger(input)) {
                 break;
+            }
         }
         int notifId = Integer.parseInt(input);
 

@@ -30,7 +30,7 @@ public class MobileDAO {
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Table created or already exists.");
         } catch (SQLException e) {
@@ -40,49 +40,68 @@ public class MobileDAO {
 
     public static boolean insertMobile(Mobile mobile, String agencyCode) {
         if (mobile == null || agencyCode == null || agencyCode.isBlank()) {
-            System.out.println(ConsoleColors.RED +"Invalid input: mobile or agencyCode is null." + ConsoleColors.RESET);
+            System.out
+                    .println(ConsoleColors.RED + "Invalid input: mobile or agencyCode is null." + ConsoleColors.RESET);
             return false;
         }
 
+        int sellerId = getSellerIdByAgencyCode(agencyCode);
+        if (sellerId == -1) {
+            System.out.println(
+                    ConsoleColors.RED + "No seller found for agency code: " + ConsoleColors.RESET + agencyCode);
+            return false;
+        }
+
+        return insertMobileRecord(mobile, sellerId);
+    }
+
+    private static int getSellerIdByAgencyCode(String agencyCode) {
         String query = "SELECT id FROM sellers WHERE agency_code = ?";
-        String sql = "INSERT INTO Mobile(seller_id, name, price, inventory, brand, memory, RAM, rareCameraResolution, frontCameraResolution, networkInternet)"
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, agencyCode);
-            int sellerId;
             try (ResultSet resultSet = pstmt.executeQuery()) {
-                if (!resultSet.next()) {
-                    System.out.println(ConsoleColors.RED + "No seller found for agency code: " + ConsoleColors.RESET + agencyCode);
-                    resultSet.close();
-                    return false;
-                }  
-                sellerId = resultSet.getInt("id");
-            }
-
-            try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
-                insertStmt.setInt(1, sellerId);
-                insertStmt.setString(2, mobile.getName());
-                insertStmt.setDouble(3, mobile.getPrice());
-                insertStmt.setInt(4, mobile.getInventory());
-                insertStmt.setString(5, mobile.getBrand());
-                insertStmt.setInt(6, mobile.getMemory());
-                insertStmt.setInt(7, mobile.getRam());
-                insertStmt.setString(8, mobile.getRearCamRes());
-                insertStmt.setString(9, mobile.getFrontCamRes());
-                insertStmt.setString(10, mobile.getNetType());
-
-                insertStmt.executeUpdate();
-                System.out.println(ConsoleColors.GREEN +"Mobile inserted successfully." + ConsoleColors.RESET);
-                return true;
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                }
             }
 
         } catch (SQLException e) {
-            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage()+ ConsoleColors.RESET);
-            e.getMessage();
+            System.out
+                    .println(ConsoleColors.RED + "Error retrieving seller ID: " + e.getMessage() + ConsoleColors.RESET);
+        }
+
+        return -1;
+    }
+
+    private static boolean insertMobileRecord(Mobile mobile, int sellerId) {
+        String sql = "INSERT INTO Mobile(seller_id, name, price, inventory, brand, memory, RAM, rareCameraResolution, frontCameraResolution, networkInternet) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+
+            insertStmt.setInt(1, sellerId);
+            insertStmt.setString(2, mobile.getName());
+            insertStmt.setDouble(3, mobile.getPrice());
+            insertStmt.setInt(4, mobile.getInventory());
+            insertStmt.setString(5, mobile.getBrand());
+            insertStmt.setInt(6, mobile.getMemory());
+            insertStmt.setInt(7, mobile.getRam());
+            insertStmt.setString(8, mobile.getRearCamRes());
+            insertStmt.setString(9, mobile.getFrontCamRes());
+            insertStmt.setString(10, mobile.getNetType());
+
+            insertStmt.executeUpdate();
+            System.out.println(ConsoleColors.GREEN + "Mobile inserted successfully." + ConsoleColors.RESET);
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
     }
+
 }

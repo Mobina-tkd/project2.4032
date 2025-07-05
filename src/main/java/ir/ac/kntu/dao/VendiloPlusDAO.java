@@ -63,18 +63,19 @@ public class VendiloPlusDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, user.getEmail());
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                String dateString = rs.getString("date");
+                if (resultSet.next()) {
+                    String dateString = resultSet.getString("date");
 
-                ZonedDateTime now = ZonedDateTime.now();
-                ZonedDateTime dateInstant = ZonedDateTime.parse(dateString.trim());
+                    ZonedDateTime now = ZonedDateTime.now();
+                    ZonedDateTime dateInstant = ZonedDateTime.parse(dateString.trim());
 
-                return now.isBefore(dateInstant);
+                    return now.isBefore(dateInstant);
+                }
+
+                return false;
             }
-
-            return false;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,11 +94,12 @@ public class VendiloPlusDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, user.getEmail());
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                String dateString = rs.getString("date");
-                System.out.println("Your subscription ends on : " + dateString.substring(0, 10));
+                if (resultSet.next()) {
+                    String dateString = resultSet.getString("date");
+                    System.out.println("Your subscription ends on : " + dateString.substring(0, 10));
+                }
             }
 
         } catch (Exception e) {

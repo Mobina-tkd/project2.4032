@@ -17,28 +17,17 @@ public class AddressController {
             Vendilo.AddressOption addressOption = Menu.getAddressOption();
             switch (addressOption) {
                 case INSERT_NEW_ADDRESS -> {
-                    while (true) {
-                        Address address = ReadDataUtil.readAddress();
-                        boolean inserted = AddressDAO.insertAddress(address, user);
-                        if (!inserted) {
-                            continue;
-                        }
-                        break;
-                    }
+                    handleInsert(user);
                 }
                 case VIEW_ADDRESSES -> {
                     AddressDAO.printAllAddresses(user);
                 }
                 case EDIT_ADDRESSES -> {
-                    System.out.print("Enter the location you want to edit : ");
-                    String location = ScannerWrapper.getInstance().nextLine();
-                    AddressDAO.editAddress(user, location);
+                    handleEditting(user);
 
                 }
                 case DELETE_ADDRESSES -> {
-                    System.out.print("Enter the location you want to delete : ");
-                    String location = ScannerWrapper.getInstance().nextLine();
-                    AddressDAO.deleteAddress(user, location);
+                    handleDeleting(user);
                 }
                 case BACK -> {
                     return;
@@ -50,5 +39,28 @@ public class AddressController {
                 default -> throw new AssertionError();
             }
         }
+    }
+
+    private static void handleInsert(User user) {
+        while (true) {
+            Address address = ReadDataUtil.readAddress();
+            boolean inserted = AddressDAO.insertAddress(address, user);
+            if (!inserted) {
+                continue;
+            }
+            break;
+        }
+    }
+
+    private static void handleEditting(User user) {
+        System.out.print("Enter the location you want to edit : ");
+        String location = ScannerWrapper.getInstance().nextLine();
+        AddressDAO.editAddress(user, location);
+    }
+
+    private static void handleDeleting(User user) {
+        System.out.print("Enter the location you want to delete : ");
+        String location = ScannerWrapper.getInstance().nextLine();
+        AddressDAO.deleteAddress(user, location);
     }
 }

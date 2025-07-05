@@ -14,7 +14,6 @@ import ir.ac.kntu.model.User;
 public class ShoppingCartDAO {
     private static final String DB_URL = "jdbc:sqlite:data.db";
 
-    
     public static void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS shoppingCart ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -60,18 +59,20 @@ public class ShoppingCartDAO {
                         insertStmt.setInt(6, productId);
 
                         insertStmt.executeUpdate();
-                        System.out.println(ConsoleColors.GREEN +"Product inserted successfully." + ConsoleColors.RESET);
+                        System.out
+                                .println(ConsoleColors.GREEN + "Product inserted successfully." + ConsoleColors.RESET);
                         return true;
                     }
 
                 } else {
-                    System.out.println(ConsoleColors.RED +"User not found with email: " + ConsoleColors.RESET + user.getEmail());
+                    System.out.println(
+                            ConsoleColors.RED + "User not found with email: " + ConsoleColors.RESET + user.getEmail());
                     return false;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println(ConsoleColors.RED +"Insert failed: " + e.getMessage() + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
             return false;
         }
     }
@@ -85,14 +86,16 @@ public class ShoppingCartDAO {
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows > 0) {
-                System.out.println(ConsoleColors.GREEN +"Product with ID " + productId + " was deleted from the cart." + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.GREEN + "Product with ID " + productId + " was deleted from the cart."
+                        + ConsoleColors.RESET);
             } else {
-                System.out.println(ConsoleColors.RED +"No product found in the cart with ID "+ ConsoleColors.RESET + productId );
+                System.out.println(
+                        ConsoleColors.RED + "No product found in the cart with ID " + ConsoleColors.RESET + productId);
             }
 
         } catch (SQLException e) {
             e.getMessage();
-            System.out.println(ConsoleColors.RED +"Database error: " + e.getMessage() + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Database error: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
@@ -105,44 +108,47 @@ public class ShoppingCartDAO {
                 PreparedStatement stmt1 = conn.prepareStatement(query1);
                 PreparedStatement stmt2 = conn.prepareStatement(query2)) {
 
-            // Get user ID from email
-            stmt1.setString(1, user.getEmail());
-
-            try (ResultSet resultSet1 = stmt1.executeQuery()) {
-                if (resultSet1.next()) {
-                    int userId = resultSet1.getInt("id");
-
-                    // Get shopping cart items
-                    stmt2.setInt(1, userId);
-
-                    try (ResultSet resultSet2 = stmt2.executeQuery()) {
-                        System.out.println(ConsoleColors.RED +"--------------------------------------------------" + ConsoleColors.RESET);
-                        System.out.println("Items in shopping cart for user: " + user.getEmail());
-                        System.out.println(ConsoleColors.RED +"--------------------------------------------------" + ConsoleColors.RESET);
-
-                        while (resultSet2.next()) {
-                            String name = resultSet2.getString("name");
-                            int cartId = resultSet2.getInt("id");
-                            double price = resultSet2.getDouble("price");
-                            if (VendiloPlusDAO.vendiloPlusUser(user)) {
-                                price = 0.95 * price;
-                            }
-
-                            System.out.printf("Name: %s | ID: %d | Price: $%.2f%n", name, cartId, price);
-                            sum += price;
-                        }
-
-                        System.out.println(ConsoleColors.RED +"--------------------------------------------------" + ConsoleColors.RESET);
-                        System.out.printf("Total Price: $%.2f%n", sum);
-                    }
-                } else {
-                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
-                }
+            int userId = UserDAO.findUserId(user.getEmail());
+            if (userId == -1) {
+                System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
+                return;
             }
+
+            stmt2.setInt(1, userId);
+            sum = printCartItems(user, stmt2);
+
+            System.out.println(
+                    ConsoleColors.RED + "--------------------------------------------------" + ConsoleColors.RESET);
+            System.out.printf("Total Price: $%.2f%n", sum);
 
         } catch (SQLException e) {
             e.getMessage();
         }
+    }
+
+    private static double printCartItems(User user, PreparedStatement stmt2) throws SQLException {
+        double sum = 0;
+        try (ResultSet resultSet2 = stmt2.executeQuery()) {
+            System.out.println(
+                    ConsoleColors.RED + "--------------------------------------------------" + ConsoleColors.RESET);
+            System.out.println("Items in shopping cart for user: " + user.getEmail());
+            System.out.println(
+                    ConsoleColors.RED + "--------------------------------------------------" + ConsoleColors.RESET);
+
+            while (resultSet2.next()) {
+                String name = resultSet2.getString("name");
+                int cartId = resultSet2.getInt("id");
+                double price = resultSet2.getDouble("price");
+
+                if (VendiloPlusDAO.vendiloPlusUser(user)) {
+                    price = 0.95 * price;
+                }
+
+                System.out.printf("Name: %s | ID: %d | Price: $%.2f%n", name, cartId, price);
+                sum += price;
+            }
+        }
+        return sum;
     }
 
     public static void clearShoppingCart(User user) {
@@ -162,9 +168,9 @@ public class ShoppingCartDAO {
                     ps2.setInt(1, userId);
                     ps2.executeUpdate();
 
-                    System.out.println(ConsoleColors.GREEN +"Shopping cart cleared for user." + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.GREEN + "Shopping cart cleared for user." + ConsoleColors.RESET);
                 } else {
-                    System.out.println(ConsoleColors.RED +"User not found." + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "User not found." + ConsoleColors.RESET);
                 }
             }
 
@@ -193,7 +199,7 @@ public class ShoppingCartDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println(ConsoleColors.RED +e.getMessage() + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + e.getMessage() + ConsoleColors.RESET);
         }
     }
 }

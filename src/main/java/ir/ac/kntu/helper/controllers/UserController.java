@@ -113,7 +113,7 @@ public class UserController {
         }
         while (true) {
             String username = LoginPageController.userLoginPage();
-            if (username.equals("Back")) {
+            if ("Back".equals(username)) {
                 return null;
             }
             if (username == null) {
@@ -137,14 +137,13 @@ public class UserController {
                     }
                     UserController.chooseUserOption(user);
                 }
-
                 case ALREADY_HAS_ACCOUNT -> {
                     String username = "";
                     while (true) {
                         username = LoginPageController.userLoginPage();
                         if (username == null) {
                             continue;
-                        } else if (username.equals("Back")) {
+                        } else if ("Back".equals(username)) {
                             return;
                         }
                         break;
@@ -208,7 +207,7 @@ public class UserController {
         while (true) {
             System.out.print("Enter username (press 0 to return): ");
             String username = ScannerWrapper.getInstance().nextLine();
-            if (username.equals("0")) {
+            if ("0".equals(username)) {
                 return;
             }
             User user = UserDAO.findUser(username);

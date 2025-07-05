@@ -102,7 +102,7 @@ public class ManagerController {
         while (true) {
             System.out.print("Enter email or phone number to block(press 0 to return): ");
             String username = ScannerWrapper.getInstance().nextLine();
-            if (username.equals("0")) {
+            if ("0".equals(username)) {
                 return;
             }
             User user = UserDAO.findUser(username);
@@ -119,7 +119,7 @@ public class ManagerController {
         while (true) {
             System.out.print("Enter username to block(press 0 to return): ");
             String username = ScannerWrapper.getInstance().nextLine();
-            if (username.equals("0")) {
+            if ("0".equals(username)) {
                 return;
             }
             if (!ManagerDAO.userExist(usertype, username)) {
@@ -133,7 +133,7 @@ public class ManagerController {
         while (true) {
             System.out.print("Enter username to change data(press 0 to return): ");
             String username = ScannerWrapper.getInstance().nextLine();
-            if (username.equals("0")) {
+            if ("0".equals(username)) {
                 return;
             }
             User user = UserDAO.findUser(username);
@@ -151,26 +151,18 @@ public class ManagerController {
             if (username == null) {
                 return;
             }
-            String newValue;
             Menu.edditingMenu();
             Vendilo.EdditingMenu option = Menu.getEdditingOption();
             switch (option) {
 
                 case NAME -> {
-                    System.out.print("Enter name: ");
-                    newValue = ScannerWrapper.getInstance().nextLine();
-                    SupporterDAO.updateSupporterAndManagerData(username, userType, "name", newValue);
-
+                    handleName(username, userType);
                 }
                 case USERNAME -> {
-                    System.out.print("Enter username: ");
-                    newValue = ScannerWrapper.getInstance().nextLine();
-                    SupporterDAO.updateSupporterAndManagerData(username, userType, "username", newValue);
-
+                    handleUsername(username, userType);
                 }
                 case PASSWORD -> {
-                    newValue = PersonFactory.readPassword();
-                    SupporterDAO.updateSupporterAndManagerData(username, userType, "password", newValue);
+                    handlePassword(username, userType);
 
                 }
                 case BACK -> {
@@ -185,11 +177,31 @@ public class ManagerController {
 
     }
 
+    private static void handleName(String username, String userType) {
+        System.out.print("Enter name: ");
+        String newValue = ScannerWrapper.getInstance().nextLine();
+        SupporterDAO.updateSupporterAndManagerData(username, userType, "name", newValue);
+
+    }
+
+    private static void handleUsername(String username, String userType) {
+        System.out.print("Enter username: ");
+        String newValue = ScannerWrapper.getInstance().nextLine();
+        SupporterDAO.updateSupporterAndManagerData(username, userType, "username", newValue);
+
+    }
+
+    private static void handlePassword(String username, String userType) {
+        String newValue = PersonFactory.readPassword();
+        SupporterDAO.updateSupporterAndManagerData(username, userType, "password", newValue);
+
+    }
+
     private static String getUsername(String userType) {
         while (true) {
             System.out.print("Enter username to change data(press 0 to return): ");
             String username = ScannerWrapper.getInstance().nextLine();
-            if (username.equals("0")) {
+            if ("0".equals(username)) {
                 return "";
             }
             if (!ManagerDAO.userExist(userType, username)) {
@@ -252,7 +264,7 @@ public class ManagerController {
         while (true) {
             System.out.print("Enter username (press 0 to return): ");
             String username = ScannerWrapper.getInstance().nextLine();
-            if (username.equals("0")) {
+            if ("0".equals(username)) {
                 return;
             }
             if (!ManagerDAO.userExist(userType, username)) {
@@ -265,7 +277,7 @@ public class ManagerController {
     private static void handleWrittigMessage() {
         System.out.println("Write you message for users(press 0 to return): ");
         String message = ScannerWrapper.getInstance().nextLine();
-        if (message.equals("0")) {
+        if ("0".equals(message)) {
             return;
         }
         UserDAO.setMessageForAllUsers(message);
@@ -275,21 +287,21 @@ public class ManagerController {
     private static void handleSupporterLimitation() {
         while (true) {
             SupporterDAO.printSupporterLimitation();
-            int id = ReadDataUtil.readId();
-            if (id == 0) {
+            int supporterId = ReadDataUtil.readId();
+            if (supporterId == 0) {
                 return;
             }
             Menu.supporterMenu();
             Vendilo.SupporterOption option = Menu.getSupporterOption();
             switch (option) {
                 case FOLLOW_UP_REQUEST -> {
-                    handleChangingAccess("Recent_purchases", id);
+                    handleChangingAccess("Recent_purchases", supporterId);
                 }
                 case RECENT_PURCHASES -> {
-                    handleChangingAccess("Follow_up_request", id);
+                    handleChangingAccess("Follow_up_request", supporterId);
                 }
                 case IDENTITY_VERIFICATION -> {
-                    handleChangingAccess("Identity_verification", id);
+                    handleChangingAccess("Identity_verification", supporterId);
                 }
                 case BACK -> {
                     return;
@@ -302,16 +314,16 @@ public class ManagerController {
         }
     }
 
-    private static void handleChangingAccess(String accessType, int id) {
+    private static void handleChangingAccess(String accessType, int supporterId) {
         while (true) {
             Menu.accessMenu();
             Vendilo.AccessOption option = Menu.getAccessOption();
             switch (option) {
                 case GIVE_ACCESS -> {
-                    SupporterDAO.mofifyAccess(accessType, id, 1);
+                    SupporterDAO.mofifyAccess(accessType, supporterId, 1);
                 }
                 case REVOKE -> {
-                    SupporterDAO.mofifyAccess(accessType, id, 0);
+                    SupporterDAO.mofifyAccess(accessType, supporterId, 0);
                 }
                 case BACK -> {
                     return;
@@ -375,27 +387,27 @@ public class ManagerController {
     }
 
     private static void handleRewardingSeller() {
-        String id= null;
+        String sellerId = null;
         while (true) {
             System.out.print("Enter seller id (press 0 to return): ");
-             id = ScannerWrapper.getInstance().nextLine();
-            if(!ValidationUtil.isInteger(id)) {
+            sellerId = ScannerWrapper.getInstance().nextLine();
+            if (!ValidationUtil.isInteger(sellerId)) {
                 continue;
             }
-            if (id.equals("0")) {
+            if ("0".equals(sellerId)) {
                 return;
             }
             break;
         }
 
-        System.out.printf("Last month income: %f%n", PurchasesDAO.findLastMonthTransaction(Integer.parseInt(id), "seller")); // do this one
+        System.out.printf("Last month income: %f%n",
+                PurchasesDAO.findLastMonthTransaction(Integer.parseInt(sellerId), "seller")); // do this one
         double reward = ReadDataUtil.getReward();
         if (reward == 0) {
             return;
         }
-        SellerDAO.rewardSeller(Integer.parseInt(id), reward);
+        SellerDAO.rewardSeller(Integer.parseInt(sellerId), reward);
 
     }
-    
 
 }

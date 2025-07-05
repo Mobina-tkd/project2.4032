@@ -129,9 +129,9 @@ public class UserDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, email);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getDouble("balance");
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getDouble("balance");
                 } else {
                     System.out.println("User not found.");
                 }
@@ -172,12 +172,13 @@ public class UserDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                return rs.getInt("id");
-            } else {
-                return -1;
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                } else {
+                    return -1;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -292,19 +293,18 @@ public class UserDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, userId);
-            ResultSet resultSet = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            if (resultSet.next()) {
-                return resultSet.getString("email");
-            } else {
-                return "";
+                if (resultSet.next()) {
+                    return resultSet.getString("email");
+                } else {
+                    return "";
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return "";
         }
     }
-
-    
 
 }

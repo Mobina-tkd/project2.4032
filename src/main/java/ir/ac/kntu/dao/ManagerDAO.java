@@ -56,8 +56,8 @@ public class ManagerDAO {
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                return resultSet.next();
             }
 
         } catch (SQLException e) {

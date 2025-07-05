@@ -170,14 +170,15 @@ public class ProductDAO {
             stmt.setInt(2, sellerId);
             stmt.setInt(3, sellerId);
 
-            ResultSet resultSet= stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            while (resultSet.next()) {
-                int productId = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                int inventory = resultSet.getInt("inventory");
+                while (resultSet.next()) {
+                    int productId = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    int inventory = resultSet.getInt("inventory");
 
-                System.out.println("ID: " + productId + ", Name: " + name + ", Inventory: " + inventory);
+                    System.out.println("ID: " + productId + ", Name: " + name + ", Inventory: " + inventory);
+                }
             }
 
         } catch (SQLException e) {
@@ -217,7 +218,7 @@ public class ProductDAO {
 
             stmt.setInt(1, productId);
 
-            try (ResultSet resultSet= stmt.executeQuery()) {
+            try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
                     inventory = resultSet.getInt("inventory");
                 }
