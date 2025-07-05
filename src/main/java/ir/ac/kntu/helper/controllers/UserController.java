@@ -185,7 +185,7 @@ public class UserController {
     public static void handleShowingUsers() {
         while (true) {
             Menu.displayUserOption();
-            Vendilo.displayingUserOption option = Menu.getDisplayingTypeOption();
+            Vendilo.DisplayingUserOption option = Menu.getDisplayingTypeOption();
             switch (option) {
                 case SHOW_ALL -> {
                     UserDAO.showAllUsers();

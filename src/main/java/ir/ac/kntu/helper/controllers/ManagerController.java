@@ -228,7 +228,7 @@ public class ManagerController {
     private static void handleShowingSupporterAndManager(String userType) {
         while (true) {
             Menu.displayUserOption();
-            Vendilo.displayingUserOption option = Menu.getDisplayingTypeOption();
+            Vendilo.DisplayingUserOption option = Menu.getDisplayingTypeOption();
             switch (option) {
                 case SHOW_ALL -> {
                     SupporterDAO.displayAllManagerAndSupporter(userType);

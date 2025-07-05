@@ -71,43 +71,45 @@ public class DiscountDAO {
             }
 
             stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            System.out.println(ConsoleColors.BLUE + "User Discount Preview:" + ConsoleColors.RESET);
-            while (rs.next()) {
-                int discountId = rs.getInt("id");
-                String type = rs.getString("type");
-                String code = rs.getString("code");
+                System.out.println(ConsoleColors.BLUE + "User Discount Preview:" + ConsoleColors.RESET);
+                while (resultSet.next()) {
+                    int discountId = resultSet.getInt("id");
+                    String type = resultSet.getString("type");
+                    String code = resultSet.getString("code");
 
-                System.out.println("ID: " + discountId +
-                        " | Code: " + code +
-                        " | Type: " + type);
+                    System.out.println("ID: " + discountId +
+                            " | Code: " + code +
+                            " | Type: " + type);
+                }
             }
         } catch (SQLException e) {
             System.out.println(ConsoleColors.RED + "Error fetching discounts: " + e.getMessage() + ConsoleColors.RESET);
         }
     }
 
-    public static void printDiscountInformation(int id) {
+    public static void printDiscountInformation(int discountId) {
         String query = "SELECT type, code, amount, used_time FROM discounts WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            stmt.setInt(1, discountId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
 
-            System.out.println(ConsoleColors.BLUE + "User Discount information:" + ConsoleColors.RESET);
-            while (rs.next()) {
-                String type = rs.getString("type");
-                String code = rs.getString("code");
-                double amount = rs.getDouble("amount");
-                int usedTime = rs.getInt("used_time");
+                System.out.println(ConsoleColors.BLUE + "User Discount information:" + ConsoleColors.RESET);
+                while (resultSet.next()) {
+                    String type = resultSet.getString("type");
+                    String code = resultSet.getString("code");
+                    double amount = resultSet.getDouble("amount");
+                    int usedTime = resultSet.getInt("used_time");
 
-                System.out.println(" | Code: " + code +
-                        " | Type: " + type +
-                        " | Amount of Discount: " + amount +
-                        " | Used Time: " + usedTime + "\n");
+                    System.out.println(" | Code: " + code +
+                            " | Type: " + type +
+                            " | Amount of Discount: " + amount +
+                            " | Used Time: " + usedTime + "\n");
+                }
             }
         } catch (SQLException e) {
             System.out.println(ConsoleColors.RED + "Error fetching discounts: " + e.getMessage() + ConsoleColors.RESET);
@@ -118,7 +120,7 @@ public class DiscountDAO {
         ScannerWrapper.getInstance().nextLine();
         System.out.println("Enter your discount code (press 0 to return): ");
         String input = ScannerWrapper.getInstance().nextLine();
-        if (input.equals("0")) {
+        if ("0".equals(input)) {
             return "";
         }
         if (codeExist(input)) {
@@ -135,11 +137,12 @@ public class DiscountDAO {
 
             stmt.setString(1, input);
 
-            ResultSet rs = stmt.executeQuery();
-            int usedTime = rs.getInt("used_time");
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                int usedTime = resultSet.getInt("used_time");
 
-            if (rs.next() && usedTime > 0) {
-                return true;
+                if (resultSet.next() && usedTime > 0) {
+                    return true;
+                }
             }
 
         } catch (SQLException e) {
@@ -172,15 +175,15 @@ public class DiscountDAO {
 
     public static int findIdByCode(String code) {
         String query = "SELECT id FROM discounts WHERE code = ?";
-        int id = -1;
+        int discountId = -1;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, code);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    id = rs.getInt("id");
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    discountId = resultSet.getInt("id");
                 }
             }
 
@@ -188,7 +191,7 @@ public class DiscountDAO {
             e.printStackTrace();
         }
 
-        return id;
+        return discountId;
     }
 
 }

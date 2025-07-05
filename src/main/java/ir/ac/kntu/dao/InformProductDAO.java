@@ -54,22 +54,24 @@ public class InformProductDAO {
 
     public static void sendInventoryNotifToUsers(String productName, int productId) {
         String query = "SELECT email FROM inform_user WHERE product_id = ? AND product_name = ?";
-        String email = "";
+    
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
             stmt.setInt(1, productId);
             stmt.setString(2, productName);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                email = rs.getString("email");
-                NotificationDAO.insertNotification(email, "Product is available",
-                        productName + " " + String.valueOf(productId));
+    
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    String email = resultSet.getString("email");
+                    NotificationDAO.insertNotification(email, "Product is available",
+                            productName + " " + productId);
+                }
             }
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+    
 }

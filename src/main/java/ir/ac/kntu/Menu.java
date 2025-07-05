@@ -414,8 +414,8 @@ public class Menu {
         return getEnumOption(Vendilo.EdditingMenu.class, Vendilo.EdditingMenu.UNDEFINED);
     }
 
-    public static Vendilo.displayingUserOption getDisplayingTypeOption() {
-        return getEnumOption(Vendilo.displayingUserOption.class, Vendilo.displayingUserOption.UNDEFINED);
+    public static Vendilo.DisplayingUserOption getDisplayingTypeOption() {
+        return getEnumOption(Vendilo.DisplayingUserOption.class, Vendilo.DisplayingUserOption.UNDEFINED);
     }
 
     public static Vendilo.ShowUsersOption getUserType() {

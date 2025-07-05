@@ -93,7 +93,7 @@ public class BookDAO {
                 boolean found = false;
     
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
+                    int bookId = resultSet.getInt("id");
                     String name = resultSet.getString("name");
                     double price = resultSet.getDouble("price");
                     int inventory = resultSet.getInt("inventory");
@@ -101,7 +101,7 @@ public class BookDAO {
                         price = 0.95 * price;
                     }
                     System.out.printf("Product name: %s, ID: %d, Price: %.2f, Inventory: %d%n", 
-                                      name, id, price, inventory);
+                                      name, bookId, price, inventory);
                     found = true;
                 }
     

@@ -156,7 +156,7 @@ public class Vendilo {
         NORMAL_USER, SUPPORTER, MANAGER, BACK, UNDEFINED
     }
 
-    public enum displayingUserOption {
+    public enum DisplayingUserOption {
         SHOW_ALL, SEARCH_BY_USERNAME, BACK, UNDEFINED
     }
 

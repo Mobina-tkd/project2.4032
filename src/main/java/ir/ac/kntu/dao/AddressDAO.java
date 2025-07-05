@@ -181,52 +181,75 @@ public class AddressDAO {
     }
 
     public static void editAddress(User user, String location) {
-        System.out.print("Enter the state: ");
-        String state = ScannerWrapper.getInstance().nextLine();
+    Address newAddress = promptForNewAddress(location);
+    int userId = getUserIdByEmail(user.getEmail());
 
-        System.out.print("Enter the street: ");
-        String street = ScannerWrapper.getInstance().nextLine();
-
-        System.out.print("Enter the house number: ");
-        String houseNumber = ScannerWrapper.getInstance().nextLine();
-
-        String email = user.getEmail();
-        String sqlGetUserId = "SELECT id FROM users WHERE email = ?";
-        String sqlUpdateAddress = "UPDATE addresses SET state = ?, street = ?, houseNumber = ? WHERE user_id = ? AND location = ?";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement getUserStmt = conn.prepareStatement(sqlGetUserId)) {
-
-            getUserStmt.setString(1, email);
-            int userId = -1;
-            try (ResultSet userResult = getUserStmt.executeQuery()) {
-                if (userResult.next()) {
-                    userId = userResult.getInt("id");
-                }
-            }
-
-            if (userId == -1) {
-                System.out.println(ConsoleColors.RED +"No user found with email: "+ ConsoleColors.RESET + email);
-                return;
-            }
-
-            try (PreparedStatement updateStmt = conn.prepareStatement(sqlUpdateAddress)) {
-                updateStmt.setString(1, state);
-                updateStmt.setString(2, street);
-                updateStmt.setString(3, houseNumber);
-                updateStmt.setInt(4, userId);
-                updateStmt.setString(5, location);
-
-                int rowsUpdated = updateStmt.executeUpdate();
-                if (rowsUpdated > 0) {
-                    System.out.println(ConsoleColors.GREEN +"Address updated successfully."+ ConsoleColors.RESET);
-                } else {
-                    System.out.println(ConsoleColors.RED +"No address found for the given location."+ ConsoleColors.RESET);
-                }
-            }
-
-        } catch (SQLException e) {
-            System.err.println(ConsoleColors.RED +"Error updating address: " + e.getMessage() + ConsoleColors.RESET);
-        }
+    if (userId == -1) {
+        System.out.println(ConsoleColors.RED + "No user found with email: " + ConsoleColors.RESET + user.getEmail());
+        return;
     }
+
+    boolean success = updateAddressInDB(userId, newAddress);
+    if (success) {
+        System.out.println(ConsoleColors.GREEN + "Address updated successfully." + ConsoleColors.RESET);
+    } else {
+        System.out.println(ConsoleColors.RED + "No address found for the given location." + ConsoleColors.RESET);
+    }
+}
+
+private static Address promptForNewAddress(String location) {
+    ScannerWrapper scanner = ScannerWrapper.getInstance();
+
+    System.out.print("Enter the state: ");
+    String state = scanner.nextLine();
+
+    System.out.print("Enter the street: ");
+    String street = scanner.nextLine();
+
+    System.out.print("Enter the house number: ");
+    String houseNumber = scanner.nextLine();
+
+    return new Address(location, state, street, houseNumber);
+}
+
+private static int getUserIdByEmail(String email) {
+    String sql = "SELECT id FROM users WHERE email = ?";
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, email);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        }
+
+    } catch (SQLException e) {
+        System.err.println(ConsoleColors.RED + "Error finding user ID: " + e.getMessage() + ConsoleColors.RESET);
+    }
+
+    return -1;
+}
+
+private static boolean updateAddressInDB(int userId, Address address) {
+    String sql = "UPDATE addresses SET state = ?, street = ?, houseNumber = ? WHERE user_id = ? AND location = ?";
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, address.getState());
+        stmt.setString(2, address.getStreet());
+        stmt.setString(3, address.getHouseNumber());
+        stmt.setInt(4, userId);
+        stmt.setString(5, address.getLocation());
+
+        return stmt.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+        System.err.println(ConsoleColors.RED + "Error updating address: " + e.getMessage() + ConsoleColors.RESET);
+        return false;
+    }
+}
+
 }
