@@ -295,10 +295,10 @@ public class ManagerController {
             Vendilo.SupporterOption option = Menu.getSupporterOption();
             switch (option) {
                 case FOLLOW_UP_REQUEST -> {
-                    handleChangingAccess("Recent_purchases", supporterId);
+                    handleChangingAccess("Follow_up_request", supporterId);
                 }
                 case RECENT_PURCHASES -> {
-                    handleChangingAccess("Follow_up_request", supporterId);
+                    handleChangingAccess("Recent_purchases", supporterId);
                 }
                 case IDENTITY_VERIFICATION -> {
                     handleChangingAccess("Identity_verification", supporterId);

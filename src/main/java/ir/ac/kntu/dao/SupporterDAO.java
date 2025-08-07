@@ -140,7 +140,6 @@ public class SupporterDAO {
     }
 
     public static void mofifyAccess(String accessType, int supporterId, int value) {
-
         String sql = "UPDATE supporters SET " + accessType + " = ? WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);

@@ -105,7 +105,7 @@ public class ReadDataUtil {
 
     public static int readId() {
         while (true) {
-            System.out.println("Enter supporter id to modify access(press 0 to return): ");
+            System.out.print("Enter supporter id to modify access(press 0 to return): ");
             String stringId = ScannerWrapper.getInstance().nextLine();
             if ("0".equals(stringId)) {
                 return 0;

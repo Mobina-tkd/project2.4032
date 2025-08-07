@@ -200,7 +200,7 @@ public class SearchProductController {
             while (cartRs.next()) {
                 int productId = cartRs.getInt("product_id");
                 String tableName = cartRs.getString("name");
-                reduceInventoryForProduct(conn, productId, tableName);
+                reduceInventoryForProduct(productId, tableName);
             }
         } finally {
             if (cartRs != null) {
@@ -212,27 +212,21 @@ public class SearchProductController {
         }
     }
 
-    private static void reduceInventoryForProduct(Connection conn, int productId, String tableName)
-            throws SQLException {
-        PreparedStatement getInvStmt = null;
-        PreparedStatement updateStmt = null;
-        ResultSet invRs = null;
-
-        try {
-            getInvStmt = prepareGetInventoryStatement(conn, tableName, productId);
-            invRs = getInvStmt.executeQuery();
-
+    private static void reduceInventoryForProduct(int productId, String tableName) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement getInvStmt = prepareGetInventoryStatement(conn, tableName, productId);
+                ResultSet invRs = getInvStmt.executeQuery()) {
             if (invRs.next()) {
                 int inventory = invRs.getInt("inventory");
                 if (inventory > 0) {
-                    updateStmt = prepareUpdateInventoryStatement(conn, tableName, inventory, productId);
-                    updateStmt.executeUpdate();
+                    try (PreparedStatement updateStmt = prepareUpdateInventoryStatement(conn, tableName, inventory,
+                            productId)) {
+                        updateStmt.executeUpdate();
+                    }
                 } else {
                     System.out.println("Product ID " + productId + " is out of stock.");
                 }
             }
-        } finally {
-            closeResources(invRs, getInvStmt, updateStmt); // closes only ResultSet and Statements
         }
     }
 
@@ -252,23 +246,6 @@ public class SearchProductController {
         stmt.setInt(1, inventory - 1);
         stmt.setInt(2, productId);
         return stmt;
-    }
-
-    private static void closeResources(ResultSet resultSet, PreparedStatement... stmts) {
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-        } catch (SQLException ignored) {
-        }
-        for (PreparedStatement stmt : stmts) {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException ignored) {
-            }
-        }
     }
 
 }

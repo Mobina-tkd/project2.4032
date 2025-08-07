@@ -47,7 +47,7 @@ public class NotificationDAO {
             insertStmt.executeUpdate();
             System.out.println(ConsoleColors.GREEN + "Notification inserted successfully." + ConsoleColors.RESET);
         } catch (SQLException e) {
-            e.printStackTrace(); // This will show the exact line causing the issue
+            e.printStackTrace();
 
             System.out.println(ConsoleColors.RED + "Insert failed: " + e.getMessage() + ConsoleColors.RESET);
         }
