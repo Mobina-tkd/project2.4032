@@ -4,12 +4,17 @@ import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.NotificationDAO;
 import ir.ac.kntu.dao.RequestDAO;
+import ir.ac.kntu.dao.SupporterDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 
 public class RequestController {
 
-    public static void handleRequest() {
+    public static void handleRequest(String username) {
+        if (!SupporterDAO.hasAccess("Follow_up_request", username)) {
+            System.out.println(ConsoleColors.RED + "You dont hava access" + ConsoleColors.RESET);
+            return;
+        }
         while (true) {
             Menu.printSupportOptionsS();
             Vendilo.SupporterSupporterOptions option = Menu.getSupporterSupportOption();

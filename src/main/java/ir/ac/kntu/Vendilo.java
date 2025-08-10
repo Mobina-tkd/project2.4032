@@ -202,16 +202,16 @@ public class Vendilo {
                 }
 
                 case SUPPORTER -> {
-                    String canEnter = LoginPageController.supporterAndManagerLoginPage("supporters");
-                    if (canEnter == null) {
+                    String username = LoginPageController.supporterAndManagerLoginPage("supporters");
+                    if (username == null || "Back".equals(username)) {
                         continue;
                     }
                     // you have to consider which supporter is entering
-                    SupporterController.chooseSupporterOption();
+                    SupporterController.chooseSupporterOption(username);
                 }
                 case MANAGER -> {
-                    String canEnter = LoginPageController.supporterAndManagerLoginPage("managers");
-                    if (canEnter == null) {
+                    String username = LoginPageController.supporterAndManagerLoginPage("managers");
+                    if (username == null || "Back".equals(username)) {
                         continue;
                     }
                     ManagerController.handleManagerOption();

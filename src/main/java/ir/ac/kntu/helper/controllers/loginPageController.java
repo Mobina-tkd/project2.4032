@@ -53,7 +53,7 @@ public class LoginPageController {
     private static boolean wantsToLogin() {
         System.out.print("Do you want to login? Y/N: ");
         String login = ScannerWrapper.getInstance().nextLine();
-        return !"n".equalsIgnoreCase(login);
+        return !"n".equalsIgnoreCase(login.trim());
     }
 
     private static String promptInput(String prompt) {

@@ -3,24 +3,25 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.SellerDAO;
+import ir.ac.kntu.dao.SupporterDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 
 public class SupporterController {
 
-    public static void chooseSupporterOption() {
+    public static void chooseSupporterOption(String username) {
         while (true) {
             Menu.supporterMenu();
             Vendilo.SupporterOption option = Menu.getSupporterOption();
             switch (option) {
                 case FOLLOW_UP_REQUEST -> {
-                    RequestController.handleRequest();
+                    RequestController.handleRequest(username);
                 }
                 case IDENTITY_VERIFICATION -> {
-                    handleIdentityVerification();
+                    handleIdentityVerification(username);
                 }
                 case RECENT_PURCHASES -> {
-                    PurchaseController.handleSupporterPurchase();
+                    PurchaseController.handleSupporterPurchase(username);
                 }
                 case BACK -> {
                     return;
@@ -34,8 +35,12 @@ public class SupporterController {
         }
     }
 
-    public static void handleIdentityVerification() { // fix back option here
+    public static void handleIdentityVerification(String username) { // fix back option here
         String agencyCode;
+        if (!SupporterDAO.hasAccess("Identity_verification", username)) {
+            System.out.println(ConsoleColors.RED + "You dont hava access" + ConsoleColors.RESET);
+            return;
+        }
 
         while (true) {
             boolean printed = SellerDAO.printSellersData();

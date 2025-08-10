@@ -163,4 +163,23 @@ public class SupporterDAO {
 
     }
 
+    public static Boolean hasAccess(String field, String username) {
+        String query = "SELECT " + field + " from supporters WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int value = rs.getInt(field);
+                    return value == 1;
+                }
+            }
+        } catch (SQLException e) {
+            // Log the exception and handle it appropriately
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
 }

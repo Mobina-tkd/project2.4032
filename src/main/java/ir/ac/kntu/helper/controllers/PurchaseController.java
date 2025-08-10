@@ -3,6 +3,7 @@ package ir.ac.kntu.helper.controllers;
 import ir.ac.kntu.Menu;
 import ir.ac.kntu.Vendilo;
 import ir.ac.kntu.dao.PurchasesDAO;
+import ir.ac.kntu.dao.SupporterDAO;
 import ir.ac.kntu.helper.ConsoleColors;
 import ir.ac.kntu.helper.ScannerWrapper;
 import ir.ac.kntu.helper.SellerChartExporter;
@@ -26,14 +27,18 @@ public class PurchaseController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
         }
     }
 
-    public static void handleSupporterPurchase() {
+    public static void handleSupporterPurchase(String username) {
+        if (!SupporterDAO.hasAccess("Recent_purchases",  username)) {
+            System.out.println(ConsoleColors.RED + "You dont have access" + ConsoleColors.RESET);
+            return;
+        }
         while (true) {
             PurchasesDAO.printAllPurchases();
             Menu.purchaseMenu();
@@ -49,7 +54,7 @@ public class PurchaseController {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
@@ -68,14 +73,14 @@ public class PurchaseController {
                     int purchaseId = ScannerWrapper.getInstance().nextInt();
                     PurchasesDAO.printAlldetailsOfPurchase(purchaseId);
                 }
-                case CHART -> { 
+                case CHART -> {
                     SellerChartExporter.exportSellerChart(agencyCode);
                 }
                 case BACK -> {
                     return;
                 }
                 case UNDEFINED -> {
-                    System.out.println(ConsoleColors.RED +"Undefined Choice; Try again...\n" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.RED + "Undefined Choice; Try again...\n" + ConsoleColors.RESET);
                 }
                 default -> throw new AssertionError();
             }
