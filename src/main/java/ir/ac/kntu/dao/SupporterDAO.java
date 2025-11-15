@@ -28,7 +28,6 @@ public class SupporterDAO {
         try (Connection conn = DriverManager.getConnection(DB_URL);
                 Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("Table created or already exists.");
         } catch (SQLException e) {
             System.out.println("Table creation failed: " + e.getMessage());
         }

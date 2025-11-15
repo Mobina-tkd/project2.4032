@@ -29,7 +29,6 @@ public class TransactionDAO {
              Statement stmt = conn.createStatement()) {
 
             stmt.execute(sql);
-            System.out.println("Table created or already exists.");
 
         } catch (SQLException e) {
             System.out.println("Table creation failed: " + e.getMessage());

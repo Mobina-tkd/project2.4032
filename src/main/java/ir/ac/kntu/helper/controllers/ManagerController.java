@@ -336,6 +336,7 @@ public class ManagerController {
         }
 
     }
+    
 
     private static void handleSellerFunction() {
         while (true) {
